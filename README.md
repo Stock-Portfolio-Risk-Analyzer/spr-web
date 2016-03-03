@@ -1,43 +1,16 @@
-# Heroku Django Starter Template
+# Stock Portfolio Risk Analysis Django Project
 
-An utterly fantastic project starter template for Django 1.9.
-
-## Features
-
-- Production-ready configuration for Static Files, Database Settings, Gunicorn, etc.
-- Enhancements to Django's static file serving functionality via WhiteNoise
+Analyzes and displays the riskiness of your stock portfolio. A project for CS428 at UIUC.
 
 ## How to Use
 
-To use this project, follow these steps:
-
-1. Create your working environment.
-2. Install Django (`$ pip install django`)
-3. Create a new project using this template
-
-## Creating Your Project
-
-Using this template to create a new Django app is easy::
-
-    $ django-admin.py startproject --template=https://github.com/heroku/heroku-django-template/archive/master.zip --name=Procfile helloworld
-
-You can replace ``helloworld`` with your desired project name.
-
-## Deployment to Heroku
-
-    $ git init
-    $ git add -A
-    $ git commit -m "Initial commit"
-
-    $ heroku create
-    $ git push heroku master
-
-    $ heroku run python manage.py migrate
-
-See also, a [ready-made application](https://github.com/heroku/python-getting-started), ready to deploy.
-
-## Further Reading
-
-- [Gunicorn](https://warehouse.python.org/project/gunicorn/)
-- [WhiteNoise](https://warehouse.python.org/project/whitenoise/)
-- [dj-database-url](https://warehouse.python.org/project/dj-database-url/)
+1. Install Python 2.7.x
+2. Create a new virtualenv (`virtualenv venv`)
+3. Activate the virtualenv (`source venv/bin/activate`)
+4. Change directories (`cd venv`)
+5. Clone this repo (`git clone git@github.com:Stock-Portfolio-Risk-Analyzer/spr-web.git stockportfolio`)
+6. Change directories (`cd stockportfolio`)
+7. Run `pip -r requirements.txt` to install dependencies
+8. Run `python manage.py migrate` to bring in the existing database models
+9. Run `python manage.py runserver 0.0.0.0:5000`
+10. Connect to `localhost:5000` from your webbrowser to view the existing site
