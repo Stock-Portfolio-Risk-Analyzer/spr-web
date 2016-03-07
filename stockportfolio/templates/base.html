@@ -14,28 +14,56 @@
 </head>
 
 <body class="nav-md " onload="sprInit()">
-    <div id="header">
-    {% block header %}
-    <a href="{% url 'index' %}"></a> |
+<div id="header">
+    <div class="top_nav">
+        <div class="nav_menu">
+            <nav class="" role="navigation">
+                <div class="nav toggle">
+                    <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="">
+                    {% block header %}{% endblock %}
 
-    {% if user.is_authenticated %}
-        {% trans "Logged in" %}: {{ user.username }}
-        (<a href="{% url 'auth_logout' %}">{% trans "Log out" %}</a> |
-        <a href="{% url 'auth_password_change' %}">{% trans "Change password" %}</a>)
-    {% else %}
-       <a href="{% url 'auth_login' %}">{% trans "Log in" %}</a>
-    {% endif %}
-    {% endblock %}
+                        <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
+                           aria-expanded="false">
+                            {% if user.is_authenticated %}
+                            <img src="{% static "images/img.jpg" %}" alt="">user.username
+                            <span class=" fa fa-angle-down"></span>
+                            {% endif %}
+                        </a>
+                            {% if user.is_authenticated %}
+                                <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
+                                <li>
+                                    <a href="javascript:;">
+                                        <span>Modify Portfolio</span>
+                                    </a>
+                                </li>
+                                <li><a href="{% url 'auth_logout' %}">{% trans "Log out" %}<i
+                                        class="fa fa-sign-out pull-right"></i> Log Out</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{% url 'auth_login' %}">{% trans "Log in" %}
+                                    </a></li>
+                            {% endif %}
+                        </ul>
+
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
+</div>
 
-    <div id="content">
+<div id="content" class="col-xs-12" style="background: #F3F3F3">
     {% block content %}{% endblock %}
-    </div>
+</div>
 
-    <div id="footer">
+<div id="footer">
     {% block footer %}
     {% endblock %}
-    </div>
+</div>
 </body>
 
 </html>
