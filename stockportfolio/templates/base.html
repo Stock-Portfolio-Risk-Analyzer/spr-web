@@ -28,7 +28,7 @@
                         <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown"
                            aria-expanded="false">
                             {% if user.is_authenticated %}
-                            <img src="{% static "images/img.jpg" %}" alt="">user.username
+                            <img src="{% static "images/img.jpg" %}" alt="">{% user.username %}
                             <span class=" fa fa-angle-down"></span>
                             {% endif %}
                         </a>
@@ -64,6 +64,6 @@
     {% block footer %}
     {% endblock %}
 </div>
+ <script src="{% static "js/bootstrap.min.js" %}"></script>
 </body>
-
 </html>
