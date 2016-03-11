@@ -16,11 +16,17 @@ class Stock(models.Model):
         return self.stock_id + " " + self.stock_ticker + " " + self.stock_beta
 
 
+class Risk(models.Model):
+    risk_id = models.AutoField(primary_key=True)
+    risk_value = models.FloatField(default=0.0)
+    risk_date = models.DateTimeField(auto_now=True)
+
+
 class Portfolio(models.Model):
     portfolio_id = models.AutoField(primary_key=True)
     portfolio_stocks = models.ManyToManyField(Stock)
     portfolio_user = models.ForeignKey(User)
-    portfolio_risk = models.FloatField(default=0.0)
+    portfolio_risk = models.ManyToManyField(Risk)
 
     def __str__(self):
         return self.portfolio_id + " " + self.portfolio_risk
