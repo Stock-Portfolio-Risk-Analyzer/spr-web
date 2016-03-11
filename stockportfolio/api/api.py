@@ -15,7 +15,8 @@ def remove_stock(request, stock):
     pass
 
 def create_portfolio(request, user_id):
-    pass
+    # user = User.objects.get()
+    Portfolio.objects.create()
 
 def delete_portfolio(request):
     pass

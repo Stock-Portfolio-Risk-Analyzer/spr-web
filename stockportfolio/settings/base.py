@@ -36,7 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'registration',
-    'crispy_forms'
+    'crispy_forms',
+    'stockportfolio.api'
 )
 
 MIDDLEWARE_CLASSES = (
