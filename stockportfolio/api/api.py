@@ -1,5 +1,10 @@
-def add_stock(request, stock):
-    pass
+from stockportfolio.api.models import Portfolio, Stock;
+from stockportfolio.api.datautils.yahoo_finance.py 
+
+def add_stock(request, portfolio_id, stock):
+    portfolio = Portfolio.objects.get(portfolio_id)
+
+    stock = Stock.objects.create(stock_price)
 
 def remove_stock(request, stock):
     pass
