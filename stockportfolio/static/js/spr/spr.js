@@ -1,5 +1,5 @@
 function sprInit() {
-    var url = "https://stock-portfolio-risk-analyzer.herokuapp.com" + "/api/"
+    var url = "https://stock-portfolio-risk-analyzer.herokuapp.com" + "/api/";
     var stocks = document.body.getElementsByTagName('stock-price');
     var requests={};
     for (var idx = 0; idx < stocks.length; idx++) {

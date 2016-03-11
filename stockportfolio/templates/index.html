@@ -2,7 +2,7 @@
 <html>
 <!-- Based on the admin template at https://github.com/kimlabs/gentelella/ used under the MIT license which is includedin it's original form in License.txt-->
 <head>
-    <title>SPRA | </title>
+    <title>SPRA |</title>
     {% load staticfiles %}
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "fonts/css/font-awesome.min.css" %}" rel="stylesheet">
@@ -54,6 +54,11 @@
                                     <li>
                                         <a href="javascript:;">
                                             <span>Modify Portfolio</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" data-toggle="modal" data-target="#userAccountModal">    
+                                        <span>Modify Account</span>
                                         </a>
                                     </li>
                                     <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
@@ -327,8 +332,11 @@
         </ul>
         <div class="clearfix"></div>
         <div id="notif-group" class="tabbed_notifications"></div>
-
+    
     </div>
+
+    {% block account %}{% endblock %}
+
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.pie.js"%}"></script>

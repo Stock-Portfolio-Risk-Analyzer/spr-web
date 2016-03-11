@@ -1,5 +1,4 @@
 from stockportfolio.api.models import Portfolio, Stock;
-from stockportfolio.api.datautils.yahoo_finance.py 
 
 def add_stock(request, portfolio_id, stock):
     portfolio = Portfolio.objects.get(portfolio_id)

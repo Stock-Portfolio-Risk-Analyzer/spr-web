@@ -1,0 +1,29 @@
+{% extends "stockportfolio/index.html" %}
+{% block account %}
+
+<div class="modal fade" id="userAccountModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Modify Account</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+        <fieldset class="form-group">
+        <label for="userAccountName">Name</label>
+        <input type="text" class="form-control" id="userAccountNameInput" placeholder="Name">
+        </fieldset>
+        <fieldset class="form-group">
+        <label for="userAccountEmail">Email</label>
+        <input type="text" class="form-control" id="userAccountEmailInput" placeholder="Email">
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Update</button>
+        </form> 
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+{% endblock %}
