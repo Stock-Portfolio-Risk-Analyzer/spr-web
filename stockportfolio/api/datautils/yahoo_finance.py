@@ -78,11 +78,16 @@ def get_options_data_yahoo(symbols=None, start_date=None, end_date=None):
 def get_current_price(symbol):
     quote = ystockquote.get_price(symbol)
     if quote == 'N/A':
-        return 'Invalid symbol'
+        return None
     return float(quote)
 
+
 def get_company_name(symbol):
-    print str(ystockquote.get_all(symbol))
+    company_name = ystockquote.get_all(symbol)['name']
+    if company_name != "N\A":
+        return company_name
+    else:
+        return None
  
 
 class TestYahooFinance(unittest.TestCase):
