@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.sessions import serializers
 from django.http import Http404, HttpResponse
 
 from stockportfolio.api.models import Portfolio, Stock
@@ -12,8 +13,9 @@ def add_stock(request, portfolio_id, stock):
         raise Http404
     stock = Stock.objects.create(stock_price=stock_price, stock_name=stock_name, stock_ticker=stock)
 
-def remove_stock(request, stock):
-    pass
+def remove_stock(request, portfolio_id, stock):
+    portfolio = Portfolio.objects.get(portfolio_id)
+    portfolio.portfolio_stocks.delete(stock_ticker=stock)
 
 def create_portfolio(request, user_id):
     user = User.objects.get(pk=user_id)
@@ -32,6 +34,11 @@ def delete_portfolio(request, portfolio_id):
         portfolio.delete()
         return HttpResponse(status=200)
 
-def get_portfolio(request):
-    pass
+def get_portfolio(request, portfolio_id):
+    portfolio = Portfolio.objects.get(portfolio_id)
+    if portfolio is None:
+        raise Http404
+    else:
+        serialized_portfolio = serializers.serialize('json', [portfolio])
+
 
