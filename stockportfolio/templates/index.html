@@ -242,16 +242,16 @@
                                             <canvas id="canvas1" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
                                         </td>
                                         <td>
-                                            <table class="tile_info">
+                                            <table class="tile_info" id="company_name">
                                                 <tr>
                                                     <td>
-                                                        <p><i class="fa fa-square blue"></i>YHOO</p>
+                                                        <p><i class="fa fa-square blue"></i>AAPL</p>
                                                     </td>
                                                     <td>50%</td>
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <p><i class="fa fa-square green"></i>AAPL</p>
+                                                        <p><i class="fa fa-square green"></i>YHOO</p>
                                                     </td>
                                                     <td>50%</td>
                                                 </tr>
@@ -396,17 +396,31 @@
         // Data for the portfolio diversity donut chart
 
         var doughnutDataForDiversity = [];
+        var arrayOfStocks = [{"ticker": "AAPL", "value": 100, "quantity": 2}, {"ticker": "YHOO", "value": 50, "quantity": 2},{"ticker": "CHK", "value": 20, "quantity": 1}]
         var arrayOfColors = ["#26B99A","#3498DB","#BDC3C7","#455C73","#9B59B6"];
-        var numOfStocks = getPortfolioSize();
-        for (var i = 0; i < numOfStocks; i++) {
+        var numOfStocks = 4
+        var valueOfStocks = 0
+        
+        for (var i =0; i<arrayOfStocks.length;i++) {
+            valueOfStocks += arrayOfStocks[i].value * arrayOfStocks[i].quantity
+        }
+        
+        for (var i =0; i<arrayOfStocks.length;i++) {
             var newStock = { 
-                value: 100/getPortfolioSize(),
+                value: valueOfStocks/arrayOfStocks[i].value/arrayOfStocks[i].quantity,
                 color: arrayOfColors[i]
             }
             doughnutDataForDiversity.push(newStock);
-            
-        };
+        }
 
+        var table = document.getElementById("company_name")
+        var loc_table_rows_count = arrayOfStocks.length
+
+        for (var i = 0; i < loc_table_rows_count; i++) {
+            var row = table.insertRow(i)
+            var cell = row.insertCell(i)
+            cell.innerHTML = "<p><i class=\"fa fa-square \"" + arrayOfColors[i]+ "\"></i>" + arrayOfColors[i%arrayOfColors.length].ticker + "</p>"
+        }
 
         // Data for the portfolio risk donut chart
 
