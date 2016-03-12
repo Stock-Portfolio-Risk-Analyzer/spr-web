@@ -22,7 +22,7 @@ def create_portfolio(request, user_id):
         portfolio.save()
         raise Http404
     else:
-        raise HttpResponse(status_code=200)
+        raise HttpResponse(status=200)
 
 def delete_portfolio(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id)
@@ -30,7 +30,7 @@ def delete_portfolio(request, portfolio_id):
         raise Http404
     else:
         portfolio.delete()
-        return HttpResponse(status_code=200)
+        return HttpResponse(status=200)
 
 def get_portfolio(request):
     pass
