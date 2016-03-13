@@ -1,14 +1,9 @@
 import Quandl as qd
-import logbook
 from collections import OrderedDict
 from datetime import datetime as dt
-import pandas
-import time
 
-log = logbook.Logger('quandl_info')
+qd.get("NSE/OIL", authtoken="-v_zAsM8GfM8UNnAr6sZ")  # initial call to Quandl. key is stored afterwards
 
-# initial call to Quandl. key is stored afterwards
-qd.get("NSE/OIL", authtoken="-v_zAsM8GfM8UNnAr6sZ")
 
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     """
@@ -29,12 +24,13 @@ def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     if start_date is not None and end_date is not None:
         assert start_date < end_date, "Start date is later than end date."
 
-    log.info("Loading symbol: {}".format(symbol))
+    # log.info("Loading symbol: {}".format(symbol))
 
     quandl_code = db_code + "/" + symbol
     symbol_data = qd.get(quandl_code, returns="pandas", 
                          trim_start=start_date, trim_end=end_date) 
     return symbol_data
+
 
 def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_code="WIKI"):
     """
@@ -50,11 +46,12 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_cod
     if symbols is not None:
         for symbol in symbols:
             quandl_code = db_code + "/" + symbol
-            symbol_data = qd.get(quandl_code, returns="pandas", 
-                         trim_start=start_date, trim_end=end_date) 
+            symbol_data = qd.get(quandl_code, returns="pandas",
+                                 trim_start=start_date, trim_end=end_date)
             data[symbol] = symbol_data
 
     return data
+
 
 def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
@@ -65,8 +62,8 @@ def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     :return:
     """
     data = get_stock_data(symbol, start_date, end_date)[col]
-
     return data.pct_change().fillna(0)
+
 
 def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
@@ -79,10 +76,10 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.diff().fillna(0)
 
+
 def get_options_data_quandl(symbol=None):
     """
     :param symbol: ticker symbol
     :return: list of column names 
     """
     return list(get_stock_data(symbol).columns.values)
-
