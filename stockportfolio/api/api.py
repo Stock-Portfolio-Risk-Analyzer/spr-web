@@ -19,9 +19,10 @@ def add_stock(request, portfolio_id):
     if stock_ticker is not None:
         stock_name = get_company_name(stock_ticker)
         stock_quantity = request.GET.get('quantity', None)
+        stock_sector = get_company_sector(stock_ticker)
         try:
             stock = Stock.objects.create(stock_name=stock_name, stock_ticker=stock_ticker,
-                                         stock_quantity=stock_quantity)
+                                         stock_quantity=stock_quantity, stock_sector=stock_sector)
             stock.save()
         except None:
             raise Http404
@@ -120,7 +121,7 @@ def _calculate_stock_info(stock):
                   'price': current_price,
                   'quantity': stock.stock_quantity,
                   'mkt_value': mkt_value,
-                  'sector': get_company_sector(stock.stock_ticker)}
+                  'sector': stock.stock_sector}
     return stock_dict
 
 
