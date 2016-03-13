@@ -78,7 +78,7 @@
                         <div class="left"></div>
                         <div class="right">
                             <span class="count_top"><i class="fa fa-user"></i> Portfolio Value</span>
-                            <div class="count green">$254.80</div>
+                            <div class="count green" id="portfolio_value"></div>
                             <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
                         </div>
                     </div>
@@ -86,7 +86,7 @@
                         <div class="left"></div>
                         <div class="right">
                             <span class="count_top"><i class="fa fa-user"></i> Portfolio Risk</span>
-                            <div class="count">5.1</div>
+                            <div class="count" id="portfolio_risk"></div>
                             <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>12% </i> From last Week</span>
                         </div>
                     </div>
@@ -557,11 +557,17 @@
             cell2.innerHTML = (proportionalRiskOfStocks[i]*100).toFixed(2)+"%";
         }
 
-
-
         //Create both the charts
         var myDoughnut = new Chart(document.getElementById("canvas1").getContext("2d")).Doughnut(doughnutDataForDiversity);
         var myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForRisk);
+
+        //Make Portfolio Value/Risk dynamic
+        var value_div = document.getElementById("portfolio_value")
+        value_div.innerHTML = "$" + totalValueOfStocks.toFixed(2)
+
+        var risk_div = document.getElementById("portfolio_risk")
+        risk_div.innerHTML = totalRiskOfStocks.toFixed(2)
+
     </script>
 
 </body>
