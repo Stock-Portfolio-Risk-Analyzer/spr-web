@@ -1,10 +1,8 @@
 import ystockquote
-import logbook
-from collections import OrderedDict
+import pandas as pd
 import pandas_datareader.data as web
+from collections import OrderedDict
 from datetime import datetime as dt
-
-log = logbook.Logger('yahoo_finance')
 
 
 def get_stock_data(symbol, start_date=None, end_date=None):
@@ -24,7 +22,7 @@ def get_stock_data(symbol, start_date=None, end_date=None):
     if start_date is not None and end_date is not None:
         assert start_date < end_date, "Start date is later than end date."
 
-    log.info("Loading symbol: {}".format(symbol))
+    # log.info("Loading symbol: {}".format(symbol))
     symbol_data = web.DataReader(symbol, 'yahoo', start_date, end_date)
 
     return symbol_data
