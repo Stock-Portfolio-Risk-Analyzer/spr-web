@@ -132,27 +132,42 @@
                                         <thead>
                                             <tr class="headings">
                                                 <th>Company</th>
-                                                <th>Symbol</th>
-                                                <th>Sector</th>
-                                                <th>Quantity</th>
-{#                                                <th>Volume </th>#}
-                                                <th>Last Price</th>
-                                                <th>Market Value </th>
+                                                <th>Stock Symbol</th>
+                                                <th>Type</th>
+                                                <th>Number held </th>
+                                                <th>Volume </th>
+                                                <th>Price</th>
+                                                <th>Amount </th>
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        {% for stock in portfolio.portfolio_stocks.all %}
                                             <tr class="even pointer">
-                                                <td class=" ">{{ stock.stock_name }}</td>
-                                                <td class=" ">{{ stock.stock_ticker }}</td>
-                                                <td class=" ">{{ stock.stock_sector }}</td>
-                                                <td class=" ">{{ stock.stock_quantity }}</td>
-                                                <td>{{ get_stock_price(stock.stock_ticker)}}</td>
-                                                <td> {{ get_stock_price*stock.stock_quantity }} </td>
+                                                <td class=" ">Yahoo Inc</td>
+                                                <td class=" ">YHOO</td>
+                                                <td class=" ">Equity</td>
+                                                <td class=" ">2</td>
+                                                <td>8000000</td>
+                                                <td class=" ">
+                                                    <stock-price id="YHOO" data-stock="YHOO">
+                                                    </stock-price>
+                                                </td>
+                                                <td> 58.72</td>
                                                 </td>
                                             </tr>
-                                            {% endfor %}
+                                            <tr class="even pointer">
+                                                <td class=" ">Apple Inc</td>
+                                                <td class=" ">AAPL</td>
+                                                <td class=" ">Equity</td>
+                                                <td class=" ">2</td>
+                                                <td>40000000</td>
+                                                <td class=" ">
+                                                    <stock-price id="AAPL" data-stock="AAPL">
+                                                    </stock-price>
+                                                </td>
+                                                <td> 196.08</td>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -161,9 +176,19 @@
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="dashboardaph x_panel">
+                                    <span class="input-group-btn">
+                                        <button id = "week" onclick = "weekFun()" class="btn btn-default" type="button">In week </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <button id = "year" onclick = "yearFun()"class="btn btn-default" type="button">In year </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <button id = "all" onclick = "allFun()"class="btn btn-default" type="button">Since the beginning
+                                        </button>
+                                    </span>
                                 <div class="row x_title">
                                     <div class="col-md-6">
-                                        <h3>Risk History </h3>
+                                        <h3>Risk History (Today) </h3>
                                     </div>
                                     <div class="col-md-6">
                                         <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
@@ -325,8 +350,6 @@
     <script type="text/javascript" src="{% static "js/flot/curvedLines.js"%}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js"%}"></script>
     <script>
-
-
         var portfolio = ["AAPL", "YHOO"];
 
         var getPortfolioSize = function(){
@@ -334,35 +357,58 @@
         }
 
                           
-        var jsonString =   { "timetags": [ "Mon Mar 6 2016 20:08:26 GMT-0600 (CST)",
+        var jsonString =   { "timetags": [ "Thu Mar 6 2014 20:08:26 GMT-0600 (CST)",
+                                           "Fri Mar 6 2015 20:08:26 GMT-0600 (CST)",
+                                           "Sun Sep 6 2015 20:08:26 GMT-0600 (CST)",
+                                           "Mon Mar 6 2016 20:08:26 GMT-0600 (CST)",
                                            "Tue Mar 7 2016 20:08:26 GMT-0600 (CST)",
                                            "Wed Mar 8 2016 20:08:26 GMT-0600 (CST)",
                                            "Thu Mar 9 2016 20:08:26 GMT-0600 (CST)",
                                            "Fri Mar 10 2016 20:08:26 GMT-0600 (CST)",
                                            "Sat Mar 11 2016 20:08:26 GMT-0600 (CST)",
                                            "Sun Mar 12 2016 20:08:26 GMT-0600 (CST)"
+                                           //"Tue Apr 12 2016 20:08:26 GMT-0600 (CST)"
                                           ],
-                              "risk": [5.1,
+                              "risk": [0.8,
+                                       10.1,
+                                       2.1,
+                                       5.1,
                                        1.0,
                                        2.0,
                                        8.0,
                                        7.7,
-                                       0.5,
-                                       1.1]
+                                       10.5,
+                                       1.1
+                                       ]
                             }
         var risks = [jsonString["timetags"].length]
-
-
-
-        //console.log(weekDay(0))
         for (i = 0; i < jsonString["timetags"].length; i++){
-            risks[i] = new Array( (new Date(jsonString["timetags"][i]).getDay()),jsonString["risk"][i]);
-            console.log(risks[i])
-        }       
+            risks[i] = new Array(new Date(jsonString["timetags"][i]).getTime(),jsonString["risk"][i])
+        }
+        var weekFun = function (){
+            options["xaxis"]["minTickSize"] = [1, "day"]
+            var currentTime = new Date()
+            var oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            options["xaxis"]["min"] = oneWeekAgo.getTime()
+            options["xaxis"]["max"] = currentTime.getTime()
+            timeformat: "%a"
+        }
+        var yearFun = function (){
+            var currentTime = new Date()
+            options["xaxis"]["min"] = (new Date(currentTime.getFullYear()-1,0,1)).getTime()
+            options["xaxis"]["max"] = currentTime.getTime()
+            options["xaxis"]["minTickSize"] =[1, "month"]
 
-            // var d1 = [
-      //       [0, 2], [1, 17], [2, 6], [3, 10], [4, 5], [5, 17], [6, 6], [7, 10], [8, 7], [9, 11], [10, 25], [11, 9], [12, 12], [13, 5], [14, 3], [15, 4], [16, 9]
-      //             ];
+        }
+        var allFun = function (){
+            options["xaxis"]["min"] = (new Date(jsonString["timetags"][0])).getTime()
+            options["xaxis"]["max"] = (new Date()).getTime()
+
+        }
+        var currentTime = new Date()
+        var dayBefore = new Date()
+        dayBefore.setDate(dayBefore.getDate()-1)
 
             var options = {
                 series: {
@@ -385,19 +431,33 @@
                         left: "#7F8790"
                     }
                 },
+                label: "Beta",
                 xaxis: {
-                    min: 0.0,
-                    max: 6.0,
-                    //mode: null,
-                    ticks: [[0,"Mon"], [1,"Tue"], [2,"Wed"], [3,"Thu"], [4,"Fri"], [5,"Sat"],[6,"Sun"]],
+                    minTickSize: [1, "hour"],
+                    min: dayBefore.getTime(),
+                    max: currentTime.getTime(),
+                    twelveHourClock: true,
+                    mode: "time",
                     tickLength: 0, // hide gridlines
                     axisLabelUseCanvas: true,
                     axisLabelFontSizePixels: 12,
                     axisLabelFontFamily: 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
                     axisLabelPadding: 5
                     }
-                };
-            var plot = $.plot($("#placeholder3xx3"), [{
+            }
+            $.plot("#placeholder3xx3",[{
+                label: "Beta",
+                data: risks,
+
+                lines: {
+                    fillColor: "rgba(250, 202, 89, 0.12)"
+                },
+                points: {
+                    fillColor: "#fff"
+                }
+                    }], options);
+            $("#week").click(function () {
+                $.plot($("#placeholder3xx3"),[{
                 label: "Beta",
                 data: risks,
                 lines: {
@@ -407,8 +467,32 @@
                     fillColor: "#fff"
                 }
                     }], options);
+            });
 
-
+            $("#year").click(function () {
+                $.plot($("#placeholder3xx3"),[{
+                label: "Beta",
+                data: risks,
+                lines: {
+                    fillColor: "rgba(250, 202, 89, 0.12)"
+                },
+                points: {
+                    fillColor: "#fff"
+                }
+                    }], options);
+            });
+            $("#all").click(function () {
+                $.plot($("#placeholder3xx3"),[{
+                label: "Beta",
+                data: risks,
+                lines: {
+                    fillColor: "rgba(250, 202, 89, 0.12)"
+                },
+                points: {
+                    fillColor: "#fff"
+                }
+                    }], options);
+            });
         // Data for the portfolio diversity donut chart
 
         var doughnutDataForDiversity = [];
@@ -444,5 +528,6 @@
         var myDoughnut = new Chart(document.getElementById("canvas1").getContext("2d")).Doughnut(doughnutDataForDiversity);
         var myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForRisk);
     </script>
+
 </body>
 </html>
