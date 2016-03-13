@@ -82,7 +82,10 @@ def get_current_price(symbol):
     :param symbol:
     :return:
     """
-    return float(ystockquote.get_price(symbol))
+    quote = ystockquote.get_price(symbol)
+    if quote == 'N/A':
+        return None
+    return float(quote)
 
 
 def get_company_name(symbol):
@@ -91,11 +94,11 @@ def get_company_name(symbol):
     :param symbol:
     :return:
     """
-    df = pd.read_csv('secwiki_tickers.csv')
-    company_info = df[df.Ticker==symbol]
-    code = company_info['Name'].keys()[0]
-    company_name = company_info.to_dict()['Name'][code]
-    return company_name
+    company_name = ystockquote.get_all(symbol)['name']
+    if company_name != "N\A":
+        return company_name
+    else:
+        return None
 
 
 def get_company_sector(symbol):
