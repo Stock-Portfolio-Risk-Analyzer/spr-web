@@ -3,7 +3,6 @@ from django.conf.urls import url
 from . import views
 from . import api
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
     url(r'^(?P<symbol>[A-Z]+)/$', views.ticker, name='ticker'),
     url(r'^user/(?P<portfolio_id>\d+)$', views.user_profile, name="user_profile"),
     url(r'^portfolio/(?P<portfolio_id>\d+)/addstock$', api.add_stock, name="add_stock"),
