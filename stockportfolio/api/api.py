@@ -96,7 +96,7 @@ def get_portfolio(request, portfolio_id):
                           'name': stock.stock_name}
             portfolio_dict["stocks"].append(stock_dict)
         for risk in portfolio.portfolio_risk.all().order_by('risk_date'):
-            risk_dict = {'risk_valu': risk.risk_value,
+            risk_dict = {'risk_value': risk.risk_value,
                          'risk_date': '{}'.format(risk.risk_date)}
             portfolio_dict["risk_history"].append(risk_dict)
 
