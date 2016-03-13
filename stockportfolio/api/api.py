@@ -24,6 +24,7 @@ def add_stock(request, portfolio_id):
             stock = Stock.objects.create(stock_name=stock_name, stock_ticker=stock_ticker,
                                          stock_quantity=stock_quantity, stock_sector=stock_sector)
             stock.save()
+            portfolio.portfolio_stocks.add(stock)
         except None:
             raise Http404
         return HttpResponse(status=200)

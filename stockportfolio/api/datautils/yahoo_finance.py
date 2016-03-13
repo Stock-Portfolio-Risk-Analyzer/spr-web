@@ -94,21 +94,25 @@ def get_company_name(symbol):
     :param symbol:
     :return:
     """
-    df = pd.read_csv('secwiki_tickers.csv')
+    fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
+    # df = pd.read_csv('stockportfolio/api/datautils/secwiki_tickers.csv')
+    print "FPATH", fpath
+    df = pd.read_csv(fpath)
     company_info = df[df.Ticker==symbol]
     code = company_info['Name'].keys()[0]
     company_sector = company_info.to_dict()['Name'][code]
     return company_sector
 
 
-
+import os
 def get_company_sector(symbol):
     """
     Get the sector of the company
     :param symbol: (str)
     :return: (str)
     """
-    df = pd.read_csv('secwiki_tickers.csv')
+    print os.getcwd()
+    df = pd.read_csv('stockportfolio/api/datautils/secwiki_tickers.csv')
     company_info = df[df.Ticker==symbol]
     code = company_info['Name'].keys()[0]
     company_sector = company_info.to_dict()['Sector'][code]
