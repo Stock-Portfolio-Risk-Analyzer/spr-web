@@ -1,6 +1,5 @@
 import unittest
-from datetime import datetime as dt
-from quandl_info import *
+from stockportfolio.api.datautils.quandl_info import *
 
 class TestQuandl(unittest.TestCase):
 
