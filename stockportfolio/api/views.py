@@ -3,8 +3,13 @@ from django.http import HttpResponse, Http404
 from datautils import yahoo_finance as yf 
 from django.contrib.auth.models import User
 
+from stockportfolio.api.models import Portfolio
+
+
 def index(request):
-    return HttpResponse("hello")
+    portfolio = Portfolio.objects.get(pk=1)
+    context = {"portfolio": portfolio}
+    return render_to_response("index.html", context)
 
 def ticker(request, symbol):
     # any api errors bubble up to the user

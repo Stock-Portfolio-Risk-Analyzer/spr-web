@@ -12,7 +12,7 @@ class Stock(models.Model):
     stock_ticker = models.CharField(max_length=8, default="")
     stock_name = models.CharField(max_length=200)
     stock_beta = models.FloatField(default=0.0)
-    stock_sector = models.CharField(max_length=200)
+    stock_sector = models.CharField(max_length=200, default="Other")
 
     def __str__(self):
         return '{} {} {}'.format(self.stock_id, self.stock_ticker, self.stock_beta)

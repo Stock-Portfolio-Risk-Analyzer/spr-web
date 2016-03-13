@@ -132,42 +132,27 @@
                                         <thead>
                                             <tr class="headings">
                                                 <th>Company</th>
-                                                <th>Stock Symbol</th>
-                                                <th>Type</th>
-                                                <th>Number held </th>
-                                                <th>Volume </th>
-                                                <th>Price</th>
-                                                <th>Amount </th>
+                                                <th>Symbol</th>
+                                                <th>Sector</th>
+                                                <th>Quantity</th>
+{#                                                <th>Volume </th>#}
+                                                <th>Last Price</th>
+                                                <th>Market Value </th>
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                        {% for stock in portfolio.portfolio_stocks.all %}
                                             <tr class="even pointer">
-                                                <td class=" ">Yahoo Inc</td>
-                                                <td class=" ">YHOO</td>
-                                                <td class=" ">Equity</td>
-                                                <td class=" ">2</td>
-                                                <td>8000000</td>
-                                                <td class=" ">
-                                                    <stock-price id="YHOO" data-stock="YHOO">
-                                                    </stock-price>
-                                                </td>
-                                                <td> 58.72</td>
+                                                <td class=" ">{{ stock.stock_name }}</td>
+                                                <td class=" ">{{ stock.stock_ticker }}</td>
+                                                <td class=" ">{{ stock.stock_sector }}</td>
+                                                <td class=" ">{{ stock.stock_quantity }}</td>
+                                                <td></td>
+                                                <td> </td>
                                                 </td>
                                             </tr>
-                                            <tr class="even pointer">
-                                                <td class=" ">Apple Inc</td>
-                                                <td class=" ">AAPL</td>
-                                                <td class=" ">Equity</td>
-                                                <td class=" ">2</td>
-                                                <td>40000000</td>
-                                                <td class=" ">
-                                                    <stock-price id="AAPL" data-stock="AAPL">
-                                                    </stock-price>
-                                                </td>
-                                                <td> 196.08</td>
-                                                </td>
-                                            </tr>
+                                            {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
