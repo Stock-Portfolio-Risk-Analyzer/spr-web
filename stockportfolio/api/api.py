@@ -16,12 +16,15 @@ def add_stock(request, portfolio_id):
     assert(portfolio is not None)
     stock_ticker = request.GET.get('stock', None)
     if stock_ticker is not None:
-        stock_price = get_current_price(stock_ticker)
         stock_name = get_company_name(stock_ticker)
-        if stock_name is None or stock_price is None:
+        stock_quantity = request.GET.get('quantity', None)
+        try:
+            stock = Stock.objects.create(stock_name=stock_name, stock_ticker=stock_ticker,
+                                         stock_quantity=stock_quantity)
+            stock.save()
+        except None:
             raise Http404
-        stock = Stock.objects.create(stock_price=stock_price, stock_name=stock_name, stock_ticker=stock_ticker)
-        assert(stock is not None)
+        return HttpResponse(status=200)
 
 
 

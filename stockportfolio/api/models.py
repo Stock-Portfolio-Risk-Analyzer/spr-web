@@ -8,7 +8,8 @@ class Stock(models.Model):
 
     """
     stock_id = models.AutoField(primary_key=True)
-    stock_price = models.FloatField(default=0)
+    # stock_price = models.FloatField(default=0)
+    stock_quantity = models.IntegerField(default=0)
     stock_ticker = models.CharField(max_length=8, default="")
     stock_name = models.CharField(max_length=200)
     stock_beta = models.FloatField(default=0.0)
