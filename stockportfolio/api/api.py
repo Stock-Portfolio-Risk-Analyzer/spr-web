@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
 from stockportfolio.api.models import Portfolio, Stock
@@ -93,10 +94,13 @@ def get_portfolio(request, portfolio_id):
         portfolio_dict = {'portfolio_id': portfolio.portfolio_id,
                           'portfolio_userid': portfolio.portfolio_user.pk,
                           'stocks': [],
-                          'risk_history': []}
+                          'risk_history': [],
+                          'date_created': '{}'.format(datetime.now())}
         for stock in portfolio.portfolio_stocks.all():
             stock_dict = {'ticker': stock.stock_ticker,
-                          'name': stock.stock_name}
+                          'name': stock.stock_name,
+                          'price':  get_current_price(stock.stock_ticker),
+                          'quantity': stock.stock_quantity}
             portfolio_dict["stocks"].append(stock_dict)
         for risk in portfolio.portfolio_risk.all().order_by('risk_date'):
             risk_dict = {'risk_value': risk.risk_value,
