@@ -2,7 +2,7 @@
 <html>
 <!-- Based on the admin template at https://github.com/kimlabs/gentelella/ used under the MIT license which is includedin it's original form in License.txt-->
 <head>
-    <title>SPRA |</title>
+    <title>SPRA | </title>
     {% load staticfiles %}
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "fonts/css/font-awesome.min.css" %}" rel="stylesheet">
@@ -54,11 +54,6 @@
                                     <li>
                                         <a href="javascript:;">
                                             <span>Modify Portfolio</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-toggle="modal" data-target="#userAccountModal">    
-                                        <span>Modify Account</span>
                                         </a>
                                     </li>
                                     <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
@@ -180,7 +175,7 @@
 
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="dashboard_graph x_panel">
+                            <div class="dashboardaph x_panel">
                                 <div class="row x_title">
                                     <div class="col-md-6">
                                         <h3>Risk History </h3>
@@ -242,7 +237,19 @@
                                             <canvas id="canvas1" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
                                         </td>
                                         <td>
-                                            <table class="tile_info" id="donut_diversity">
+                                            <table class="tile_info">
+                                                <tr>
+                                                    <td>
+                                                        <p><i class="fa fa-square blue"></i>YHOO</p>
+                                                    </td>
+                                                    <td>50%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p><i class="fa fa-square green"></i>AAPL</p>
+                                                    </td>
+                                                    <td>50%</td>
+                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
@@ -290,8 +297,19 @@
                                             <canvas id="canvas2" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
                                         </td>
                                         <td>
-                                            <table class="tile_info" id="donut_risk">
-            
+                                            <table class="tile_info">
+                                                <tr>
+                                                    <td>
+                                                        <p><i class="fa fa-square blue"></i>YHOO</p>
+                                                    </td>
+                                                    <td>67%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p><i class="fa fa-square green"></i>AAPL</p>
+                                                    </td>
+                                                    <td>33%</td>
+                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
@@ -309,11 +327,8 @@
         </ul>
         <div class="clearfix"></div>
         <div id="notif-group" class="tabbed_notifications"></div>
-    
+
     </div>
-
-    {% block account %}{% endblock %}
-
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.pie.js"%}"></script>
@@ -325,16 +340,42 @@
     <script type="text/javascript" src="{% static "js/flot/curvedLines.js"%}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js"%}"></script>
     <script>
-        var portfolio = ["AAPL", "YHOO"] 
-        var getPortfolioSize = function(){
+        var portfolio = ["AAPL", "YHOO"];
 
-        return portfolio.length;
-        
+        var getPortfolioSize = function(){
+            return portfolio.length;
         }
 
-            var d1 = [
-            [0, 5], [1, 17], [2, 6], [3, 10], [4, 5], [5, 17], [6, 6], [7, 10], [8, 7], [9, 11], [10, 25], [11, 9], [12, 12], [13, 5], [14, 3], [15, 4], [16, 9]
-        ];
+                          
+        var jsonString =   { "timetags": [ "Mon Mar 6 2016 20:08:26 GMT-0600 (CST)",
+                                           "Tue Mar 7 2016 20:08:26 GMT-0600 (CST)",
+                                           "Wed Mar 8 2016 20:08:26 GMT-0600 (CST)",
+                                           "Thu Mar 9 2016 20:08:26 GMT-0600 (CST)",
+                                           "Fri Mar 10 2016 20:08:26 GMT-0600 (CST)",
+                                           "Sat Mar 11 2016 20:08:26 GMT-0600 (CST)",
+                                           "Sun Mar 12 2016 20:08:26 GMT-0600 (CST)"
+                                          ],
+                              "risk": [5.1,
+                                       1.0,
+                                       2.0,
+                                       8.0,
+                                       7.7,
+                                       0.5,
+                                       1.1]
+                            }
+        var risks = [jsonString["timetags"].length]
+
+
+
+        //console.log(weekDay(0))
+        for (i = 0; i < jsonString["timetags"].length; i++){
+            risks[i] = new Array( (new Date(jsonString["timetags"][i]).getDay()),jsonString["risk"][i]);
+            console.log(risks[i])
+        }       
+
+            // var d1 = [
+      //       [0, 2], [1, 17], [2, 6], [3, 10], [4, 5], [5, 17], [6, 6], [7, 10], [8, 7], [9, 11], [10, 25], [11, 9], [12, 12], [13, 5], [14, 3], [15, 4], [16, 9]
+      //             ];
 
             var options = {
                 series: {
@@ -356,11 +397,22 @@
                         bottom: "#7F8790",
                         left: "#7F8790"
                     }
-                }
-            };
+                },
+                xaxis: {
+                    min: 0.0,
+                    max: 6.0,
+                    //mode: null,
+                    ticks: [[0,"Mon"], [1,"Tue"], [2,"Wed"], [3,"Thu"], [4,"Fri"], [5,"Sat"],[6,"Sun"]],
+                    tickLength: 0, // hide gridlines
+                    axisLabelUseCanvas: true,
+                    axisLabelFontSizePixels: 12,
+                    axisLabelFontFamily: 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+                    axisLabelPadding: 5
+                    }
+                };
             var plot = $.plot($("#placeholder3xx3"), [{
                 label: "Beta",
-                data: d1,
+                data: risks,
                 lines: {
                     fillColor: "rgba(150, 202, 89, 0.12)"
                 },
@@ -373,89 +425,35 @@
         // Data for the portfolio diversity donut chart
 
         var doughnutDataForDiversity = [];
-        var arrayOfStocks = [
-                            {"ticker": "AAPL", "value": 100, "risk": 2.1, "quantity": 2}, 
-                            {"ticker": "YHOO", "value": 50, "risk": 3.2, "quantity": 2},
-                            {"ticker": "CHK", "value": 20, "risk": 4.3, "quantity": 1},
-                            {"ticker": "ASA", "value": 40, "risk": 5.4, "quantity": 3}
-                            ]
         var arrayOfColors = ["#26B99A","#3498DB","#BDC3C7","#455C73","#9B59B6"];
-        var numOfStocks = arrayOfStocks.length
-        var totalValueOfStocks = 0
-        var proportionOfStocks = []
-
-        
-        for (var i =0; i<arrayOfStocks.length;i++) {
-            valueOfStock = arrayOfStocks[i].value * arrayOfStocks[i].quantity
-            totalValueOfStocks += valueOfStock
-        }
-        
-        for (var i =0; i<arrayOfStocks.length;i++) {   
-            
-            valueOfStock = arrayOfStocks[i].value * arrayOfStocks[i].quantity
-            proportionOfStocks[i] = valueOfStock/totalValueOfStocks         
-           
+        var numOfStocks = getPortfolioSize();
+        for (var i = 0; i < numOfStocks; i++) {
             var newStock = { 
-                value: proportionOfStocks[i],
+                value: 100/getPortfolioSize(),
                 color: arrayOfColors[i]
             }
             doughnutDataForDiversity.push(newStock);
-        }
+            
+        };
 
-        var table = document.getElementById("donut_diversity")
-        var loc_table_rows_count = arrayOfStocks.length
-
-        for (var i = 0; i < loc_table_rows_count; i++) {
-            var row = table.insertRow(i)
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-
-            cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + arrayOfStocks[i].ticker + "</p>"
-            cell1.style.color = arrayOfColors[i%arrayOfStocks.length]
-
-            cell2.innerHTML = (proportionOfStocks[i]*100).toFixed(2)+"%";
-        }
 
         // Data for the portfolio risk donut chart
 
-        var doughnutDataForRisk = [];
-        var totalRiskOfStocks = 0
-        var proportionalRiskOfStocks = []
+        var doughnutDataForRisk = [
 
-        
-        for (var i =0; i<arrayOfStocks.length;i++) {
-            riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
-            totalRiskOfStocks += riskOfStock
-        }
-        
-        for (var i =0; i<arrayOfStocks.length;i++) {   
-            
-            riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
-            proportionalRiskOfStocks[i] = riskOfStock/totalRiskOfStocks         
-           
-            var newStock = { 
-                value: proportionalRiskOfStocks[i],
-                color: arrayOfColors[i]
+            {
+                value: 33,
+                color: arrayOfColors[0]
+            },
+            {
+                value: 67,
+                color: arrayOfColors[1]
             }
-            doughnutDataForRisk.push(newStock);
-        }
 
-        var table = document.getElementById("donut_risk")
-        var loc_table_rows_count = arrayOfStocks.length
-
-        for (var i = 0; i < loc_table_rows_count; i++) {
-            var row = table.insertRow(i)
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-
-            cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + arrayOfStocks[i].ticker + "</p>"
-            cell1.style.color = arrayOfColors[i%arrayOfStocks.length]
-
-            cell2.innerHTML = (proportionalRiskOfStocks[i]*100).toFixed(2)+"%";
-        }
+        ];
 
 
-        //Create both the charts
+
         var myDoughnut = new Chart(document.getElementById("canvas1").getContext("2d")).Doughnut(doughnutDataForDiversity);
         var myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForRisk);
     </script>
