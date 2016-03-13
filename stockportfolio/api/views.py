@@ -2,9 +2,7 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, Http404
 from datautils import yahoo_finance as yf 
 from django.contrib.auth.models import User
-
 from stockportfolio.api.models import Portfolio
-
 
 def index(request):
     portfolio = Portfolio.objects.get(pk=1)

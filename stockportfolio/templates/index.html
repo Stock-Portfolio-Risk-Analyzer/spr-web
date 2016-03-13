@@ -148,8 +148,8 @@
                                                 <td class=" ">{{ stock.stock_ticker }}</td>
                                                 <td class=" ">{{ stock.stock_sector }}</td>
                                                 <td class=" ">{{ stock.stock_quantity }}</td>
-                                                <td></td>
-                                                <td> </td>
+                                                <td>{{ get_stock_price(stock.stock_ticker)}}</td>
+                                                <td> {{ get_stock_price*stock.stock_quantity }} </td>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -325,6 +325,8 @@
     <script type="text/javascript" src="{% static "js/flot/curvedLines.js"%}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js"%}"></script>
     <script>
+
+
         var portfolio = ["AAPL", "YHOO"];
 
         var getPortfolioSize = function(){
