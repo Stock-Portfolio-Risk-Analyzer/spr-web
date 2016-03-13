@@ -1,22 +1,28 @@
 from django.contrib.auth.models import User
-from django.contrib.sessions import serializers
-from django.core.serializers import json
 from django.http import Http404, HttpResponse
 import json
 from stockportfolio.api.models import Portfolio, Stock
 from datautils.yahoo_finance import get_current_price, get_company_name
 
-def add_stock(request, portfolio_id, stock):
-    portfolio = Portfolio.objects.get(portfolio_id)
-    stock_price = get_current_price(stock)
-    stock_name = get_company_name(stock)
-    if stock_name is None or stock_price is None:
-        raise Http404
-    stock = Stock.objects.create(stock_price=stock_price, stock_name=stock_name, stock_ticker=stock)
+def add_stock(request, portfolio_id):
+    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
+    stock_ticker = request.GET.get('stock', None)
+    if stock_ticker is not None:
+        stock_price = get_current_price(stock_ticker)
+        stock_name = get_company_name(stock_ticker)
+        if stock_name is None or stock_price is None:
+            raise Http404
+        stock = Stock.objects.create(stock_price=stock_price, stock_name=stock_name, stock_ticker=stock_ticker)
 
-def remove_stock(request, portfolio_id, stock):
-    portfolio = Portfolio.objects.get(portfolio_id)
-    portfolio.portfolio_stocks.delete(stock_ticker=stock)
+def remove_stock(request, portfolio_id):
+    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
+    stock_ticker = request.GET.get('stock', None)
+    if stock_ticker is not None and portfolio is not None:
+        stock = portfolio.portfolio_stocks.filter(stock_ticker=stock_ticker).first()
+        if stock is not None:
+            stock.delete()
+            return HttpResponse(status=200)
+    return HttpResponse(status=400)
 
 def create_portfolio(request, user_id):
     user = User.objects.get(pk=user_id)
