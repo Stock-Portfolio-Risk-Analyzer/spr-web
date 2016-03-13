@@ -12,13 +12,16 @@ class Stock(models.Model):
     stock_beta = models.FloatField(default=0.0)
 
     def __str__(self):
-        return self.stock_id + " " + self.stock_ticker + " " + self.stock_beta
+        return '{} {} {}'.format(self.stock_id, self.stock_ticker, self.stock_beta)
 
 
 class Risk(models.Model):
     risk_id = models.AutoField(primary_key=True)
     risk_value = models.FloatField(default=0.0)
     risk_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{} @ {}'.format(self.risk_value, self.risk_date)
 
 
 class Portfolio(models.Model):
@@ -28,7 +31,7 @@ class Portfolio(models.Model):
     portfolio_risk = models.ManyToManyField(Risk)
 
     def __str__(self):
-        return self.portfolio_id + " " + self.portfolio_risk
+        return '{} {}'.format(self.portfolio_id, self.portfolio_risk)
 
 
 
