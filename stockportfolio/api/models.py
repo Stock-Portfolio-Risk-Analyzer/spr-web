@@ -41,4 +41,3 @@ class Portfolio(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.portfolio_id, self.portfolio_risk)
-

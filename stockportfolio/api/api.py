@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
 from stockportfolio.api.models import Portfolio, Stock
-from datautils.yahoo_finance import get_current_price, get_company_name
+from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 
 
 def add_stock(request, portfolio_id):
@@ -26,7 +26,6 @@ def add_stock(request, portfolio_id):
         except None:
             raise Http404
         return HttpResponse(status=200)
-
 
 
 def remove_stock(request, portfolio_id):
@@ -96,15 +95,64 @@ def get_portfolio(request, portfolio_id):
                           'stocks': [],
                           'risk_history': [],
                           'date_created': '{}'.format(datetime.now())}
+
         for stock in portfolio.portfolio_stocks.all():
-            stock_dict = {'ticker': stock.stock_ticker,
-                          'name': stock.stock_name,
-                          'price':  get_current_price(stock.stock_ticker),
-                          'quantity': stock.stock_quantity}
-            portfolio_dict["stocks"].append(stock_dict)
+            portfolio_dict['stocks'].append(_calculate_stock_info(stock))
+
         for risk in portfolio.portfolio_risk.all().order_by('risk_date'):
-            risk_dict = {'risk_value': risk.risk_value,
-                         'risk_date': '{}'.format(risk.risk_date)}
-            portfolio_dict["risk_history"].append(risk_dict)
+            portfolio_dict["risk_history"].append(_calculate_risk(risk))
+
+        portfolio_dict['sector_allocations'] = _calculate_sector_allocations(portfolio)
 
         return HttpResponse(content=json.dumps(portfolio_dict), status=200, content_type='application/json')
+
+
+def _calculate_stock_info(stock):
+    """
+    Get's some information for a stock such as symbol, name, price
+    :param stock: (Stock)
+    :return: (dict)
+    """
+    current_price = get_current_price(stock.stock_ticker)
+    mkt_value = float(current_price*stock.stock_quantity)
+    stock_dict = {'ticker': stock.stock_ticker,
+                  'name': stock.stock_name,
+                  'price': current_price,
+                  'quantity': stock.stock_quantity,
+                  'mkt_value': mkt_value,
+                  'sector': get_company_sector(stock.stock_ticker)}
+    return stock_dict
+
+
+def _calculate_risk(risk):
+    """
+
+    :param risk: (Risk)
+    :return: (dict)
+    """
+    risk_dict = {'risk_value': risk.risk_value, 'risk_date': '{}'.format(risk.risk_date)}
+    return risk_dict
+
+
+def _calculate_sector_allocations(portfolio):
+    """
+    Calculates the sector allocations of a portfolio
+    :param portfolio:
+    :return: (dict (str):(float)) {"sector": pct_allocation}
+    """
+    sector_allocations_raw = {}
+    for stock in portfolio.portfolio_stocks.all():
+        current_price = get_current_price(stock.stock_ticker)
+        mkt_value = float(current_price*stock.stock_quantity)
+        try:
+            sector_allocations_raw[get_company_sector(stock.stock_ticker)] += mkt_value
+        except KeyError:
+            sector_allocations_raw[get_company_sector(stock.stock_ticker)] = mkt_value
+
+    # calculate sector allocations percentage
+    total_mkt_value = sum(sector_allocations_raw.values())
+    sector_allocations_pct = {}
+    for sector, _mkt_value in sector_allocations_raw.iteritems():
+        sector_allocations_pct[sector] = float(_mkt_value/total_mkt_value)
+
+    return sector_allocations_pct
