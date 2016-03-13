@@ -1,7 +1,5 @@
 import ystockquote
-import pandas as pd
 import logbook
-import unittest
 from collections import OrderedDict
 import pandas_datareader.data as web
 from datetime import datetime as dt
@@ -31,6 +29,7 @@ def get_stock_data(symbol, start_date=None, end_date=None):
 
     return symbol_data
 
+
 def get_stock_data_multiple(symbols=None, start_date=None, end_date=None):
     """
     Get OHLC stock data from Yahoo Finance for multiple stocks
@@ -48,6 +47,7 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None):
 
     return data
 
+
 def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     """
 
@@ -59,6 +59,7 @@ def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     """
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.pct_change().fillna(0)
+
 
 def get_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     """
@@ -72,31 +73,43 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.diff().fillna(0)
 
+
 def get_options_data_yahoo(symbols=None, start_date=None, end_date=None):
-    raise NotImplementedError("")
+    raise NotImplementedError()
+
 
 def get_current_price(symbol):
-    quote = ystockquote.get_price(symbol)
-    if quote == 'N/A':
-        return None
-    return float(quote)
+    """
+    Get the latest price!
+    :param symbol:
+    :return:
+    """
+    return float(ystockquote.get_price(symbol))
 
 
 def get_company_name(symbol):
-    company_name = ystockquote.get_all(symbol)['name']
-    if company_name != "N\A":
-        return company_name
-    else:
-        return None
- 
+    """
+    Get the full name of the company by the symbol
+    :param symbol:
+    :return:
+    """
+    df = pd.read_csv('secwiki_tickers.csv')
+    company_info = df[df.Ticker==symbol]
+    code = company_info['Name'].keys()[0]
+    company_name = company_info.to_dict()['Name'][code]
+    return company_name
 
-class TestYahooFinance(unittest.TestCase):
 
-    def test_get_current_price(self):
-        symbol = 'GOOG'
-        current_price = get_current_price(symbol)
-        self.assertTrue(type(current_price) is float)
-        self.assertGreaterEqual(current_price, 400)
+def get_company_sector(symbol):
+    """
+    Get the sector of the company
+    :param symbol: (str)
+    :return: (str)
+    """
+    df = pd.read_csv('secwiki_tickers.csv')
+    company_info = df[df.Ticker==symbol]
+    code = company_info['Name'].keys()[0]
+    company_sector = company_info.to_dict()['Sector'][code]
+    return company_sector
 
-if __name__ == "__main__":
-    unittest.main()
+
