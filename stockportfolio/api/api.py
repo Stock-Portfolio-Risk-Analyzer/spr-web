@@ -7,7 +7,7 @@ from datautils.yahoo_finance import get_current_price, get_company_name
 
 def add_stock(request, portfolio_id):
     """
-
+    Add a stock to a portfolio.
     :param request:
     :param portfolio_id:
     :return:
@@ -29,7 +29,7 @@ def add_stock(request, portfolio_id):
 
 def remove_stock(request, portfolio_id):
     """
-
+    Remove a stock from the portfolio
     :param request:
     :param portfolio_id:
     :return:
@@ -46,7 +46,7 @@ def remove_stock(request, portfolio_id):
 
 def create_portfolio(request, user_id):
     """
-
+    Creates a new portfolio model.
     :param request:
     :param user_id:
     :return:
@@ -63,7 +63,7 @@ def create_portfolio(request, user_id):
 
 def delete_portfolio(request, portfolio_id):
     """
-
+    Deletes a portfolio based on portfolio_id.
     :param request:
     :param portfolio_id:
     :return:
