@@ -171,34 +171,7 @@
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr class="even pointer">
-                                                <td class=" ">Yahoo Inc</td>
-                                                <td class=" ">YHOO</td>
-                                                <td class=" ">Equity</td>
-                                                <td class=" ">2</td>
-                                                <td>8000000</td>
-                                                <td class=" ">
-                                                    <stock-price id="YHOO" data-stock="YHOO">
-                                                    </stock-price>
-                                                </td>
-                                                <td> 58.72</td>
-                                                </td>
-                                            </tr>
-                                            <tr class="even pointer">
-                                                <td class=" ">Apple Inc</td>
-                                                <td class=" ">AAPL</td>
-                                                <td class=" ">Equity</td>
-                                                <td class=" ">2</td>
-                                                <td>40000000</td>
-                                                <td class=" ">
-                                                    <stock-price id="AAPL" data-stock="AAPL">
-                                                    </stock-price>
-                                                </td>
-                                                <td> 196.08</td>
-                                                </td>
-                                            </tr>
-                                        </tbody>
+                                        <tbody id="example_body"></tbody>
                                     </table>
                                 </div>
                             </div>
@@ -501,27 +474,27 @@
         
         var doughnutDataForDiversity = []
         var arrayOfStocks = [
-                            {"ticker": "AAPL", "value": 100, "risk": 2.1, "quantity": 2}, 
-                            {"ticker": "YHOO", "value": 50, "risk": 3.2, "quantity": 2},
-                            {"ticker": "CHK", "value": 20, "risk": 4.3, "quantity": 1},
-                            {"ticker": "ASA", "value": 40, "risk": 5.4, "quantity": 3}
+                            {"name": "Apple Inc", "ticker": "AAPL", "value": 100, "risk": 2.1, "quantity": 2, "type": "Equity"}, 
+                            {"name": "Yahoo Inc", "ticker": "YHOO", "value": 50, "risk": 3.2, "quantity": 2, "type": "Equity"},
+                            {"name": "Chesapeake", "ticker": "CHK", "value": 20, "risk": 4.3, "quantity": 1, "type": "Equity"},
+                            {"name": "MasterCard", "ticker": "MC", "value": 40, "risk": 5.4, "quantity": 3, "type": "Equity"}
                             ]
 
         var arrayOfColors = ["#26B99A","#3498DB","#BDC3C7","#455C73","#9B59B6"];
         var numOfStocks = arrayOfStocks.length
         var totalValueOfStocks = 0
         var proportionOfStocks = []
+        var valueOfStocks = []
 
         
-        for (var i =0; i<arrayOfStocks.length;i++) {
-            valueOfStock = arrayOfStocks[i].value * arrayOfStocks[i].quantity
-            totalValueOfStocks += valueOfStock
+        for (var i =0; i<numOfStocks;i++) {
+            valueOfStocks[i] = arrayOfStocks[i].value * arrayOfStocks[i].quantity
+            totalValueOfStocks += valueOfStocks[i]
         }
         
-        for (var i =0; i<arrayOfStocks.length;i++) {   
+        for (var i =0; i<numOfStocks;i++) {   
             
-            valueOfStock = arrayOfStocks[i].value * arrayOfStocks[i].quantity
-            proportionOfStocks[i] = valueOfStock/totalValueOfStocks
+            proportionOfStocks[i] = valueOfStocks[i]/totalValueOfStocks
 
             var newStock = { 
                 value: proportionOfStocks[i],                
@@ -532,15 +505,14 @@
         }
 
         var table = document.getElementById("donut_diversity")
-        var loc_table_rows_count = arrayOfStocks.length
 
-        for (var i = 0; i < loc_table_rows_count; i++) {
+        for (var i = 0; i < numOfStocks; i++) {
             var row = table.insertRow(i)
             var cell1 = row.insertCell(0)
             var cell2 = row.insertCell(1)
 
             cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + arrayOfStocks[i].ticker + "</p>"
-            cell1.style.color = arrayOfColors[i%arrayOfStocks.length]
+            cell1.style.color = arrayOfColors[i%numOfStocks]
             cell2.innerHTML = (proportionOfStocks[i]*100).toFixed(2)+"%";
         }
 
@@ -551,12 +523,12 @@
         var proportionalRiskOfStocks = []
 
         
-        for (var i =0; i<arrayOfStocks.length;i++) {
+        for (var i =0; i<numOfStocks;i++) {
             riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
             totalRiskOfStocks += riskOfStock
         }
         
-        for (var i =0; i<arrayOfStocks.length;i++) {   
+        for (var i =0; i<numOfStocks;i++) {   
             
             riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
             proportionalRiskOfStocks[i] = riskOfStock/totalRiskOfStocks         
@@ -570,9 +542,8 @@
         }
 
         var table = document.getElementById("donut_risk")
-        var loc_table_rows_count = arrayOfStocks.length
 
-        for (var i = 0; i < loc_table_rows_count; i++) {
+        for (var i = 0; i < numOfStocks; i++) {
             var row = table.insertRow(i)
             var cell1 = row.insertCell(0)
             var cell2 = row.insertCell(1)
@@ -592,6 +563,28 @@
 
         var risk_div = document.getElementById("portfolio_risk")
         risk_div.innerHTML = totalRiskOfStocks.toFixed(2)
+
+        //Make Portfolio List dynamic
+        var table = document.getElementById("example_body")
+
+        for (var i = 0; i < numOfStocks; i++) {
+            var row = table.insertRow(i)
+            var cell1 = row.insertCell(0)
+            var cell2 = row.insertCell(1)
+            var cell3 = row.insertCell(2)
+            var cell4 = row.insertCell(3)
+            var cell5 = row.insertCell(4)
+            var cell6 = row.insertCell(5)
+            var cell7 = row.insertCell(6)
+
+            cell1.innerHTML = arrayOfStocks[i].name
+            cell2.innerHTML = arrayOfStocks[i].ticker
+            cell3.innerHTML = arrayOfStocks[i].type
+            cell4.innerHTML = arrayOfStocks[i].quantity
+            cell5.innerHTML = "Volume"
+            cell6.innerHTML = arrayOfStocks[i].value
+            cell7.innerHTML = valueOfStocks[i]
+        }
 
     </script>
 
