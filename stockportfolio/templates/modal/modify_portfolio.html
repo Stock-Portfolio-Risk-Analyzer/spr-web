@@ -1,5 +1,3 @@
-{% extends "stockportfolio/index.html" %}
-{% block portfolio %}
 
     <div class="modal fade" id="modifyPortfolio" tabindex="-1" role="dialog">
         <div class="modal-dialog">
@@ -10,12 +8,14 @@
                     <h4 class="modal-title">Modify Portfolio</h4>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form action="" method="post">
                         <table id="portfolio-table" class="table table-striped responsive-utilities jambo_table">
+                            {% csrf_token %}
                             <thead>
                             <tr class="headings">
                                 <th>Symbol</th>
                                 <th>Quantity</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tr class="even pointer hide clone">
@@ -25,6 +25,7 @@
                                 <td id="quantityTd">
                                     <input required type="text" id="quantity" placeholder="Enter quantity here"/>
                                 </td>
+                                <td><a style="cursor:pointer;" href="#" id="delete-row"><i style="color:red;" class="fa fa-2x fa-close"></i></a></td>
                             </tr>
                         </table>
                         <button id="add-row" class="btn btn-primary">Add Row</button>
@@ -38,7 +39,7 @@
     <script>
         {%  if user.is_authenticated %}
         var $user = {{ user.pk }}
-        var $url = "api/user/" + $user + "/getportfolio";
+        var $url = "/api/user/" + $user + "/getportfolio";
         raw_json = $.ajax({
             url:$url,
             success: function (data) {
@@ -51,8 +52,7 @@
             for(var i = 0; i < stocks.length; i++) {
                 var stock = stocks[i];
                 var $clone = $("#portfolio-table").find('tr.clone').clone(true).removeClass("hide").removeClass('clone')
-                $clone.find("input#symbol").remove()
-                $clone.find("#inputTd").text(stock.ticker)
+                $clone.find("input#symbol").val(stock.ticker).attr("readonly", "readonly")
                 $clone.find("input#quantity").val(stock.quantity)
                 $("#portfolio-table").append($clone)
             }
@@ -62,8 +62,10 @@
             var $clone = $("#portfolio-table").find('tr.clone').clone(true).removeClass("hide").removeClass('clone')
             $("#portfolio-table").append($clone)
         });
+        $("#delete-row").click(function () {
+            $(this).closest("tr").remove()
+        });
         {% endif %}
 e.preventDefault()
 
     </script>
-{% endblock %}
