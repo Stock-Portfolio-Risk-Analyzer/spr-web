@@ -6,15 +6,17 @@ from stockportfolio.api.models import Portfolio
 
 
 def dashboard(request):
-    email_hash = str.strip(request.user.email) 
+    #email_hash = str.strip(request.user.email) 
     context = {"user" : request.user }
     return render_to_response("index.html", context)
 
 
-def landing(requst):
+def landing(request):
     """Renders the landing page"""
     return render_to_response('landing.html')
 
+def profile(request):
+   print request.POST['accountName'] 
 
 def ticker(request, symbol):
     # any api errors bubble up to the user
