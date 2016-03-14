@@ -11,13 +11,6 @@
     <script src="{% static "js/jquery.min.js" %} "></script>
     <script src="{% static "js/spr/spr.js" %} "></script>
     <script src="{% static "js/chartjs/chart.min.js" %} "></script>
-    <script>
-    {% if request.user %}
-        currentUser = "{{request.user}}"
-    {% else %}
-        currentUser = null;
-    {% endif %}
-</script>
 </head>
 <body class="nav-md" onload="sprInit()">
 
@@ -141,47 +134,56 @@
                                     <span class="input-group-btn">
                                         <button class="btn btn-default" type="button">Go!</button>
                                     </span>
-                                </div>
-                            </div>
-                        </div>
-                            <div class="x_panel">
-                                <div class="x_title">
-                                    <h2> Portfolio </h2>
-                                    <ul class="nav navbar-right panel_toolbox">
-                                        <li><a href="#"><i class="fa fa-chevron-up"></i></a>
-                                        </li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                            <ul class="dropdown-menu" role="menu">
-                                                <li><a href="#">Settings 1</a>
-                                                </li>
-                                                <li><a href="#">Settings 2</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="#"><i class="fa fa-close"></i></a>
-                                        </li>
-                                    </ul>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="x_content">
-                                    <table id="example" class="table table-striped responsive-utilities jambo_table">
-                                        <thead>
-                                            <tr class="headings">
-                                                <th>Company</th>
-                                                <th>Stock Symbol</th>
-                                                <th>Type</th>
-                                                <th>Number held </th>
-                                                <th>Volume </th>
-                                                <th>Price</th>
-                                                <th>Amount </th>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="example_body"></tbody>
-                                    </table>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2> Portfolio </h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a data-target="#modifyPortfolio" data-toggle="modifyPortfolio" href="#modifyPortfolio"><i
+                                class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Settings 1</a>
+                                </li>
+                                <li><a href="#">Settings 2</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><a href="#"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <table id="portfolio" class="table table-striped responsive-utilities jambo_table">
+                        <thead>
+                        <tr class="headings">
+                            <th>Company</th>
+                            <th>Symbol</th>
+                            <th>Sector</th>
+                            <th>Quantity</th>
+                            <th>Last Price</th>
+                            <th>Market Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="even pointer hide sample">
+                            <td class="company"></td>
+                            <td class="symbol"></td>
+                            <td class="sector"></td>
+                            <td class="quantity"></td>
+                            <td class="last_price"></td>
+                            <td class="market_value"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
@@ -324,6 +326,14 @@
 
     </div>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <script>
+    {% if user %}
+        currentUser_id = {{user.pk}};
+    {% else %}
+        currentUser_id = null;
+    {% endif %}
+</script>
+<script type="text/javascript" src="{% static "js/portfolio_utils/portfolio_loader.js" %}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.pie.js"%}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.orderBars.js"%}"></script>
