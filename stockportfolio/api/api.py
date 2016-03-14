@@ -80,6 +80,15 @@ def delete_portfolio(request, portfolio_id):
         return HttpResponse(status=200)
 
 
+def get_portfolio_by_user(request, user_id):
+    user = User.objects.get(pk=user_id)
+    if user is None:
+        raise Http404
+    portfolio = user.portfolio_set.all().first()
+    if portfolio is None:
+        portfolio = Portfolio.objects.create(portfolio_user=user)
+    return get_portfolio(request, portfolio.pk)
+
 def get_portfolio(request, portfolio_id):
     """
 
