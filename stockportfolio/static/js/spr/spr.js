@@ -1,5 +1,5 @@
 function sprInit() {
-    var url = window.location.href + "api/";
+    var url = "http://" + window.location.host + "/api/";
     var stocks = document.body.getElementsByTagName('stock-price');
     var requests={};
     for (var idx = 0; idx < stocks.length; idx++) {

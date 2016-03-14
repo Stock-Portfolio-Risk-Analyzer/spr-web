@@ -6,9 +6,8 @@ from stockportfolio.api.models import Portfolio
 
 
 def dashboard(request):
-    # portfolio = Portfolio.objects.get(pk=1)
-    portfolio = None
-    context = {"portfolio": portfolio}
+    email_hash = str.strip(request.user.email) 
+    context = {"user" : request.user }
     return render_to_response("index.html", context)
 
 

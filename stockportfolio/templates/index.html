@@ -26,11 +26,11 @@
         <form>
         <fieldset class="form-group">
         <label for="userAccountName">Name</label>
-        <input type="text" class="form-control" id="userAccountNameInput" placeholder="Name">
+        <input type="text" class="form-control" id="userAccountNameInput" value="{{ user.get_username }}">
         </fieldset>
         <fieldset class="form-group">
         <label for="userAccountEmail">Email</label>
-        <input type="text" class="form-control" id="userAccountEmailInput" placeholder="Email">
+        <input type="text" class="form-control" id="userAccountEmailInput" value="{{ user.email}}">
         </fieldset>
         <button type="submit" class="btn btn-primary">Update</button>
         </form> 
@@ -52,7 +52,8 @@
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2>Donald Trump</h2>
+                            <h2>{{ user.get_username }}</h2>
+
                         </div>
                     </div>
 
@@ -71,7 +72,7 @@
                         <ul class="nav navbar-nav navbar-right">
                             <li class="">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="{% static "images/img.jpg" %}" alt="">Donald Trump
+                                    <img src="{% static "images/img.jpg" %}" alt="">{{ user.get_username }}
                                     <span class=" fa fa-angle-down"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
