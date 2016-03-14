@@ -476,7 +476,7 @@
                             {"name": "Apple Inc", "ticker": "AAPL", "value": 100, "risk": 2.1, "quantity": 2, "type": "Equity"}, 
                             {"name": "Yahoo Inc", "ticker": "YHOO", "value": 50, "risk": 3.2, "quantity": 2, "type": "Equity"},
                             {"name": "Chesapeake", "ticker": "CHK", "value": 20, "risk": 4.3, "quantity": 1, "type": "Equity"},
-                            {"name": "MasterCard", "ticker": "MC", "value": 40, "risk": 5.4, "quantity": 3, "type": "Equity"}
+                            {"name": "MasterCard", "ticker": "MA", "value": 40, "risk": 5.4, "quantity": 3, "type": "Equity"}
                             ]
 
         var arrayOfColors = ["#26B99A","#3498DB","#BDC3C7","#455C73","#9B59B6"];
@@ -581,7 +581,7 @@
             cell3.innerHTML = arrayOfStocks[i].type
             cell4.innerHTML = arrayOfStocks[i].quantity
             cell5.innerHTML = "Volume"
-            cell6.innerHTML = arrayOfStocks[i].value
+            cell6.innerHTML = "<stock-price id=" + arrayOfStocks[i].ticker +" data-stock="+arrayOfStocks[i].ticker+"></stock-price>"
             cell7.innerHTML = valueOfStocks[i]
         }
 
