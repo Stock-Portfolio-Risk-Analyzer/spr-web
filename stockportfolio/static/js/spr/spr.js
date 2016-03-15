@@ -1,3 +1,4 @@
+window.onload = sprInit()
 function sprInit() {
     var url = "http://" + window.location.host + "/api/";
     var stocks = document.body.getElementsByTagName('stock-price');
