@@ -3,11 +3,15 @@ from django.http import HttpResponse, Http404
 from datautils import yahoo_finance as yf
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
 from stockportfolio.api.models import Portfolio
+from registration.models import RegistrationManager
 import string
 import hashlib
 
 def dashboard(request):
+    if request.user.is_anonymous():
+        return redirect("/")
     email = string.lower(string.strip(request.user.email, string.whitespace))
     g_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email).hexdigest()
     context = {"user" : request.user, "gravatar": g_url}
@@ -22,9 +26,14 @@ def landing(request):
 def profile(request):
     un = request.POST['accountName']
     email = request.POST['accountEmail']
-    request.user.username = un;
-    request.user.email = email;
-    request.user.save() 
+    if request.user.username != un:
+        request.user.username = un
+        request.user.save()
+    if request.user.email != email:
+        request.user.email = email
+        request.user.save()
+        #r = RegistrationManager()
+        #r.resend_activation_mail(request.user.email,"", request)
     return redirect('dashboard')
 
 def ticker(request, symbol):

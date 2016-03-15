@@ -93,10 +93,11 @@ var risk_div = document.getElementById("portfolio_risk")
 risk_div.innerHTML = totalRiskOfStocks.toFixed(2)
 
 //Make Portfolio List dynamic
-var table = document.getElementById("example_body")
+var table = document.getElementById("portfolio")
 
-for (var i = 0; i < numOfStocks; i++) {
+for (var i = 1; i <= numOfStocks; i++) {
     var row = table.insertRow(i)
+    
     var cell1 = row.insertCell(0)
     var cell2 = row.insertCell(1)
     var cell3 = row.insertCell(2)
