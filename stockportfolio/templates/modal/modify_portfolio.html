@@ -80,8 +80,8 @@
             $("#stock-modify-count").val(currentCount)
         });
         $("#delete-row").click(function () {
-            $(this).closest("tr").remove()
-            var currentCount = parseInt($("#stock-modify-count").val()) - 1
+            $(this).closest("tr").find("#quantity").val(0)
+            $(this).closest("tr").hide()
             $("#stock-modify-count").val(currentCount)
         });
 
@@ -118,7 +118,7 @@
                     window.location.href = "/dashboard";
                 },
                 error: function(data) {
-                    $("#modify-error #text").text(data.message)
+                    $("#modify-error #text").text(data.responseJSON.message)
                     $("#modify-error").show()
                 }
             })

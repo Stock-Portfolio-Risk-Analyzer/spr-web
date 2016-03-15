@@ -116,22 +116,29 @@ def modify_portfolio_form_post(request):
     if request.method == 'POST':
         data = request.POST.get("data", None)
         data = json.loads(data)
-        invalid_stocks = _verify_stock_ticker_validity(data["symbols"])
+        invalid_stocks = _verify_stock_ticker_validity(data["symbols"], data["quantities"])
         if data is not None and len(invalid_stocks) == 0:
             for i in range(len(data["symbols"])):
                 stock = data["symbols"][str(i)]
-                quantity = data["quantities"][str(i)]
+                quantity = int(data["quantities"][str(i)])
                 user_id = request.user.id
                 user_portfolio = Portfolio.objects.get(portfolio_user=user_id)
                 user_has_stock = user_portfolio.portfolio_stocks.filter(stock_ticker=stock).exists()
                 if user_has_stock:
-                    user_portfolio.portfolio_stocks.filter(stock_ticker=stock).update(stock_quantity=quantity)
-                else:
+                    if quantity <= 0:
+                        user_portfolio.portfolio_stocks.all().get(stock_ticker=stock).delete()
+                    else:
+                        user_portfolio.portfolio_stocks.filter(stock_ticker=stock).update(stock_quantity=quantity)
+                elif quantity > 0:
                     _add_stock_helper(user_portfolio, quantity, stock)
             return HttpResponse(json.dumps({"success" : "true"}))
         err_message = ["The following stock symbols are invalid:"]
         err_message.extend(invalid_stocks)
-        return HttpResponse(json.dumps({"success" : "false", "message" : " ".join(err_message)}), status=400)
+        err_message = " ".join(err_message)
+        err_message = json.dumps({"success" : "false","message" : err_message})
+        return HttpResponse(content=err_message,
+                                        status=400,
+                                        content_type="application/json charset=utf-8")
 
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
@@ -147,13 +154,18 @@ def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
         return False
 
 
-def _verify_stock_ticker_validity(stocks):
+def _verify_stock_ticker_validity(stocks, quantity):
     invalid_stocks = []
     for stock in stocks.values():
         try:
             stock_sector = get_company_name(stock)
         except (KeyError, IndexError):
             invalid_stocks.append(stock)
+    #remove any invalid stocks with quantity 0
+    for i, stock in stocks.items():
+        if stock in invalid_stocks and int(quantity[i]) == 0:
+            invalid_stocks.remove(stock)
+
     return invalid_stocks
 
 
