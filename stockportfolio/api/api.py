@@ -16,18 +16,13 @@ def add_stock(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     assert(portfolio is not None)
     stock_ticker = request.GET.get('stock', None)
+    stock_quantity = request.GET.get('quantity', None)
     if stock_ticker is not None:
-        stock_name = get_company_name(stock_ticker)
-        stock_quantity = request.GET.get('quantity', None)
-        stock_sector = get_company_sector(stock_ticker)
-        try:
-            stock = Stock.objects.create(stock_name=stock_name, stock_ticker=stock_ticker,
-                                         stock_quantity=stock_quantity, stock_sector=stock_sector)
-            stock.save()
-            portfolio.portfolio_stocks.add(stock)
-        except None:
+        added = _add_stock_helper(portfolio, stock_quantity, stock_ticker)
+        if not added:
             raise Http404
-        return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=200)
 
 
 def remove_stock(request, portfolio_id):
@@ -116,6 +111,51 @@ def get_portfolio(request, portfolio_id):
         portfolio_dict['sector_allocations'] = _calculate_sector_allocations(portfolio)
 
         return HttpResponse(content=json.dumps(portfolio_dict), status=200, content_type='application/json')
+
+def modify_portfolio_form_post(request):
+    if request.method == 'POST':
+        data = request.POST.get("data", None)
+        data = json.loads(data)
+        invalid_stocks = _verify_stock_ticker_validity(data["symbols"])
+        if data is not None and len(invalid_stocks) == 0:
+            for i in range(len(data["symbols"])):
+                stock = data["symbols"][str(i)]
+                quantity = data["quantities"][str(i)]
+                user_id = request.user.id
+                user_portfolio = Portfolio.objects.get(portfolio_user=user_id)
+                user_has_stock = user_portfolio.portfolio_stocks.filter(stock_ticker=stock).exists()
+                if user_has_stock:
+                    user_portfolio.portfolio_stocks.filter(stock_ticker=stock).update(stock_quantity=quantity)
+                else:
+                    _add_stock_helper(user_portfolio, quantity, stock)
+            return HttpResponse(json.dumps({"success" : "true"}))
+        err_message = ["The following stock symbols are invalid:"]
+        err_message.extend(invalid_stocks)
+        return HttpResponse(json.dumps({"success" : "false", "message" : " ".join(err_message)}), status=400)
+
+
+def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
+    stock_name = get_company_name(stock_ticker)
+    stock_sector = get_company_sector(stock_ticker)
+    try:
+        stock = Stock.objects.create(stock_name=stock_name, stock_ticker=stock_ticker,
+                                     stock_quantity=stock_quantity, stock_sector=stock_sector)
+        stock.save()
+        portfolio.portfolio_stocks.add(stock)
+        return True
+    except None:
+        return False
+
+
+def _verify_stock_ticker_validity(stocks):
+    invalid_stocks = []
+    for stock in stocks.values():
+        try:
+            stock_sector = get_company_name(stock)
+        except (KeyError, IndexError):
+            invalid_stocks.append(stock)
+    return invalid_stocks
+
 
 
 def _calculate_stock_info(stock):

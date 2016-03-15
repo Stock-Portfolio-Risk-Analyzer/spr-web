@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^portfolio/(?P<portfolio_id>\d+)/removestock$', api.remove_stock, name="remove_stock"),
     url(r'^portfolio/create(?P<user_id>\w+)$', api.create_portfolio, name="create_portfolio"),
     url(r'^portfolio/(?P<portfolio_id>\d+)/delete$', api.delete_portfolio, name="delete_portfolio"),
-    url(r'^portfolio/(?P<portfolio_id>\d+)$', api.get_portfolio, name="get_portfolio")
+    url(r'^portfolio/(?P<portfolio_id>\d+)$', api.get_portfolio, name="get_portfolio"),
+    url(r'^portfolio/modify$', api.modify_portfolio_form_post, name="modify_portfolio_form_post")
 ]

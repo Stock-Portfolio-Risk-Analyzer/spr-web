@@ -1,47 +1,55 @@
+<div class="modal fade" id="modifyPortfolio" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modify Portfolio</h4>
+            </div>
+            <div class="modal-body">
+                <div id="modify-error" class="close alert alert-danger" role="alert">
+                    <strong>Oh snap!</strong> <span id="text"></span>
+                    </div>
+                <form id="modify-portfolio-form" action="" method="post">
+                    <table id="portfolio-table" class="table table-striped responsive-utilities jambo_table">
+                        {% csrf_token %}
+                        <thead>
+                        <tr class="headings">
+                            <th>Symbol</th>
+                            <th>Quantity</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tr class="even pointer hide clone">
+                            <td id="inputTd">
+                                <input form="modify-portfolio-form" required type="text" id="symbol"
+                                       placeholder="Enter symbol here" name="symbol"/>
+                            </td>
+                            <td id="quantityTd">
+                                <input form="modify-portfolio-form" required type="text" id="quantity"
+                                       placeholder="Enter quantity here"/>
+                            </td>
+                            <td><a style="cursor:pointer;" href="#" id="delete-row"><i style="color:red;"
+                                                                                       class="fa fa-2x fa-close"></i></a>
+                            </td>
+                        </tr>
+                    </table>
+                    <input type="hidden" id="stock-modify-count" name="stock_count" value="0">
+                    <button id="add-row" class="btn btn-primary">Add Row</button>
+                    <button id="save-button" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
-    <div class="modal fade" id="modifyPortfolio" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Modify Portfolio</h4>
-                </div>
-                <div class="modal-body">
-                    <form action="" method="post">
-                        <table id="portfolio-table" class="table table-striped responsive-utilities jambo_table">
-                            {% csrf_token %}
-                            <thead>
-                            <tr class="headings">
-                                <th>Symbol</th>
-                                <th>Quantity</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tr class="even pointer hide clone">
-                                <td id="inputTd">
-                                    <input required type="text" id="symbol" placeholder="Enter symbol here" name="symbol"/>
-                                </td>
-                                <td id="quantityTd">
-                                    <input required type="text" id="quantity" placeholder="Enter quantity here"/>
-                                </td>
-                                <td><a style="cursor:pointer;" href="#" id="delete-row"><i style="color:red;" class="fa fa-2x fa-close"></i></a></td>
-                            </tr>
-                        </table>
-                        <button id="add-row" class="btn btn-primary">Add Row</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </form>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <script>
-        {%  if user.is_authenticated %}
+<script>
+    $("#modify-error").hide()
+    {%  if user.is_authenticated %}
         var $user = {{ user.pk }}
         var $url = "/api/user/" + $user + "/getportfolio";
         raw_json = $.ajax({
-            url:$url,
+            url: $url,
             success: function (data) {
                 populate_table(data);
             }
@@ -49,23 +57,74 @@
 
         function populate_table(data) {
             stocks = data.stocks;
-            for(var i = 0; i < stocks.length; i++) {
+            var currentCount = parseInt($("#stock-modify-count").val())
+            for (var i = 0; i < stocks.length; i++) {
                 var stock = stocks[i];
                 var $clone = $("#portfolio-table").find('tr.clone').clone(true).removeClass("hide").removeClass('clone')
                 $clone.find("input#symbol").val(stock.ticker).attr("readonly", "readonly")
+                $clone.find("input#symbol").attr("name", "symbol_" + currentCount)
                 $clone.find("input#quantity").val(stock.quantity)
+                $clone.find("input#quantity").attr("name", "quantity_" + currentCount)
                 $("#portfolio-table").append($clone)
+                currentCount += 1
             }
+            $("#stock-modify-count").val(currentCount)
         }
 
         $("#add-row").click(function () {
+            var currentCount = parseInt($("#stock-modify-count").val())
             var $clone = $("#portfolio-table").find('tr.clone').clone(true).removeClass("hide").removeClass('clone')
+            $clone.find("input#symbol").attr("name", "symbol_" + currentCount)
+            $clone.find("input#quantity").attr("name", "quantity_" + currentCount)
             $("#portfolio-table").append($clone)
+            $("#stock-modify-count").val(currentCount)
         });
         $("#delete-row").click(function () {
             $(this).closest("tr").remove()
+            var currentCount = parseInt($("#stock-modify-count").val()) - 1
+            $("#stock-modify-count").val(currentCount)
         });
-        {% endif %}
-e.preventDefault()
 
-    </script>
+        $("#save-button").click(function(e) {
+            $clone = $('#modify-portfolio-form')
+            $clone.find("tr.hide.clone").remove()
+            var form = {};
+            form["symbols"] = {}
+            form["quantities"] = {}
+            $.each($clone.serializeArray(),
+                    function(i, field) {
+                        var dict = ""
+                        if(field.name.indexOf("symbol") > -1){
+                            var i = field.name.split("_").pop()
+                            form["symbols"][i] = field.value
+                        } else if (field.name.indexOf("quantity") > -1) {
+                            var i = field.name.split("_").pop()
+                            form["quantities"][i] = field.value
+                        }
+                    });
+            delete form["csrfmiddlewaretoken"]
+            delete form["stock_count"]
+            delete form["symbol"]
+            delete form["quantity"]
+            $.ajax({
+                url : "/api/portfolio/modify",
+                type: "post",
+                data : {
+                    "data": JSON.stringify(form),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: "json",
+                success: function(results){
+                    window.location.href = "/dashboard";
+                },
+                error: function(data) {
+                    $("#modify-error #text").text(data.message)
+                    $("#modify-error").show()
+                }
+            })
+            e.preventDefault();
+        });
+
+    {% endif %}
+
+</script>
