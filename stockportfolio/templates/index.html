@@ -13,31 +13,9 @@
     <script src="{% static "js/chartjs/chart.min.js" %} "></script>
 </head>
 <body class="nav-md" onload="sprInit()">
+{% include "modal/modify_account.html" %}
+{% include "modal/modify_portfolio.html" %}
 
-<div class="modal fade" id="userAccountModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Modify Account</h4>
-      </div>
-      <div class="modal-body">
-        <form action="/profile/" method="post">
-        {% csrf_token %}
-        <fieldset class="form-group">
-        <label for="userAccountName">Name</label>
-        <input type="text" class="form-control" name="accountName" value="{{ user.get_username }}">
-        </fieldset>
-        <fieldset class="form-group">
-        <label for="userAccountEmail">Email</label>
-        <input type="text" class="form-control" name="accountEmail" value="{{ user.email}}">
-        </fieldset>
-        <button type="submit" class="btn btn-primary">Update</button>
-        </form> 
-      </div>
-    </div>
-  </div>
-</div>
     <div class="container body">
         <div class="main_container">
             <div class="col-md-3 left_col">
@@ -135,23 +113,6 @@
             <div class="x_panel">
                 <div class="x_title">
                     <h2> Portfolio </h2>
-                    <ul class="nav navbar-right panel_toolbox">
-                        <li><a data-target="#modifyPortfolio" data-toggle="modifyPortfolio" href="#modifyPortfolio"><i
-                                class="fa fa-chevron-up"></i></a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">Settings 1</a>
-                                </li>
-                                <li><a href="#">Settings 2</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li><a href="#"><i class="fa fa-close"></i></a>
-                        </li>
-                    </ul>
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
@@ -318,16 +279,15 @@
         </ul>
         <div class="clearfix"></div>
         <div id="notif-group" class="tabbed_notifications"></div>
-
     </div>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script>
-    {% if user %}
-        currentUser_id = {{user.pk}};
-    {% else %}
-        currentUser_id = null;
-    {% endif %}
-</script>
+        {% if user %}
+            currentUser_id = {{user.pk}};
+        {% else %}
+            currentUser_id = null;
+        {% endif %}
+    </script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/portfolio_utils/portfolio_loader.js" %}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.pie.js"%}"></script>
@@ -338,267 +298,7 @@
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.stack.js"%}"></script>
     <script type="text/javascript" src="{% static "js/flot/curvedLines.js"%}"></script>
     <script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js"%}"></script>
-    <script>
-        var portfolio = ["AAPL", "YHOO"];
-
-        var getPortfolioSize = function(){
-            return portfolio.length;
-        }
-
-                          
-        var jsonString =   { "timetags": [ "Thu Mar 6 2014 20:08:26 GMT-0600 (CST)",
-                                           "Fri Mar 6 2015 20:08:26 GMT-0600 (CST)",
-                                           "Sun Sep 6 2015 20:08:26 GMT-0600 (CST)",
-                                           "Mon Mar 6 2016 20:08:26 GMT-0600 (CST)",
-                                           "Tue Mar 7 2016 20:08:26 GMT-0600 (CST)",
-                                           "Wed Mar 8 2016 20:08:26 GMT-0600 (CST)",
-                                           "Thu Mar 9 2016 20:08:26 GMT-0600 (CST)",
-                                           "Fri Mar 10 2016 20:08:26 GMT-0600 (CST)",
-                                           "Sat Mar 11 2016 20:08:26 GMT-0600 (CST)",
-                                           "Sun Mar 12 2016 20:08:26 GMT-0600 (CST)"
-                                           //"Tue Apr 12 2016 20:08:26 GMT-0600 (CST)"
-                                          ],
-                              "risk": [0.8,
-                                       10.1,
-                                       2.1,
-                                       5.1,
-                                       1.0,
-                                       2.0,
-                                       8.0,
-                                       7.7,
-                                       10.5,
-                                       1.1
-                                       ]
-                            }
-        var risks = [jsonString["timetags"].length]
-        for (i = 0; i < jsonString["timetags"].length; i++){
-            risks[i] = new Array(new Date(jsonString["timetags"][i]).getTime(),jsonString["risk"][i])
-        }
-        var weekFun = function (){
-            options["xaxis"]["minTickSize"] = [1, "day"]
-            var currentTime = new Date()
-            var oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            options["xaxis"]["min"] = oneWeekAgo.getTime()
-            options["xaxis"]["max"] = currentTime.getTime()
-            timeformat: "%a"
-        }
-        var yearFun = function (){
-            var currentTime = new Date()
-            options["xaxis"]["min"] = (new Date(currentTime.getFullYear()-1,0,1)).getTime()
-            options["xaxis"]["max"] = currentTime.getTime()
-            options["xaxis"]["minTickSize"] =[1, "month"]
-
-        }
-        var allFun = function (){
-            options["xaxis"]["min"] = (new Date(jsonString["timetags"][0])).getTime()
-            options["xaxis"]["max"] = (new Date()).getTime()
-
-        }
-        var currentTime = new Date()
-        var dayBefore = new Date()
-        dayBefore.setDate(dayBefore.getDate()-1)
-
-            var options = {
-                series: {
-                    curvedLines: {
-                        apply: true,
-                        active: true,
-                        monotonicFit: true
-                    }
-                },
-                colors: ["#26B99A"],
-                grid: {
-                    borderWidth: {
-                        top: 0,
-                        right: 0,
-                        bottom: 1,
-                        left: 1
-                    },
-                    borderColor: {
-                        bottom: "#7F8790",
-                        left: "#7F8790"
-                    }
-                },
-                label: "Beta",
-                xaxis: {
-                    minTickSize: [1, "hour"],
-                    min: dayBefore.getTime(),
-                    max: currentTime.getTime(),
-                    twelveHourClock: true,
-                    mode: "time",
-                    tickLength: 0, // hide gridlines
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
-                    axisLabelPadding: 5
-                    }
-            }
-            $.plot("#placeholder3xx3",[{
-                label: "Beta",
-                data: risks,
-
-                lines: {
-                    fillColor: "rgba(250, 202, 89, 0.12)"
-                },
-                points: {
-                    fillColor: "#fff"
-                }
-                    }], options);
-            $("#week").click(function () {
-                $.plot($("#placeholder3xx3"),[{
-                label: "Beta",
-                data: risks,
-                lines: {
-                    fillColor: "rgba(150, 202, 89, 0.12)"
-                },
-                points: {
-                    fillColor: "#fff"
-                }
-                    }], options);
-            });
-
-            $("#year").click(function () {
-                $.plot($("#placeholder3xx3"),[{
-                label: "Beta",
-                data: risks,
-                lines: {
-                    fillColor: "rgba(250, 202, 89, 0.12)"
-                },
-                points: {
-                    fillColor: "#fff"
-                }
-                    }], options);
-            });
-            $("#all").click(function () {
-                $.plot($("#placeholder3xx3"),[{
-                label: "Beta",
-                data: risks,
-                lines: {
-                    fillColor: "rgba(250, 202, 89, 0.12)"
-                },
-                points: {
-                    fillColor: "#fff"
-                }
-                    }], options);
-            });
-        // Data for the portfolio diversity donut chart
-        
-        var doughnutDataForDiversity = []
-        var arrayOfStocks = [
-                            {"name": "Apple Inc", "ticker": "AAPL", "value": 100, "risk": 2.1, "quantity": 2, "type": "Equity"}, 
-                            {"name": "Yahoo Inc", "ticker": "YHOO", "value": 50, "risk": 3.2, "quantity": 2, "type": "Equity"},
-                            {"name": "Chesapeake", "ticker": "CHK", "value": 20, "risk": 4.3, "quantity": 1, "type": "Equity"},
-                            {"name": "MasterCard", "ticker": "MA", "value": 40, "risk": 5.4, "quantity": 3, "type": "Equity"}
-                            ]
-
-        var arrayOfColors = ["#26B99A","#3498DB","#BDC3C7","#455C73","#9B59B6"];
-        var numOfStocks = arrayOfStocks.length
-        var totalValueOfStocks = 0
-        var proportionOfStocks = []
-        var valueOfStocks = []
-
-        
-        for (var i =0; i<numOfStocks;i++) {
-            valueOfStocks[i] = arrayOfStocks[i].value * arrayOfStocks[i].quantity
-            totalValueOfStocks += valueOfStocks[i]
-        }
-        
-        for (var i =0; i<numOfStocks;i++) {   
-            
-            proportionOfStocks[i] = valueOfStocks[i]/totalValueOfStocks
-
-            var newStock = { 
-                value: proportionOfStocks[i],                
-                color: arrayOfColors[i]
-            }
-
-            doughnutDataForDiversity.push(newStock)
-        }
-
-        var table = document.getElementById("donut_diversity")
-
-        for (var i = 0; i < numOfStocks; i++) {
-            var row = table.insertRow(i)
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-
-            cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + arrayOfStocks[i].ticker + "</p>"
-            cell1.style.color = arrayOfColors[i%numOfStocks]
-            cell2.innerHTML = (proportionOfStocks[i]*100).toFixed(2)+"%";
-        }
-
-        // Data for the portfolio risk donut chart
-
-        var doughnutDataForRisk = []
-        var totalRiskOfStocks = 0
-        var proportionalRiskOfStocks = []
-
-        
-        for (var i =0; i<numOfStocks;i++) {
-            riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
-            totalRiskOfStocks += riskOfStock
-        }
-        
-        for (var i =0; i<numOfStocks;i++) {   
-            
-            riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
-            proportionalRiskOfStocks[i] = riskOfStock/totalRiskOfStocks         
-           
-            var newStock = { 
-                value: proportionalRiskOfStocks[i],
-                color: arrayOfColors[i]
-            }
-            
-            doughnutDataForRisk.push(newStock)
-        }
-
-        var table = document.getElementById("donut_risk")
-
-        for (var i = 0; i < numOfStocks; i++) {
-            var row = table.insertRow(i)
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-
-            cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + arrayOfStocks[i].ticker + "</p>"
-            cell1.style.color = arrayOfColors[i%arrayOfStocks.length]
-            cell2.innerHTML = (proportionalRiskOfStocks[i]*100).toFixed(2)+"%";
-        }
-
-        //Create both the charts
-        var myDoughnut = new Chart(document.getElementById("canvas1").getContext("2d")).Doughnut(doughnutDataForDiversity);
-        var myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForRisk);
-
-        //Make Portfolio Value/Risk dynamic
-        var value_div = document.getElementById("portfolio_value")
-        value_div.innerHTML = "$" + totalValueOfStocks.toFixed(2)
-
-        var risk_div = document.getElementById("portfolio_risk")
-        risk_div.innerHTML = totalRiskOfStocks.toFixed(2)
-
-        //Make Portfolio List dynamic
-        var table = document.getElementById("example_body")
-
-        for (var i = 0; i < numOfStocks; i++) {
-            var row = table.insertRow(i)
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-            var cell3 = row.insertCell(2)
-            var cell4 = row.insertCell(3)
-            var cell5 = row.insertCell(4)
-            var cell6 = row.insertCell(5)
-            var cell7 = row.insertCell(6)
-
-            cell1.innerHTML = arrayOfStocks[i].name
-            cell2.innerHTML = arrayOfStocks[i].ticker
-            cell3.innerHTML = arrayOfStocks[i].type
-            cell4.innerHTML = arrayOfStocks[i].quantity
-            cell5.innerHTML = "Volume"
-            cell6.innerHTML = "<stock-price id=" + arrayOfStocks[i].ticker +" data-stock="+arrayOfStocks[i].ticker+"></stock-price>"
-            cell7.innerHTML = valueOfStocks[i]
-        }
-
-    </script>
-{% include "modal/modify_portfolio.html" %}
+    <script type="text/javascript" src="{% static "js/spr/portfolio_graph.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/spr/diversity_charts.js"%}"></script>
 </body>
 </html>

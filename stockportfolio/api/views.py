@@ -19,7 +19,6 @@ def landing(request):
     """Renders the landing page"""
     return render_to_response('landing.html')
 
-# TODO: replace this with a ModelForm
 def profile(request):
     un = request.POST['accountName']
     email = request.POST['accountEmail']
