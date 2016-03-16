@@ -49,3 +49,16 @@ def user_profile(request, user_id):
         'user': user
     }
     return render_to_response('user/user_profile.html', context)
+
+def modify_account(request,user_id):
+    args = {}
+    if request.method == 'POST':
+        form = UpdateProfile(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('update_profile_success'))
+    else:
+        form = UpdateProfile()
+
+    args['form'] = form
+    return render(request, 'registration/update_profile.html', args)
