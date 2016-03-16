@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html>
-<!-- Based on the admin template at https://github.com/kimlabs/gentelella/ used under the MIT license which is includedin it's original form in License.txt-->
+<!-- Based on the admin template at https://github.com/kimlabs/gentelella/ used 
+     under the MIT license which is includedin it's original form in License.txt-->
 <head>
-    <title>SPRA | </title>
+    <title>SPRA | {{ user.get_username }}'s profile</title>
     {% load staticfiles %}
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "fonts/css/font-awesome.min.css" %}" rel="stylesheet">
     <link href="{% static "css/animate.min.css" %}" rel="stylesheet">
     <link href="{% static "css/custom.css" %}" rel="stylesheet">
     <script src="{% static "js/jquery.min.js" %} "></script>
-    <script src="{% static "js/spr/spr.js" %} "></script>
     <script src="{% static "js/chartjs/chart.min.js" %} "></script>
-
 </head>
-<body class="nav-md" onload="sprInit()">
+<body class="nav-md">
+{% include "modal/modify_account.html" %}
+<script>
+        {% if user %}
+            currentUser_id = {{user.pk}};
+        {% else %}
+            currentUser_id = null;
+        {% endif %}
+</script>
+{% include "modal/modify_portfolio.html" %}
+
     <div class="container body">
         <div class="main_container">
             <div class="col-md-3 left_col">
@@ -24,628 +33,51 @@
                     <div class="clearfix"></div>
                     <div class="profile">
                         <div class="profile_pic">
-                            <img src="{% static "images/img.jpg" %}" class="img-circle profile_img">
+                            <img src="{{ gravatar}}" class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2>Donald Trump</h2>
+                            <h2>{{ user.get_username }}</h2>
+
                         </div>
                     </div>
 
-                    <br/>
+                        <br/>
                     
                     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                     </div>
                 </div>
             </div>
-            <div class="top_nav">
-                <div class="nav_menu">
-                    <nav class="" role="navigation">
-                        <div class="nav toggle">
-                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-                        </div>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="">
-                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="{% static "images/img.jpg" %}" alt="">Donald Trump
-                                    <span class=" fa fa-angle-down"></span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
-                                    <li>
-                                        <a href="javascript:;">
-                                            <span>Modify Portfolio</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-toggle="modal" data-target="#userAccountModal">    
-                                            <span>Modify Account</span>
-                                        </a>
-                                    </li>
-                                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                {% include "dashboard/user_dropdown.html"   %}
+                {% include "dashboard/portfolio_stats.html" %}
+                {% include "dashboard/portfolio_table.html" %} 
+                {% include "dashboard/portfolio_graph.html" %}
+                {% include "dashboard/portfolio_diversity.html" %}
+                {% include "dashboard/portfolio_risk.html" %} 
             </div>
-            <div class="right_col" role="main">
-                <div class="row tile_count">
-                    <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
-                        <div class="left"></div>
-                    </div>
-                    <div class="animated flipInY col-md-3 col-sm-4 col-xs-4 tile_stats_count">
-                        <div class="left"></div>
-                        <div class="right">
-                            <span class="count_top"><i class="fa fa-user"></i> Portfolio Value</span>
-                            <div class="count green">$254.80</div>
-                            <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> From last Week</span>
-                        </div>
-                    </div>
-                    <div class="animated flipInY col-md-3 col-sm-4 col-xs-4 tile_stats_count">
-                        <div class="left"></div>
-                        <div class="right">
-                            <span class="count_top"><i class="fa fa-user"></i> Portfolio Risk</span>
-                            <div class="count">5.1</div>
-                            <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>12% </i> From last Week</span>
-                        </div>
-                    </div>
-                    <div class="animated flipInY col-md-3 col-sm-4 col-xs-4 tile_stats_count">
-                        <div class="left"></div>
-                        <div class="right">
-                            <span class="count_top"><i class="fa fa-user"></i> Risk Rank</span>
-                            <div class="count">#21</div>
-                            <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>2 </i> From last Week</span>
-                        </div>
-                    </div>
-                    <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
-                    </div>
-                </div>
-                <br>
-                <div class="title_right">
-                    <div class="col-xs-10 col-xs-offset-1 form-group top_search">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Compare with...">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">Go!</button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2> Portfolio </h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                            <li><a href="#"><i class="fa fa-chevron-up"></i></a>
-                            </li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">Settings 1</a>
-                                    </li>
-                                    <li><a href="#">Settings 2</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li><a href="#"><i class="fa fa-close"></i></a>
-                            </li>
-                        </ul>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="x_content">
-                        <table id="example" class="table table-striped responsive-utilities jambo_table">
-                            <thead>
-                                <tr class="headings">
-                                    <th>Company</th>
-                                    <th>Stock Symbol</th>
-                                    <th>Type</th>
-                                    <th>Number held </th>
-                                    <th>Volume </th>
-                                    <th>Price</th>
-                                    <th>Amount </th>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="even pointer">
-                                <td class=" ">Yahoo Inc</td>
-                                <td class=" ">YHOO</td>
-                                <td class=" ">Equity</td>
-                                <td class=" ">2</td>
-                                <td>8000000</td>
-                                <td class=" ">
-                                    <stock-price id="YHOO" data-stock="YHOO">
-                                </stock-price>
-                            </td>
-                            <td> 58.72</td>
-                        </td>
-                    </tr>
-                    <tr class="even pointer">
-                        <td class=" ">Apple Inc</td>
-                        <td class=" ">AAPL</td>
-                        <td class=" ">Equity</td>
-                        <td class=" ">2</td>
-                        <td>40000000</td>
-                        <td class=" ">
-                            <stock-price id="AAPL" data-stock="AAPL">
-                        </stock-price>
-                    </td>
-                    <td> 196.08</td>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-</div>
-
-<div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="dashboardaph x_panel">
-            <span class="input-group-btn">
-                <button id = "week" onclick = "weekFun()" class="btn btn-default" type="button">In week </button>
-            </span>
-            <span class="input-group-btn">
-                <button id = "year" onclick = "yearFun()"class="btn btn-default" type="button">In year </button>
-            </span>
-            <span class="input-group-btn">
-                <button id = "all" onclick = "allFun()"class="btn btn-default" type="button">Since the beginning
-                </button>
-            </span>
-            <div class="row x_title">
-                <div class="col-md-6">
-                    <h3>Risk History (Today) </h3>
-                </div>
-                <div class="col-md-6">
-                    <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
-                        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
-                        <span>December 30, 2014 - January 28, 2015</span> <b class="caret"></b>
-                    </div>
-                </div>
-            </div>
-            <div class="x_content">
-                <div class="demo-container" style="height:250px">
-                    <div id="placeholder3xx3" class="demo-placeholder" style="width: 100%; height:250px;"></div>
-                </div>
             </div>
         </div>
+
+    <div id="custom_notifications" class="custom-notifications dsp_none">
+        <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
+        </ul>
+        <div class="clearfix"></div>
+        <div id="notif-group" class="tabbed_notifications"></div>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="x_panel tile fixed_height_320 overflow_hidden">
-            <div class="x_title">
-                <h2>Portfolio Diversity</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Settings 1</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-
-                <table class="" style="width:100%">
-                    <tr>
-                        <th style="width:37%;">
-
-                        </th>
-                        <th>
-                            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
-                                <p class="">Stock</p>
-                            </div>
-                            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
-                                <p class="">Portfolio %</p>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <canvas id="canvas1" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
-                        </td>
-                        <td>
-                            <table class="tile_info" id="donut_diversity"></table>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4 col-sm-4 col-xs-12">
-        <div class="x_panel tile fixed_height_320 overflow_hidden">
-            <div class="x_title">
-                <h2>Risk Diversity</h2>
-                <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Settings 1</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                </ul>
-                <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-
-                <table class="" style="width:100%">
-                    <tr>
-                        <th style="width:37%;">
-                        </th>
-                        <th>
-                            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
-                                <p class="">Stock</p>
-                            </div>
-                            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
-                                <p class="">Risk %</p>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <canvas id="canvas2" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>
-                        </td>
-                        <td>
-                            <table class="tile_info" id="donut_risk"></table>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-</div>
-
-<div id="custom_notifications" class="custom-notifications dsp_none">
-    <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
-    </ul>
-    <div class="clearfix"></div>
-    <div id="notif-group" class="tabbed_notifications"></div>
-
-</div>
-<script src="{% static "js/bootstrap.min.js" %}"></script>
-<script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
-<script type="text/javascript" src="{% static "js/flot/jquery.flot.pie.js"%}"></script>
-<script type="text/javascript" src="{% static "js/flot/jquery.flot.orderBars.js"%}"></script>
-<script type="text/javascript" src="{% static "js/flot/jquery.flot.time.min.js"%}"></script>
-<script type="text/javascript" src="{% static "js/flot/date.js"%}"></script>
-<script type="text/javascript" src="{% static "js/flot/jquery.flot.spline.js"%}"></script>
-<script type="text/javascript" src="{% static "js/flot/jquery.flot.stack.js"%}"></script>
-<script type="text/javascript" src="{% static "js/flot/curvedLines.js"%}"></script>
-<script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js"%}"></script>
-<script>
-    var portfolio = ["AAPL", "YHOO"];
-
-    var getPortfolioSize = function(){
-        return portfolio.length;
-    }
-
-    $.ajax({
-        dataType: "json",
-        url: "/api/portfolio/1", 
-        success: function(data) {
-
-            var jsonString = []
-            jsonString = data["risk_history"]
-            var risks = [jsonString.length]
-            console.log(jsonString)
-            for (risk in jsonString) {
-                risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])        
-            }
-        }
-    });
-
-
-        // var jsonString =   { "timetags": [ "Thu Mar 6 2014 20:08:26 GMT-0600 (CST)",
-        //                                    "Fri Mar 6 2015 20:08:26 GMT-0600 (CST)",
-        //                                    "Sun Sep 6 2015 20:08:26 GMT-0600 (CST)",
-        //                                    "Mon Mar 6 2016 20:08:26 GMT-0600 (CST)",
-        //                                    "Tue Mar 7 2016 20:08:26 GMT-0600 (CST)",
-        //                                    "Wed Mar 8 2016 20:08:26 GMT-0600 (CST)",
-        //                                    "Thu Mar 9 2016 20:08:26 GMT-0600 (CST)",
-        //                                    "Fri Mar 10 2016 20:08:26 GMT-0600 (CST)",
-        //                                    "Sat Mar 11 2016 20:08:26 GMT-0600 (CST)",
-        //                                    "Sun Mar 12 2016 20:08:26 GMT-0600 (CST)"
-        //                                    //"Tue Apr 12 2016 20:08:26 GMT-0600 (CST)"
-        //                                   ],
-        //                       "risk": [0.8,
-        //                                10.1,
-        //                                2.1,
-        //                                5.1,
-        //                                1.0,
-        //                                2.0,
-        //                                8.0,
-        //                                7.7,
-        //                                10.5,
-        //                                1.1
-        //                                ]
-        //                     }
-
-        var currentTime = new Date()
-        var dayBefore = new Date()
-        dayBefore.setDate(dayBefore.getDate()-1)
-
-        var weekFun = function (){
-            options["xaxis"]["minTickSize"] = [1, "day"]
-            var currentTime = new Date()
-            var oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            options["xaxis"]["min"] = oneWeekAgo.getTime()
-            options["xaxis"]["max"] = currentTime.getTime()
-            timeformat: "%a"
-            $.ajax({
-                dataType: "json",
-                url: "/api/portfolio/1", 
-                success: function(data) {
-
-                    var jsonString = []
-                    jsonString = data["risk_history"]
-                    var risks = [jsonString.length]
-                                console.log(jsonString)
-                                for (i = 0; i<jsonString.length;i++){
-                                    risk = jsonString[i]
-                                    risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
-                                    console.log(risks[i])
-                                }
-                                console.log(risks)
-                                $.plot($("#placeholder3xx3"),[{
-                                    label: "Beta",
-                                    data: risks,
-                                    lines: {
-                                        fillColor: "rgba(150, 202, 89, 0.12)"
-                                    },
-                                    points: {
-                                        fillColor: "#fff"
-                                    }
-                                }], options);
-
-                            }
-                        });
-
-}
-var yearFun = function (){
-    var currentTime = new Date()
-    options["xaxis"]["min"] = (new Date(currentTime.getFullYear()-1,0,1)).getTime()
-    options["xaxis"]["max"] = currentTime.getTime()
-    options["xaxis"]["minTickSize"] =[1, "month"]
-
-    $.ajax({
-        dataType: "json",
-        url: "/api/portfolio/1", 
-        success: function(data) {
-
-            var jsonString = []
-            jsonString = data["risk_history"]
-            var risks = [jsonString.length]
-            console.log(jsonString)
-
-            for (i = 0; i<jsonString.length;i++){
-                risk = jsonString[i]
-                risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
-            }
-
-
-            $.plot($("#placeholder3xx3"),[{
-                label: "Beta",
-                data: risks,
-                lines: {
-                    fillColor: "rgba(250, 202, 89, 0.12)"
-                },
-                points: {
-                    fillColor: "#fff"
-                }
-            }], options);
-
-        }
-    });
-
-}
-var allFun = function (){
-
-
-    $.ajax({
-        dataType: "json",
-        url: "/api/portfolio/1", 
-        success: function(data) {
-
-            var jsonString = []
-            jsonString = data["risk_history"]
-            var risks = [jsonString.length]
-            for (i = 0; i<jsonString.length;i++){
-                risk = jsonString[i]
-                risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
-            }
-            options["xaxis"]["min"] = (new Date(jsonString[0]["risk_date"])).getTime()
-            console.log(options["xaxis"]["min"])
-            options["xaxis"]["max"] = (new Date()).getTime()
-            console.log(options["xaxis"]["max"])
-
-            $.plot($("#placeholder3xx3"),[{
-                label: "Beta",
-                data: risks,
-                lines: {
-                    fillColor: "rgba(250, 202, 89, 0.12)"
-                },
-                points: {
-                    fillColor: "#fff"
-                }
-            }], options);
-
-        }
-    })
-
-}
-var options = {
-    series: {
-        curvedLines: {
-            apply: true,
-            active: true,
-            monotonicFit: true
-        }
-    },
-    colors: ["#26B99A"],
-    grid: {
-        borderWidth: {
-            top: 0,
-            right: 0,
-            bottom: 1,
-            left: 1
-        },
-        borderColor: {
-            bottom: "#7F8790",
-            left: "#7F8790"
-        }
-    },
-    label: "Beta",
-    xaxis: {
-        minTickSize: [1, "hour"],
-        min: dayBefore.getTime(),
-        max: currentTime.getTime(),
-        twelveHourClock: true,
-        mode: "time",
-                    tickLength: 0, // hide gridlines
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
-                    axisLabelPadding: 5
-                }
-            }
-
-
-            $.ajax({
-                dataType: "json",
-                url: "/api/portfolio/2", 
-                success: function(data) {
-
-                    var jsonString = []
-                    jsonString = data["risk_history"]
-                    var risks = [jsonString.length]
-                    for (i = 0; i<jsonString.length;i++){
-                        risk = jsonString[i]
-                        risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
-                    }
-
-
-                    $.plot("#placeholder3xx3",[{
-                        label: "Beta",
-                        data: risks,
-
-                        lines: {
-                            fillColor: "rgba(250, 202, 89, 0.12)"
-                        },
-                        points: {
-                            fillColor: "#fff"
-                        }
-                    }], options);
-
-                }
-            });
-        //Data for the portfolio diversity donut chart
-        
-        var doughnutDataForDiversity = []
-        var arrayOfStocks = [
-        {"ticker": "AAPL", "value": 100, "risk": 2.1, "quantity": 2}, 
-        {"ticker": "YHOO", "value": 50, "risk": 3.2, "quantity": 2},
-        {"ticker": "CHK", "value": 20, "risk": 4.3, "quantity": 1},
-        {"ticker": "ASA", "value": 40, "risk": 5.4, "quantity": 3}
-        ]
-
-        var arrayOfColors = ["#26B99A","#3498DB","#BDC3C7","#455C73","#9B59B6"];
-        var numOfStocks = arrayOfStocks.length
-        var totalValueOfStocks = 0
-        var proportionOfStocks = []
-
-        
-        for (var i =0; i<arrayOfStocks.length;i++) {
-            valueOfStock = arrayOfStocks[i].value * arrayOfStocks[i].quantity
-            totalValueOfStocks += valueOfStock
-        }
-        
-        for (var i =0; i<arrayOfStocks.length;i++) {   
-
-            valueOfStock = arrayOfStocks[i].value * arrayOfStocks[i].quantity
-            proportionOfStocks[i] = valueOfStock/totalValueOfStocks
-
-            var newStock = { 
-                value: proportionOfStocks[i],                
-                color: arrayOfColors[i]
-            }
-
-            doughnutDataForDiversity.push(newStock)
-        }
-
-        var table = document.getElementById("donut_diversity")
-        var loc_table_rows_count = arrayOfStocks.length
-
-        for (var i = 0; i < loc_table_rows_count; i++) {
-            var row = table.insertRow(i)
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-
-            cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + arrayOfStocks[i].ticker + "</p>"
-            cell1.style.color = arrayOfColors[i%arrayOfStocks.length]
-            cell2.innerHTML = (proportionOfStocks[i]*100).toFixed(2)+"%";
-        }
-
-        // Data for the portfolio risk donut chart
-
-        var doughnutDataForRisk = []
-        var totalRiskOfStocks = 0
-        var proportionalRiskOfStocks = []
-
-        
-        for (var i =0; i<arrayOfStocks.length;i++) {
-            riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
-            totalRiskOfStocks += riskOfStock
-        }
-        
-        for (var i =0; i<arrayOfStocks.length;i++) {   
-
-            riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
-            proportionalRiskOfStocks[i] = riskOfStock/totalRiskOfStocks         
-
-            var newStock = { 
-                value: proportionalRiskOfStocks[i],
-                color: arrayOfColors[i]
-            }
-            
-            doughnutDataForRisk.push(newStock)
-        }
-
-        var table = document.getElementById("donut_risk")
-        var loc_table_rows_count = arrayOfStocks.length
-
-        for (var i = 0; i < loc_table_rows_count; i++) {
-            var row = table.insertRow(i)
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-
-            cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + arrayOfStocks[i].ticker + "</p>"
-            cell1.style.color = arrayOfColors[i%arrayOfStocks.length]
-            cell2.innerHTML = (proportionalRiskOfStocks[i]*100).toFixed(2)+"%";
-        }
-
-
-
-        //Create both the charts
-        var myDoughnut = new Chart(document.getElementById("canvas1").getContext("2d")).Doughnut(doughnutDataForDiversity);
-        var myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForRisk);
-    </script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/portfolio_utils/portfolio_loader.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/flot/jquery.flot.pie.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/flot/jquery.flot.orderBars.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/flot/jquery.flot.time.min.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/flot/date.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/flot/jquery.flot.spline.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/flot/jquery.flot.stack.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/flot/curvedLines.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/spr/portfolio_graph.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/spr/diversity_charts.js"%}"></script>
+    <script type-"text/javascript" src="{% static "js/spr/spr.js" %} "></script>
 
 </body>
 </html>
