@@ -1,13 +1,15 @@
 from django.shortcuts import render, render_to_response, redirect
 from django.http import HttpResponse, Http404
 from datautils import yahoo_finance as yf
+from datautils import rri as rri
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from stockportfolio.api.models import Portfolio
+from stockportfolio.api.models import Portfolio, Risk
 from registration.models import RegistrationManager
 import string
 import hashlib
+
 
 def dashboard(request):
     if request.user.is_anonymous():
@@ -23,6 +25,7 @@ def landing(request):
     """Renders the landing page"""
     return render_to_response('landing.html')
 
+
 def profile(request):
     un = request.POST['accountName']
     email = request.POST['accountEmail']
@@ -32,9 +35,10 @@ def profile(request):
     if request.user.email != email:
         request.user.email = email
         request.user.save()
-        #r = RegistrationManager()
-        #r.resend_activation_mail(request.user.email,"", request)
+        # r = RegistrationManager()
+        # r.resend_activation_mail(request.user.email,"", request)
     return redirect('dashboard')
+
 
 def ticker(request, symbol):
     # any api errors bubble up to the user
@@ -49,3 +53,16 @@ def user_profile(request, user_id):
         'user': user
     }
     return render_to_response('user/user_profile.html', context)
+
+
+def calculate_all_rris(request):
+    for portfolio in Portfolio.objects.all():
+        stocks = portfolio.portfolio_stocks.all()
+        if not stocks:
+            continue
+        risk = Risk(
+            risk_value=rri.compute_portfolio_rri_for_today(stocks, 10))
+        risk.save()
+        portfolio.portfolio_risk.add(risk)
+        portfolio.save()
+    return HttpResponse(status=200)
