@@ -8,8 +8,11 @@
         <h4 class="modal-title">Modify Account</h4>
       </div>
       <div class="modal-body">
-        <form action="/dashboard/" method="post">
+        <form action="/profile/" method="post">
         {% csrf_token %}
+        <a href="https://en.gravatar.com/">
+        <img src="{{ gravatar }}" class="img-fluid img-circle center-block" title="gravatar" alt="gravatar">
+        </a>
         <fieldset class="form-group">
         <label for="userAccountName">Name</label>
         <input type="text" class="form-control" name="accountName" value="{{ user.get_username }}">

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
-import django.forms as forms
+
 
 class Stock(models.Model):
     """
@@ -41,27 +41,3 @@ class Portfolio(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.portfolio_id, self.portfolio_risk)
-class UpdateProfile(forms.ModelForm):
-    username = forms.CharField(required=True)
-    email = forms.EmailField(required=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'email')
-
-    def clean_email(self):
-        username = self.cleaned_data.get('username')
-        email = self.cleaned_data.get('email')
-
-        if email and User.objects.filter(email=email).exclude(username=username).count():
-            raise forms.ValidationError('This email address is already in use. Please supply a different email address.')
-        return email
-
-    def save(self, commit=True):
-        user = super(RegistrationForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-
-        if commit:
-            user.save()
-
-        return user
