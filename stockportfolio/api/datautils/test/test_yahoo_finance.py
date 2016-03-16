@@ -1,22 +1,34 @@
 import unittest
 from stockportfolio.api.datautils.yahoo_finance import *
 
+# TODO: finish writing tests here
 
 class TestYahooFinance(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.symbol = 'GOOG'
+        cls.symbol2 = 'AAPL'
+        cls.start_date = dt(year=2016, month=1, day=1)
+        cls.end_date = dt(year=2016, month=2, day=1)
 
     def test_get_stock_data(self):
-        start_date = dt(year=2016, month=1, day=1)
-        end_date = dt(year=2016, month=2, day=1)
-        data = get_stock_data(self.symbol, start_date, end_date)
+        data = get_stock_data(self.symbol, self.start_date, self.end_date)
         self.assertTrue(data.keys().__contains__('Open'))
         self.assertTrue(data.keys().__contains__('High'))
         self.assertTrue(data.keys().__contains__('Low'))
         self.assertTrue(data.keys().__contains__('Close'))
         self.assertTrue(data.keys().__contains__('Volume'))
+
+    def test_get_stock_data_multiple(self):
+        raise NotImplementedError()
+
+    def test_get_pct_returns(self):
+        raise NotImplementedError()
+
+    def test_get_returns(self):
+        raise NotImplementedError()
+
 
     def test_get_current_price(self):
         current_price = get_current_price(self.symbol)
@@ -29,4 +41,5 @@ class TestYahooFinance(unittest.TestCase):
 
     def test_get_company_sector(self):
         company_sector = get_company_sector(self.symbol)
+        print company_sector
         self.assertEqual(company_sector, 'Technology')

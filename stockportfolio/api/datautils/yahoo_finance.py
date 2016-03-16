@@ -1,3 +1,4 @@
+import os
 import ystockquote
 import pandas as pd
 import pandas_datareader.data as web
@@ -8,10 +9,10 @@ from datetime import datetime as dt
 def get_stock_data(symbol, start_date=None, end_date=None):
     """
     Get OHLC stock data from Yahoo Finance for a single stock
-    :param symbol: string
-    :param start_date: datetime
-    :param end_date: datetime
-    :return: DataFrame of stock data from start_date to end_date
+    :param symbol: (string)
+    :param start_date: (DateTime)
+    :param end_date: (DateTime)
+    :return: (DataFrame) of stock data from start_date to end_date
     """
     if start_date is None:
         start_date = dt(year=1990, month=1, day=1)
@@ -31,10 +32,10 @@ def get_stock_data(symbol, start_date=None, end_date=None):
 def get_stock_data_multiple(symbols=None, start_date=None, end_date=None):
     """
     Get OHLC stock data from Yahoo Finance for multiple stocks
-    :param symbols: list of symbols (strings)
-    :param start_date: datetime
-    :param end_date: datetime
-    :return: OrderedDict of DataFrames of stock data from start_date to end_date
+    :param symbols: (list) of symbols (string)
+    :param start_date: (DateTime)
+    :param end_date: (DateTime)
+    :return: (OrderedDict) of DataFrames of stock data from start_date to end_date
     """
     data = OrderedDict()
 
@@ -49,8 +50,8 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None):
 def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     """
 
-    :param symbol:
-    :param start_date:
+    :param symbol: (string)
+    :param start_date: (datetime
     :param end_date:
     :param col: (string) name of column to calculate the pct returns from
     :return:
@@ -72,10 +73,6 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     return data.diff().fillna(0)
 
 
-def get_options_data_yahoo(symbols=None, start_date=None, end_date=None):
-    raise NotImplementedError()
-
-
 def get_current_price(symbol):
     """
     Get the latest price!
@@ -95,27 +92,22 @@ def get_company_name(symbol):
     :return:
     """
     fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
-    # df = pd.read_csv('stockportfolio/api/datautils/secwiki_tickers.csv')
-    print "FPATH", fpath
     df = pd.read_csv(fpath)
-    company_info = df[df.Ticker==symbol]
+    company_info = df[df.Ticker == symbol]
     code = company_info['Name'].keys()[0]
     company_sector = company_info.to_dict()['Name'][code]
     return company_sector
 
 
-import os
 def get_company_sector(symbol):
     """
     Get the sector of the company
     :param symbol: (str)
     :return: (str)
     """
-    print os.getcwd()
-    df = pd.read_csv('stockportfolio/api/datautils/secwiki_tickers.csv')
-    company_info = df[df.Ticker==symbol]
+    fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
+    df = pd.read_csv(fpath)
+    company_info = df[df.Ticker == symbol]
     code = company_info['Name'].keys()[0]
     company_sector = company_info.to_dict()['Sector'][code]
     return company_sector
-
-
