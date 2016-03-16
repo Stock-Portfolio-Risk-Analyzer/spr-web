@@ -5,12 +5,9 @@ from django.template.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from stockportfolio.api.models import Portfolio
-from stockportfolio.api.models import Portfolio
 from registration.models import RegistrationManager
 import string
 import hashlib
-from stockportfolio.api.models import UpdateProfile
-
 
 def dashboard(request):
     if request.user.is_anonymous():
@@ -53,7 +50,15 @@ def user_profile(request, user_id):
     }
     return render_to_response('user/user_profile.html', context)
 
-def modify_account(request,username):
+def modify_account(request,user_id):
     args = {}
+    if request.method == 'POST':
+        form = UpdateProfile(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('update_profile_success'))
+    else:
+        form = UpdateProfile()
 
-    return render(request, 'modal/modify_account.html', args)
+    args['form'] = form
+    return render(request, 'registration/update_profile.html', args)
