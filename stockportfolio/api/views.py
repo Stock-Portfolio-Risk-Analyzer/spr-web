@@ -1,18 +1,15 @@
 from django.shortcuts import render, render_to_response, redirect
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from datautils import yahoo_finance as yf
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from stockportfolio.api.models import Portfolio
-from stockportfolio.api.models import Portfolio
 from registration.models import RegistrationManager
 import string
 import hashlib
 from stockportfolio.api.forms import UpdateProfile
-from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-
 
 
 def dashboard(request):
@@ -55,6 +52,7 @@ def user_profile(request, user_id):
         'user': user
     }
     return render_to_response('user/user_profile.html', context)
+
 
 def modify_account(request,username):
     args = {}
