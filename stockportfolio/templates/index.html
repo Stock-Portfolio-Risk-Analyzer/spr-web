@@ -17,11 +17,14 @@
 <script>
         {% if user %}
             var currentUser_id = {{user.pk}};
-            url_getportfolio = "/api/user/" + currentUser_id + "/getportfolio";
-            $.ajax({
-                url: url_getportfolio,
-                success: function (data) {
-                    var user_portfolio = data;
+            reloadPortfolio()
+            function reloadPortfolio() {
+                url_getportfolio = "/api/user/" + currentUser_id + "/getportfolio";
+                $.ajax({
+                    url: url_getportfolio,
+                    success: function (data) {
+                        var user_portfolio = data;
+                    }
                 }
             }
         {% endif %}
