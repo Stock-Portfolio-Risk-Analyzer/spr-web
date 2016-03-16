@@ -1,3 +1,4 @@
+
 // Data for the portfolio diversity donut chart
 
 var doughnutDataForDiversity = []
@@ -93,28 +94,15 @@ var risk_div = document.getElementById("portfolio_risk")
 risk_div.innerHTML = totalRiskOfStocks.toFixed(2)
 
 //Make Portfolio List dynamic
-var table = document.getElementById("portfolio")
-
-for (var i = 1; i <= numOfStocks; i++) {
-    
-    stocknum = i-1
-
-    var row = table.insertRow(i)
-    
-    var cell1 = row.insertCell(0)
-    var cell2 = row.insertCell(1)
-    var cell3 = row.insertCell(2)
-    var cell4 = row.insertCell(3)
-    var cell5 = row.insertCell(4)
-    var cell6 = row.insertCell(5)
-    var cell7 = row.insertCell(6)
-
-    cell1.innerHTML = arrayOfStocks[stocknum].name
-    cell2.innerHTML = arrayOfStocks[stocknum].ticker
-    cell3.innerHTML = arrayOfStocks[stocknum].type
-    cell4.innerHTML = arrayOfStocks[stocknum].quantity
-    cell5.innerHTML = "Volume"
-    cell6.innerHTML = "<stock-price id=" + arrayOfStocks[stocknum].ticker +" data-stock="+arrayOfStocks[stocknum].ticker+"></stock-price>"
-    cell7.innerHTML = valueOfStocks[stocknum]
+stocks = user_portfolio.stocks;
+for (var i = 0; i < stocks.length; i++) {
+    var stock = stocks[i];
+    var $clone = $("table#portfolio").find('tr.hide.sample').clone(true).removeClass("hide")
+    $clone.find("td.company").text(stock.name)
+    $clone.find("td.symbol").text(stock.ticker)
+    $clone.find("td.sector").text(stock.sector)
+    $clone.find("td.quantity").text(stock.quantity)
+    $clone.find("td.last_price").text(stock.price)
+    $clone.find("td.market_value").text(stock.mkt_value)
+    $("table#portfolio").append($clone)
 }
-

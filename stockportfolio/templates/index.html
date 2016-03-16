@@ -11,82 +11,81 @@
     <link href="{% static "css/custom.css" %}" rel="stylesheet">
     <script src="{% static "js/jquery.min.js" %} "></script>
     <script src="{% static "js/chartjs/chart.min.js" %} "></script>
+
 </head>
 <body class="nav-md">
 {% include "modal/modify_account.html" %}
-<script>
-        {% if user %}
-            var currentUser_id = {{user.pk}};
-            reloadPortfolio()
-            function reloadPortfolio() {
-                url_getportfolio = "/api/user/" + currentUser_id + "/getportfolio";
-                $.ajax({
-                    url: url_getportfolio,
-                    success: function (data) {
-                        var user_portfolio = data;
-                    }
-                }
-            }
-        {% endif %}
-});
-</script>
 {% include "modal/modify_portfolio.html" %}
+<script>
+    {% if user %}
+        var currentUser_id = {{user.pk}};
+        var user_portfolio = null;
+            url_getportfolio = "/api/user/" + currentUser_id + "/getportfolio";
+            $.ajax({
+                url: url_getportfolio,
+                success: function (data) {
+                    user_portfolio = data;
+                },
+                async:false
+            });
 
-    <div class="container body">
-        <div class="main_container">
-            <div class="col-md-3 left_col">
-                <div class="left_col scroll-view">
-                    <div class="navbar nav_title" style="border: 0;">
-                        <a href="index.html" class="site_title"><i class="fa fa-money"></i> <span>SPRA</span></a>
+    {% endif %}
+</script>
+
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="index.html" class="site_title"><i class="fa fa-money"></i> <span>SPRA</span></a>
+                </div>
+                <div class="clearfix"></div>
+                <div class="profile">
+                    <div class="profile_pic">
+                        <img src="{{ gravatar }}" class="img-circle profile_img">
                     </div>
-                    <div class="clearfix"></div>
-                    <div class="profile">
-                        <div class="profile_pic">
-                            <img src="{{ gravatar}}" class="img-circle profile_img">
-                        </div>
-                        <div class="profile_info">
-                            <span>Welcome,</span>
-                            <h2>{{ user.get_username }}</h2>
+                    <div class="profile_info">
+                        <span>Welcome,</span>
+                        <h2>{{ user.get_username }}</h2>
 
-                        </div>
-                    </div>
-
-                        <br/>
-                    
-                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                     </div>
                 </div>
-            </div>
-                {% include "dashboard/user_dropdown.html"   %}
-                {% include "dashboard/portfolio_stats.html" %}
-                {% include "dashboard/portfolio_table.html" %} 
-                {% include "dashboard/portfolio_graph.html" %}
-                {% include "dashboard/portfolio_diversity.html" %}
-                {% include "dashboard/portfolio_risk.html" %} 
-            </div>
+
+                <br/>
+
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                </div>
             </div>
         </div>
-
-    <div id="custom_notifications" class="custom-notifications dsp_none">
-        <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
-        </ul>
-        <div class="clearfix"></div>
-        <div id="notif-group" class="tabbed_notifications"></div>
+        {% include "dashboard/user_dropdown.html" %}
+        {% include "dashboard/portfolio_stats.html" %}
+        {% include "dashboard/portfolio_table.html" %}
+        {% include "dashboard/portfolio_graph.html" %}
+        {% include "dashboard/portfolio_diversity.html" %}
+        {% include "dashboard/portfolio_risk.html" %}
     </div>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/portfolio_utils/portfolio_loader.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/flot/jquery.flot.pie.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/flot/jquery.flot.orderBars.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/flot/jquery.flot.time.min.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/flot/date.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/flot/jquery.flot.spline.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/flot/jquery.flot.stack.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/flot/curvedLines.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/spr/portfolio_graph.js"%}"></script>
-    <script type="text/javascript" src="{% static "js/spr/diversity_charts.js"%}"></script>
-    <script type-"text/javascript" src="{% static "js/spr/spr.js" %} "></script>
+</div>
+
+<div id="custom_notifications" class="custom-notifications dsp_none">
+    <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
+    </ul>
+    <div class="clearfix"></div>
+    <div id="notif-group" class="tabbed_notifications"></div>
+</div>
+<script src="{% static "js/bootstrap.min.js" %}"></script>
+
+<script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
+<script type="text/javascript" src="{% static "js/flot/jquery.flot.pie.js" %}"></script>
+<script type="text/javascript" src="{% static "js/flot/jquery.flot.orderBars.js" %}"></script>
+<script type="text/javascript" src="{% static "js/flot/jquery.flot.time.min.js" %}"></script>
+<script type="text/javascript" src="{% static "js/flot/date.js" %}"></script>
+<script type="text/javascript" src="{% static "js/flot/jquery.flot.spline.js" %}"></script>
+<script type="text/javascript" src="{% static "js/flot/jquery.flot.stack.js" %}"></script>
+<script type="text/javascript" src="{% static "js/flot/curvedLines.js" %}"></script>
+<script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js" %}"></script>
+<script type="text/javascript" src="{% static "js/spr/portfolio_graph.js" %}"></script>
+<script type="text/javascript" src="{% static "js/spr/diversity_charts.js" %}"></script>
+<script type=text/javascript" src="{% static "js/spr/spr.js" %} "></script>
 
 </body>
 </html>
