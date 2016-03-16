@@ -96,6 +96,9 @@ risk_div.innerHTML = totalRiskOfStocks.toFixed(2)
 var table = document.getElementById("portfolio")
 
 for (var i = 1; i <= numOfStocks; i++) {
+    
+    stocknum = i-1
+
     var row = table.insertRow(i)
     
     var cell1 = row.insertCell(0)
@@ -106,12 +109,12 @@ for (var i = 1; i <= numOfStocks; i++) {
     var cell6 = row.insertCell(5)
     var cell7 = row.insertCell(6)
 
-    cell1.innerHTML = arrayOfStocks[i].name
-    cell2.innerHTML = arrayOfStocks[i].ticker
-    cell3.innerHTML = arrayOfStocks[i].type
-    cell4.innerHTML = arrayOfStocks[i].quantity
+    cell1.innerHTML = arrayOfStocks[stocknum].name
+    cell2.innerHTML = arrayOfStocks[stocknum].ticker
+    cell3.innerHTML = arrayOfStocks[stocknum].type
+    cell4.innerHTML = arrayOfStocks[stocknum].quantity
     cell5.innerHTML = "Volume"
-    cell6.innerHTML = "<stock-price id=" + arrayOfStocks[i].ticker +" data-stock="+arrayOfStocks[i].ticker+"></stock-price>"
-    cell7.innerHTML = valueOfStocks[i]
+    cell6.innerHTML = "<stock-price id=" + arrayOfStocks[stocknum].ticker +" data-stock="+arrayOfStocks[stocknum].ticker+"></stock-price>"
+    cell7.innerHTML = valueOfStocks[stocknum]
 }
 
