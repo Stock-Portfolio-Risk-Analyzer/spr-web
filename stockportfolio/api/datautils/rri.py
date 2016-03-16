@@ -105,11 +105,10 @@ def compute_stock_rri_for_range(symbol, start_date, end_date):
     return (rri + 1)
 
 
-def compute_portfolio_rri_for_today(stock_list, quantity_list, number_of_days_back):
+def compute_portfolio_rri_for_today(stocks, number_of_days_back):
     """
     Computes RRI for a portfolio
-    Parameter:  stock_list -> list of stock tickers
-            quantity_list -> quantity of stocks per ticker
+    Parameter:  stocks -> list of stock objects
             number_of_days_back ->  number of days back from today
                         for which you want rri
                         (Type -> integer)
@@ -117,30 +116,33 @@ def compute_portfolio_rri_for_today(stock_list, quantity_list, number_of_days_ba
     """
     total_rri = 0.0
     total_quantity = 0
-    for i in range(len(stock_list)):
-        stock_rri = compute_stock_rri_for_today(stock_list[i], number_of_days_back)
-        total_rri = total_rri + (stock_rri * quantity_list[i])
-        total_quantity = total_quantity + quantity_list[i]
+    for i in range(len(stocks)):
+        ticker = stocks[i].stock_ticker
+        quantity = stocks[i].stock_quantity
+        stock_rri = compute_stock_rri_for_today(ticker, number_of_days_back)
+        total_rri = total_rri + (stock_rri * quantity)
+        total_quantity = total_quantity + quantity
 
     portfolio_rri = (total_rri / total_quantity)
 
     return portfolio_rri
 
 
-def compute_portfolio_rri_for_range(stock_list, quantity_list, start_date, end_date):
+def compute_portfolio_rri_for_range(stocks, start_date, end_date):
     """
     Computes RRI for a portfolio
-    Parameter:  stock_list -> list of stock tickers
-            quantity_list -> quantity of stocks per ticker
+    Parameter:  stocks -> list of stock objects
             start_date, end_date -> range you want to compute rri on (Type -> String)
     Return: float
     """
     total_rri = 0.0
     total_quantity = 0
-    for i in range(len(stock_list)):
-        stock_rri = compute_stock_rri_for_range(stock_list[i], start_date, end_date)
-        total_rri = total_rri + (stock_rri * quantity_list[i])
-        total_quantity = total_quantity + quantity_list[i]
+    for i in range(len(stocks)):
+        ticker = stocks[i].stock_ticker
+        quantity = stocks[i].stock_quantity
+        stock_rri = compute_stock_rri_for_range(ticker, start_date, end_date)
+        total_rri = total_rri + (stock_rri * quantity)
+        total_quantity = total_quantity + quantity
 
     portfolio_rri = (total_rri / total_quantity)
 
