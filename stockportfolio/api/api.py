@@ -84,6 +84,7 @@ def get_portfolio_by_user(request, user_id):
         portfolio = Portfolio.objects.create(portfolio_user=user)
     return get_portfolio(request, portfolio.pk)
 
+
 def get_portfolio(request, portfolio_id):
     """
 
@@ -111,6 +112,7 @@ def get_portfolio(request, portfolio_id):
         portfolio_dict['sector_allocations'] = _calculate_sector_allocations(portfolio)
 
         return HttpResponse(content=json.dumps(portfolio_dict), status=200, content_type='application/json')
+
 
 def modify_portfolio_form_post(request):
     if request.method == 'POST':
@@ -167,7 +169,6 @@ def _verify_stock_ticker_validity(stocks, quantity):
             invalid_stocks.remove(stock)
 
     return invalid_stocks
-
 
 
 def _calculate_stock_info(stock):
