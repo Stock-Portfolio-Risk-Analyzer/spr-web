@@ -16,10 +16,16 @@
 {% include "modal/modify_account.html" %}
 <script>
         {% if user %}
-            currentUser_id = {{user.pk}};
-        {% else %}
-            currentUser_id = null;
+            var currentUser_id = {{user.pk}};
+            url_getportfolio = "/api/user/" + currentUser_id + "/getportfolio";
+            $.ajax({
+                url: url_getportfolio,
+                success: function (data) {
+                    var user_portfolio = data;
+                }
+            }
         {% endif %}
+});
 </script>
 {% include "modal/modify_portfolio.html" %}
 
