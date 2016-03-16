@@ -9,7 +9,10 @@ from stockportfolio.api.models import Portfolio
 from registration.models import RegistrationManager
 import string
 import hashlib
-from stockportfolio.api.models import UpdateProfile
+from stockportfolio.api.forms import UpdateProfile
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+
 
 
 def dashboard(request):
@@ -55,5 +58,19 @@ def user_profile(request, user_id):
 
 def modify_account(request,username):
     args = {}
+    user = User.objects.get(username = username)
+    if request.method == 'POST':
+        form = UpdateProfile(request.POST, instance=request.user)
+        print ("before validation")
+        if form.is_valid():
+            print ("Here ")
+            form.save()
+            return HttpResponseRedirect(reverse('dashboard'))
+        else:
+            print form.errors
+            print "not valid"
 
-    return render(request, 'modal/modify_account.html', args)
+    else:
+        form = UpdateProfile(instance = request.user)
+    args['form'] = form
+    return render(request, 'modal/modify_account.html', {"form": form})
