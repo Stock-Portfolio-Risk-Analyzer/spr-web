@@ -220,3 +220,6 @@ def _calculate_sector_allocations(portfolio):
         sector_allocations_pct[sector] = float(_mkt_value/total_mkt_value)
 
     return sector_allocations_pct
+
+if __name__ == "__main__":
+    print "FOO"
