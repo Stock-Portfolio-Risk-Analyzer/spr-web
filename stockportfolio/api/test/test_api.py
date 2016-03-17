@@ -5,7 +5,7 @@ from django.conf.urls import url
 class TestAPI(unittest.TestCase):
 
     @classmethod
-    def setUp(self):
+    def setUpClass(cls):
         cls.user = 'thibaut.xiong@gmail.com'
 
     # def test_add_stock(self):
