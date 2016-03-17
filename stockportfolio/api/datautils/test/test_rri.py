@@ -61,7 +61,7 @@ class TestRRI(unittest.TestCase):
         start_date = "03/03/2016"
         end_date = "03/13/2016"
         rri = compute_stock_rri_for_range(symbol, start_date, end_date)
-        self.assertEqual(rri, 1.73629103182)
+        self.assertAlmostEqual(rri, 2.2967252609958937, places=3)
 
     def test_compute_portfolio_rri_validity(self):
         """ Tests the compute_portfolio_rri_for_range function """
@@ -75,6 +75,6 @@ class TestRRI(unittest.TestCase):
         fb.stock_ticker = 'FB'
         fb.stock_quantity = 10
         stocks = [apple, netflix, fb]
-        p_rri = compute_portfolio_rri_for_range(stock_list, quantity_list, start_date, end_date)
+        p_rri = compute_portfolio_rri_for_range(stocks, start_date, end_date)
         s_rri = compute_stock_rri_for_range(apple.stock_ticker, start_date, end_date)
         self.assertEqual(p_rri, s_rri)
