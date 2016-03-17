@@ -22,3 +22,4 @@ six==1.8.0
 requests==2.4.3
 ystockquote==0.2.4
 django-crispy-forms==1.6.0
+mock==1.3.0

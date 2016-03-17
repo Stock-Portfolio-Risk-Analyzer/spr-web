@@ -1,3 +1,4 @@
+sudo: false
 language: python
 cache: pip
 python:
@@ -8,9 +9,9 @@ addons:
   sauce_connect:
     username: "gleisner"
     access_key: $SAUCE
-
 install: pip install -r requirements.txt
 script: nosetests
-env:
-  global:
-    secure: vmg/NQN7x+RmGxjeFXMwYe7UxOnJJRynpNsMvcYkN3bMEuRCjk3TAq8b4+WylEnrlpyquA8AdFlccF562d9OuqpU23P0ZZ2iErPRI2lkZKPBHRo3WMG1Yt4Kmg7+gqZ7FSiNUWL27Htdrv6+JGvk4WMdaw/WsMbUDAYldRro3GD7ReeiPO83hajIJKDpGOB4Ukj2QDVukhTuh/wWBo7xr+XBeFPI5WePcYL8YUqOFOPT0R13rXAN8H1XXE3JVdXhh8A4BhGi7elcMa1di+NoYuzSAEbCS81VxMtaiJpDt2XJ5h2tlKJcIC0ebed3pFv0ANZ8ZrL0tzpaYtZZryavvfHhagtL7IX8etcPgvFpjdJQbhOY3aw7jo4lYiK9kZNmu/IZF/mbHoKrbr/cJ1QBf53WDKxx0H55gHta6ieVcUPjK3XU0XX3EVJhdU250G0tJ2IoVzBHP5dlJmRyY3SQ6oV2YO66bsuyhXSXn6MlZCkDdtRViU9a+lIkHffReaqGG09r0zMrtW3vtaCTiAdc30of5ZZXdZqnQSqVUfm4ImTg84j4ZHQoYEI/qoPx4Gr/k2S323UOIFXXAWbbGapwhUgd4NUmucJekCQ9ocfg1Tpu7ykl8SdEYrRuvfkpw08IosbzFjsgkyYOdHvUKNaMDtoRdsD5DDfsfEP74u/7tdE=
+branches:
+  only:
+    - master
+    - develop
