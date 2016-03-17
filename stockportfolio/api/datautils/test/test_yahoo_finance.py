@@ -11,6 +11,8 @@ class TestYahooFinance(unittest.TestCase):
         cls.symbol2 = 'AAPL'
         cls.start_date = dt(year=2016, month=1, day=1)
         cls.end_date = dt(year=2016, month=2, day=1)
+        cls.test_date = dt(year=2016, month=2, day=1)
+
 
     def test_get_stock_data(self):
         data = get_stock_data(self.symbol, self.start_date, self.end_date)
@@ -21,13 +23,15 @@ class TestYahooFinance(unittest.TestCase):
         self.assertTrue(data.keys().__contains__('Volume'))
 
     def test_get_stock_data_multiple(self):
-        raise NotImplementedError()
+        pass
 
     def test_get_pct_returns(self):
-        raise NotImplementedError()
+        pct_returns = get_pct_returns(self.symbol, self.start_date, self.end_date)
+        self.assertAlmostEqual(pct_returns[self.test_date], .0121811533129)
 
     def test_get_returns(self):
-        raise NotImplementedError()
+        returns = get_returns(self.symbol, self.start_date, self.end_date)
+        self.assertAlmostEqual(returns[self.test_date], 9.049988)
 
 
     def test_get_current_price(self):
@@ -41,5 +45,4 @@ class TestYahooFinance(unittest.TestCase):
 
     def test_get_company_sector(self):
         company_sector = get_company_sector(self.symbol)
-        print company_sector
         self.assertEqual(company_sector, 'Technology')
