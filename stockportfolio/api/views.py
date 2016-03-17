@@ -1,11 +1,11 @@
 from django.shortcuts import render, render_to_response, redirect
 from django.http import HttpResponse, Http404
 from datautils import yahoo_finance as yf
-from datautils import rri as rri
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from stockportfolio.api.models import Portfolio, Risk
+from stockportfolio.api.utils import update_rri_for_all_portfolios
 from registration.models import RegistrationManager
 import string
 import hashlib
@@ -56,13 +56,5 @@ def user_profile(request, user_id):
 
 
 def calculate_all_rris(request):
-    for portfolio in Portfolio.objects.all():
-        stocks = portfolio.portfolio_stocks.all()
-        if not stocks:
-            continue
-        risk = Risk(
-            risk_value=rri.compute_portfolio_rri_for_today(stocks, 10))
-        risk.save()
-        portfolio.portfolio_risk.add(risk)
-        portfolio.save()
+    update_rri_for_all_portfolios()
     return HttpResponse(status=200)
