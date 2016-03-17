@@ -19,15 +19,15 @@ class TestYahooFinance(unittest.TestCase):
         self.assertTrue(data.keys().__contains__('Low'))
         self.assertTrue(data.keys().__contains__('Close'))
         self.assertTrue(data.keys().__contains__('Volume'))
+    #
+    #def test_get_stock_data_multiple(self):
+    #    raise NotImplementedError()
 
-    def test_get_stock_data_multiple(self):
-        raise NotImplementedError()
+    #def test_get_pct_returns(self):
+    #    raise NotImplementedError()
 
-    def test_get_pct_returns(self):
-        raise NotImplementedError()
-
-    def test_get_returns(self):
-        raise NotImplementedError()
+    #def test_get_returns(self):
+    #    raise NotImplementedError()
 
 
     def test_get_current_price(self):
