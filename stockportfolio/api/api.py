@@ -41,7 +41,7 @@ def remove_stock(request, portfolio_id):
             return HttpResponse(status=200)
     return HttpResponse(status=400)
 
-
+# done test
 def create_portfolio(request, user_id):
     """
     Creates a new portfolio model.
@@ -54,9 +54,9 @@ def create_portfolio(request, user_id):
     if user is not None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
         portfolio.save()
-        raise Http404
+        return HttpResponse(status=200)
     else:
-        raise HttpResponse(status=200)
+        raise Http404
 
 
 def delete_portfolio(request, portfolio_id):
