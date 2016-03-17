@@ -40,6 +40,7 @@ def remove_stock(request, portfolio_id):
             return HttpResponse(status=200)
     return HttpResponse(status=400)
 
+
 def create_portfolio(request, user_id):
     """
     Creates a new portfolio model.
@@ -56,6 +57,7 @@ def create_portfolio(request, user_id):
     else:
         raise Http404
 
+
 def delete_portfolio(request, portfolio_id):
     """
     Deletes a portfolio based on portfolio_id.
@@ -71,6 +73,7 @@ def delete_portfolio(request, portfolio_id):
         portfolio.delete()
         return HttpResponse(status=200)
 
+
 def get_portfolio_by_user(request, user_id):
     user = User.objects.get(pk=user_id)
     if user is None:
@@ -79,6 +82,7 @@ def get_portfolio_by_user(request, user_id):
     if portfolio is None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
     return get_portfolio(request, portfolio.pk)
+
 
 def get_portfolio(request, portfolio_id):
     """
@@ -215,6 +219,3 @@ def _calculate_sector_allocations(portfolio):
         sector_allocations_pct[sector] = float(_mkt_value/total_mkt_value)
 
     return sector_allocations_pct
-
-if __name__ == "__main__":
-    print "FOO"
