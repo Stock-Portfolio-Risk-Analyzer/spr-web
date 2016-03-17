@@ -75,6 +75,8 @@ class TestRRI(unittest.TestCase):
         fb.stock_ticker = 'FB'
         fb.stock_quantity = 10
         stocks = [apple, netflix, fb]
+        start_date = "03/03/2016"
+        end_date = "03/13/2016"
         p_rri = compute_portfolio_rri_for_range(stocks, start_date, end_date)
         s_rri = compute_stock_rri_for_range(apple.stock_ticker, start_date, end_date)
         self.assertEqual(p_rri, s_rri)
