@@ -2,7 +2,7 @@ import Quandl as qd
 from collections import OrderedDict
 from datetime import datetime as dt
 
-qd.get("NSE/OIL", authtoken="SyH7V4ywJGho77EC6W7C")  # initial call to Quandl. key is stored afterwards
+quandl_key = "SyH7V4ywJGho77EC6W7C"
 
 
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
@@ -24,11 +24,10 @@ def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     if start_date is not None and end_date is not None:
         assert start_date < end_date, "Start date is later than end date."
 
-    # log.info("Loading symbol: {}".format(symbol))
-
     quandl_code = db_code + "/" + symbol
     symbol_data = qd.get(quandl_code, returns="pandas",
-                         trim_start=start_date, trim_end=end_date)
+                         trim_start=start_date, trim_end=end_date,
+                         authtoken=quandl_key)
     return symbol_data
 
 
@@ -47,7 +46,8 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_cod
         for symbol in symbols:
             quandl_code = db_code + "/" + symbol
             symbol_data = qd.get(quandl_code, returns="pandas",
-                                 trim_start=start_date, trim_end=end_date)
+                                 trim_start=start_date, trim_end=end_date,
+                                 authtoken=quandl_key)
             data[symbol] = symbol_data
 
     return data
