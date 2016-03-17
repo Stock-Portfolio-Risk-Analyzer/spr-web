@@ -15,10 +15,11 @@ def get_stock_data(symbol, start_date=None, end_date=None):
     :return: (DataFrame) of stock data from start_date to end_date
     """
     if start_date is None:
-        start_date = dt(year=1990, month=1, day=1)
+        start_date = dt(year=2016, month=1, day=1)
 
     if end_date is None:
-        end_date = dt.today()
+        today = dt.today()
+        end_date = dt(year=today.year, month=today.month, day=today.day)
 
     if start_date is not None and end_date is not None:
         assert start_date < end_date, "Start date is later than end date."
@@ -29,7 +30,7 @@ def get_stock_data(symbol, start_date=None, end_date=None):
     return symbol_data
 
 
-def get_stock_data_multiple(symbols=None, start_date=None, end_date=None):
+def get_stock_data_multiple(symbols, start_date=None, end_date=None):
     """
     Get OHLC stock data from Yahoo Finance for multiple stocks
     :param symbols: (list) of symbols (string)
@@ -39,10 +40,9 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None):
     """
     data = OrderedDict()
 
-    if symbols is not None:
-        for symbol in symbols:
-            symbol_data = get_stock_data(symbol, start_date, end_date)
-            data[symbol] = symbol_data
+    for symbol in symbols:
+        symbol_data = get_stock_data(symbol, start_date, end_date)
+        data[symbol] = symbol_data
 
     return data
 
@@ -108,6 +108,9 @@ def get_company_sector(symbol):
     fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
     df = pd.read_csv(fpath)
     company_info = df[df.Ticker == symbol]
-    code = company_info['Name'].keys()[0]
-    company_sector = company_info.to_dict()['Sector'][code]
+    try:
+        code = company_info['Name'].keys()[0]
+        company_sector = company_info.to_dict()['Sector'][code]
+    except KeyError:
+        return "No data for {}".format(symbol)
     return company_sector

@@ -5,7 +5,6 @@ from django.http import Http404, HttpResponse
 from stockportfolio.api.models import Portfolio, Stock
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 
-
 def add_stock(request, portfolio_id):
     """
     Add a stock to a portfolio.
@@ -54,9 +53,9 @@ def create_portfolio(request, user_id):
     if user is not None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
         portfolio.save()
-        raise Http404
+        return HttpResponse(status=200)
     else:
-        raise HttpResponse(status=200)
+        raise Http404
 
 
 def delete_portfolio(request, portfolio_id):
