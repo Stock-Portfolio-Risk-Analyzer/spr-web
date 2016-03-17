@@ -13,9 +13,9 @@
     <title>{% block title %}User test{% endblock %}</title>
 </head>
 
-<body class="nav-md " onload="sprInit()">
-<div id="header">
-    <div class="top_nav">
+<body class="bg-pic">
+<div id="header" class="nav-md " onload="sprInit()">
+    <div class="top_nav" style="opacity:0.90">
         <div class="nav_menu">
             <nav class="" role="navigation">
                 <div class="nav toggle">
@@ -56,7 +56,15 @@
     </div>
 </div>
 {% block user-account-modal %}{% endblock %}
-<div id="content" class="col-xs-12" style="background: #F3F3F3">
+<style>
+.bg-pic{
+    background-image: url("{% static "images/background.jpg" %}");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+</style>
+<div id="content">
     {% block content %}{% endblock %}
 </div>
 
