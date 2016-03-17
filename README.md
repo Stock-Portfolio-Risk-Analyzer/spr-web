@@ -1,5 +1,7 @@
 # Stock Portfolio Risk Analysis Django Project
 
+![travis ci button](https://travis-ci.org/Stock-Portfolio-Risk-Analyzer/spr-web.svg)
+
 Analyzes and displays the riskiness of your stock portfolio. A project for CS428 at UIUC.
 
 ## How to Use

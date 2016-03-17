@@ -4,7 +4,8 @@ from datautils import yahoo_finance as yf
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from stockportfolio.api.models import Portfolio
+from stockportfolio.api.models import Portfolio, Risk
+from stockportfolio.api.utils import update_rri_for_all_portfolios
 from registration.models import RegistrationManager
 import string
 import hashlib
@@ -26,6 +27,7 @@ def landing(request):
     """Renders the landing page"""
     return render_to_response('landing.html')
 
+
 def profile(request):
     un = request.POST['accountName']
     email = request.POST['accountEmail']
@@ -35,9 +37,10 @@ def profile(request):
     if request.user.email != email:
         request.user.email = email
         request.user.save()
-        #r = RegistrationManager()
-        #r.resend_activation_mail(request.user.email,"", request)
+        # r = RegistrationManager()
+        # r.resend_activation_mail(request.user.email,"", request)
     return redirect('dashboard')
+
 
 def ticker(request, symbol):
     # any api errors bubble up to the user
@@ -52,6 +55,11 @@ def user_profile(request, user_id):
         'user': user
     }
     return render_to_response('user/user_profile.html', context)
+
+
+def calculate_all_rris(request):
+    update_rri_for_all_portfolios()
+    return HttpResponse(status=200)
 
 
 def modify_account(request,username):

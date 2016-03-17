@@ -2,7 +2,7 @@ import Quandl as qd
 from collections import OrderedDict
 from datetime import datetime as dt
 
-qd.get("NSE/OIL", authtoken="-v_zAsM8GfM8UNnAr6sZ")  # initial call to Quandl. key is stored afterwards
+qd.get("NSE/OIL", authtoken="SyH7V4ywJGho77EC6W7C")  # initial call to Quandl. key is stored afterwards
 
 
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
@@ -27,8 +27,8 @@ def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     # log.info("Loading symbol: {}".format(symbol))
 
     quandl_code = db_code + "/" + symbol
-    symbol_data = qd.get(quandl_code, returns="pandas", 
-                         trim_start=start_date, trim_end=end_date) 
+    symbol_data = qd.get(quandl_code, returns="pandas",
+                         trim_start=start_date, trim_end=end_date)
     return symbol_data
 
 
@@ -38,7 +38,7 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_cod
     :param symbols: list of symbols (strings)
     :param start_date: datetime
     :param end_date: datetime
-    :param db_code: Quandl database code. 
+    :param db_code: Quandl database code.
     :return: OrderedDict of DataFrames of stock data from start_date to end_date
     """
     data = OrderedDict()
@@ -80,6 +80,6 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
 def get_options_data_quandl(symbol=None):
     """
     :param symbol: ticker symbol
-    :return: list of column names 
+    :return: list of column names
     """
     return list(get_stock_data(symbol).columns.values)
