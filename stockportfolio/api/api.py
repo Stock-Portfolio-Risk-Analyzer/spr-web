@@ -74,7 +74,7 @@ def delete_portfolio(request, portfolio_id):
         portfolio.delete()
         return HttpResponse(status=200)
 
-
+# done test
 def get_portfolio_by_user(request, user_id):
     user = User.objects.get(pk=user_id)
     if user is None:
@@ -84,7 +84,7 @@ def get_portfolio_by_user(request, user_id):
         portfolio = Portfolio.objects.create(portfolio_user=user)
     return get_portfolio(request, portfolio.pk)
 
-
+# done test
 def get_portfolio(request, portfolio_id):
     """
 
