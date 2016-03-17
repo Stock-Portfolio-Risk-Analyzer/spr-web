@@ -2,9 +2,6 @@ language: python
 cache: pip
 python:
 - '2.7'
-branches:
-  only:
-  - feature/unittest-setup
 notifications:
   slack: stockportfolio:cnyIsQVuBjUgajhm9YN9OaI4
 addons:
