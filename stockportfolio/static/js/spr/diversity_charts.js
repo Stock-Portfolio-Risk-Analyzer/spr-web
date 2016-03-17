@@ -2,7 +2,8 @@
 // Data for the portfolio diversity donut chart
 
 var doughnutDataForDiversity = []
-var arrayOfStocks = [
+var arrayOfStocks = user_portfolio.stocks
+var xkcd = [
                     {"name": "Apple Inc", "ticker": "AAPL", "value": 100, "risk": 2.1, "quantity": 2, "type": "Equity"}, 
                     {"name": "Yahoo Inc", "ticker": "YHOO", "value": 50, "risk": 3.2, "quantity": 2, "type": "Equity"},
                     {"name": "Chesapeake", "ticker": "CHK", "value": 20, "risk": 4.3, "quantity": 1, "type": "Equity"},
@@ -17,13 +18,12 @@ var valueOfStocks = []
 
 
 for (var i =0; i<numOfStocks;i++) {
-    valueOfStocks[i] = arrayOfStocks[i].value * arrayOfStocks[i].quantity
-    totalValueOfStocks += valueOfStocks[i]
+    totalValueOfStocks += arrayOfStocks[i].mkt_value
 }
 
 for (var i =0; i<numOfStocks;i++) {   
     
-    proportionOfStocks[i] = valueOfStocks[i]/totalValueOfStocks
+    proportionOfStocks[i] = arrayOfStocks[i].mkt_value/totalValueOfStocks
 
     var newStock = { 
         value: proportionOfStocks[i],                
@@ -45,56 +45,63 @@ for (var i = 0; i < numOfStocks; i++) {
     cell2.innerHTML = (proportionOfStocks[i]*100).toFixed(2)+"%";
 }
 
-// Data for the portfolio risk donut chart
+// Data for the portfolio sector diversity donut chart
 
-var doughnutDataForRisk = []
-var totalRiskOfStocks = 0
-var proportionalRiskOfStocks = []
-
+var valueOfSectors = {}
+var doughnutDataForSectorDiversity = []
 
 for (var i =0; i<numOfStocks;i++) {
-    riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
-    totalRiskOfStocks += riskOfStock
+    
+    if (valueOfSectors.hasOwnProperty(arrayOfStocks[i].sector))
+        valueOfSectors[arrayOfStocks[i].sector] = valueOfSectors[arrayOfStocks[i].sector] + arrayOfStocks[i].mkt_value
+    else
+        valueOfSectors[arrayOfStocks[i].sector] = arrayOfStocks[i].mkt_value
 }
 
-for (var i =0; i<numOfStocks;i++) {   
+
+var namesOfSectors = Object.keys(valueOfSectors)
+var numOfSectors = namesOfSectors.length
+
+for (var i =0; i<numOfSectors;i++) {   
     
-    riskOfStock = arrayOfStocks[i].risk * arrayOfStocks[i].quantity
-    proportionalRiskOfStocks[i] = riskOfStock/totalRiskOfStocks         
+    valueOfSector = valueOfSectors[namesOfSectors[i]]
    
     var newStock = { 
-        value: proportionalRiskOfStocks[i],
+        value: valueOfSector/totalValueOfStocks,
         color: arrayOfColors[i]
     }
     
-    doughnutDataForRisk.push(newStock)
+    doughnutDataForSectorDiversity.push(newStock)
 }
 
-var table = document.getElementById("donut_risk")
 
-for (var i = 0; i < numOfStocks; i++) {
+var table = document.getElementById("donut_sector_diversity")
+
+for (var i = 0; i < numOfSectors; i++) {
+
+    valueOfSector = valueOfSectors[namesOfSectors[i]]
+
     var row = table.insertRow(i)
     var cell1 = row.insertCell(0)
     var cell2 = row.insertCell(1)
 
-    cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + arrayOfStocks[i].ticker + "</p>"
+    cell1.innerHTML = "<p><i class=\"fa fa-square \"" +i+"\"></i>" + namesOfSectors[i] + "</p>"
     cell1.style.color = arrayOfColors[i%arrayOfStocks.length]
-    cell2.innerHTML = (proportionalRiskOfStocks[i]*100).toFixed(2)+"%";
+    cell2.innerHTML = (valueOfSector/totalValueOfStocks*100).toFixed(2)+"%";
 }
 
 //Create both the charts
 var myDoughnut = new Chart(document.getElementById("canvas1").getContext("2d")).Doughnut(doughnutDataForDiversity);
-var myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForRisk);
+var myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForSectorDiversity);
 
 //Make Portfolio Value/Risk dynamic
 var value_div = document.getElementById("portfolio_value")
 value_div.innerHTML = "$" + totalValueOfStocks.toFixed(2)
 
 var risk_div = document.getElementById("portfolio_risk")
-risk_div.innerHTML = totalRiskOfStocks.toFixed(2)
+risk_div.innerHTML = "N/A"
 
-//Make Portfolio List dynamic
-stocks = user_portfolio.stocks;
+//Make Portfolio Table dynamic
 for (var i = 0; i < stocks.length; i++) {
     var stock = stocks[i];
     var $clone = $("table#portfolio").find('tr.hide.sample').clone(true).removeClass("hide")
