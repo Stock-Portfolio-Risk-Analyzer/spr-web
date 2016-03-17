@@ -6297,3 +6297,21 @@ ul.notifications {
     float: right;
     opacity: 1;
 }
+
+input, button, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    height: 50px;
+    width: 100%;
+}
+
+label {
+    font-size: 20px;
+    margin-top: 15px;
+}
+
+.fa-5x {
+     font-size: 6em; 
+     margin-top: 5px;
+}

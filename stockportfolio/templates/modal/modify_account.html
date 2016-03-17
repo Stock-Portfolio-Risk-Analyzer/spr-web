@@ -1,3 +1,5 @@
+{% load crispy_forms_tags %}
+
 <div class="modal fade" id="userAccountModal" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -8,21 +10,7 @@
         <h4 class="modal-title">Modify Account</h4>
       </div>
       <div class="modal-body">
-        <form action="/profile/" method="post">
-        {% csrf_token %}
-        <a href="https://en.gravatar.com/">
-        <img src="{{ gravatar }}" class="img-fluid img-circle center-block" title="gravatar" alt="gravatar">
-        </a>
-        <fieldset class="form-group">
-        <label for="userAccountName">Name</label>
-        <input type="text" class="form-control" name="accountName" value="{{ user.get_username }}">
-        </fieldset>
-        <fieldset class="form-group">
-        <label for="userAccountEmail">Email</label>
-        <input type="text" class="form-control" name="accountEmail" value="{{ user.email}}">
-        </fieldset>
-        <button type="submit" class="btn btn-primary">Update</button>
-        </form>
+            {% crispy form %}
       </div>
     </div>
   </div>

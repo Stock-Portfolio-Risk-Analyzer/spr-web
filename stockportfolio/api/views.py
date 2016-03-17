@@ -1,5 +1,5 @@
 from django.shortcuts import render, render_to_response, redirect
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from datautils import yahoo_finance as yf
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
@@ -8,6 +8,9 @@ from stockportfolio.api.models import Portfolio
 from registration.models import RegistrationManager
 import string
 import hashlib
+from stockportfolio.api.forms import UpdateProfile
+from django.core.urlresolvers import reverse
+
 
 def dashboard(request):
     if request.user.is_anonymous():
@@ -49,3 +52,23 @@ def user_profile(request, user_id):
         'user': user
     }
     return render_to_response('user/user_profile.html', context)
+
+
+def modify_account(request,username):
+    args = {}
+    user = User.objects.get(username = username)
+    if request.method == 'POST':
+        form = UpdateProfile(request.POST, instance=request.user)
+        print ("before validation")
+        if form.is_valid():
+            print ("Here ")
+            form.save()
+            return HttpResponseRedirect(reverse('dashboard'))
+        else:
+            print form.errors
+            print "not valid"
+
+    else:
+        form = UpdateProfile(instance = request.user)
+    args['form'] = form
+    return render(request, 'modal/modify_account.html', {"form": form})
