@@ -2,7 +2,12 @@ import Quandl as qd
 from collections import OrderedDict
 from datetime import datetime as dt
 
+<<<<<<< HEAD
+
+quandl_key="-v_zAsM8GfM8UNnAr6sZ"
+=======
 qd.get("NSE/OIL", authtoken="SyH7V4ywJGho77EC6W7C")  # initial call to Quandl. key is stored afterwards
+>>>>>>> b4fbc62b17d1c49e382abe00901053e73651418c
 
 
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
@@ -27,8 +32,14 @@ def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     # log.info("Loading symbol: {}".format(symbol))
 
     quandl_code = db_code + "/" + symbol
+<<<<<<< HEAD
+    symbol_data = qd.get(quandl_code, returns="pandas", 
+                         trim_start=start_date, trim_end=end_date,
+                         authtoken=quandl_key)
+=======
     symbol_data = qd.get(quandl_code, returns="pandas",
                          trim_start=start_date, trim_end=end_date)
+>>>>>>> b4fbc62b17d1c49e382abe00901053e73651418c
     return symbol_data
 
 
@@ -47,7 +58,8 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_cod
         for symbol in symbols:
             quandl_code = db_code + "/" + symbol
             symbol_data = qd.get(quandl_code, returns="pandas",
-                                 trim_start=start_date, trim_end=end_date)
+                                 trim_start=start_date, trim_end=end_date,
+                                 authtoken=quandl_key)
             data[symbol] = symbol_data
 
     return data
