@@ -1,3 +1,4 @@
+sudo: false
 language: python
 cache: pip
 python:
@@ -7,3 +8,7 @@ notifications:
 
 install: "pip install -r requirements.txt"
 script: nosetests
+branches:
+  only:
+    - master
+    - develop
