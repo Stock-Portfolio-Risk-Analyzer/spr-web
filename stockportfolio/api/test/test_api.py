@@ -2,6 +2,7 @@ from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from stockportfolio.api.models import Portfolio
+from django.core.exceptions import ObjectDoesNotExist
 from stockportfolio.api import api
 import json
 
@@ -16,18 +17,55 @@ class ApiTestCase(TestCase):
         self.portfolio_id = 1
         self.portfolio.save()
 
-    # def test_add_stock(self):
-    #     request = self.factory.get(
-    #         reverse('add_stock', kwargs={'portfolio_id': self.portfolio_id, 'stock': 'AAPL', 'quantity': 10})
-    #     )
-    #     print 'request:', request
-    #     response = api.add_stock(request, portfolio_id=self.portfolio_id)
-    #     self.assertEqual(response.status_code, 200)
-    #     received_content = json.loads(response.content)
-    #     print received_content
+    def test_add_stock(self):
 
-    # def test_remove_stock(self):
-    #     raise NotImplementedError()
+        url = "%s?stock=AAPL&quantity=10"
+        request = self.factory.get(
+            url % reverse('add_stock', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        response = api.add_stock(request, portfolio_id=self.portfolio_id)
+        self.assertEqual(response.status_code, 200)
+
+        request = self.factory.get(
+            reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        response = api.get_portfolio(request, portfolio_id=self.portfolio_id)
+        portfolio = json.loads(response.content)
+        aapl = portfolio['stocks'][0]
+        expected_aapl = {'sector': 'Consumer Goods', 'name': 'Apple Inc.', 'price': 105.93,
+                         'mkt_value': 1059.3, 'ticker': 'AAPL', 'quantity': 10}
+        expected_aapl.pop('price', None)
+        expected_aapl.pop('mkt_value', None)
+        aapl.pop('price', None)
+        aapl.pop('mkt_value', None)
+        for key in aapl.keys():
+            self.assertAlmostEqual(aapl[key], expected_aapl[key])
+
+    def test_remove_stock(self):
+
+        # add the stock
+        url = "%s?stock=AAPL&quantity=10"
+        request = self.factory.get(
+            url % reverse('add_stock', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        response = api.add_stock(request, portfolio_id=self.portfolio_id)
+        self.assertEqual(response.status_code, 200)
+
+        # remove the stock
+        url = '%s?stock=AAPL'
+        request = self.factory.get(
+            url % reverse('remove_stock', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        response = api.remove_stock(request, portfolio_id=self.portfolio_id)
+        self.assertEqual(response.status_code, 200)
+
+        # check the portfolio
+        request = self.factory.get(
+            reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        response = api.get_portfolio(request, portfolio_id=self.portfolio_id)
+        portfolio = json.loads(response.content)
+        self.assertEqual(len(portfolio['stocks']), 0)
 
     def test_create_portfolio(self):
         request = self.factory.get(
@@ -36,8 +74,37 @@ class ApiTestCase(TestCase):
         response = api.create_portfolio(request, user_id=self.user.id)
         self.assertEqual(response.status_code, 200)
 
+
+        # get the portfolio
+        request = self.factory.get(
+            reverse('get_portfolio_by_user', kwargs={'user_id': self.user.id})
+        )
+
+        response = api.get_portfolio_by_user(request, user_id=self.user.id)
+        self.assertEqual(response.status_code, 200)
+        portfolio = json.loads(response.content)
+        expected_content = json.loads('{"risk_history": [], "portfolio_id": 1, "sector_allocations": {}, '
+                              '"date_created": "2016-03-17 02:35:55.273000", "stocks": [], '
+                              '"portfolio_userid": 1}')
+        portfolio.pop('date_created', None)
+        expected_content.pop('date_created', None)
+        self.assertEqual(expected_content, portfolio)
+
     def test_delete_portfolio(self):
-        pass
+
+        # delete the portfolio
+        request = self.factory.get(
+            reverse('delete_portfolio', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        response = api.delete_portfolio(request, portfolio_id=self.portfolio_id)
+        self.assertEqual(response.status_code, 200)
+
+        # get the portfolio
+        request = self.factory.get(
+            reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        with self.assertRaises(Portfolio.DoesNotExist):
+            api.get_portfolio(request, portfolio_id=self.portfolio_id)
 
     def test_get_portfolio_by_user(self):
         request = self.factory.get(
@@ -55,7 +122,6 @@ class ApiTestCase(TestCase):
         self.assertEqual(expected_content, received_content)
 
     def test_get_portfolio(self):
-        # url(r'^portfolio/(?P<portfolio_id>\d+)$', api.get_portfolio, name="get_portfolio"),
         request = self.factory.get(
             reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
         )
