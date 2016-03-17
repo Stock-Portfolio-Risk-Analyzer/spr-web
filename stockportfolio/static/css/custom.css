@@ -6315,3 +6315,47 @@ label {
      font-size: 6em; 
      margin-top: 5px;
 }
+
+.form-well {
+    width: 50%; 
+    margin: auto; 
+    opacity: 0.9; 
+    position: absolute; 
+    left: 0; 
+    right: 0; 
+    top: 10%; 
+    border-radius: 10px; 
+    margin-right: auto; 
+    margin-left: auto; 
+    margin-top: 100px; 
+    margin-bottom: 100px; 
+    text-align: center;
+}
+
+input[type="text"]
+{
+    font-size:24px;
+}
+
+input[type="email"]
+{
+    font-size:24px;
+}
+
+input[type="password"]
+{
+    font-size:24px;
+}
+
+.bg-pic{
+    background-image: url("images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.logout{
+    font-size: 30px;
+}
+
+
