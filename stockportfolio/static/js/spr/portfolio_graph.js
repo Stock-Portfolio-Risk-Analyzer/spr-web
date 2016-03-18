@@ -31,8 +31,8 @@ $.ajax({
     success: function(data) {
 
         var jsonString = []
-        jsonString = globalTestJsonString["risk_history"]
-
+        //jsonString = globalTestJsonString["risk_history"]
+        jsonString = data["risk_history"]
         //jsonString = globalTestJsonString
         //console.log(jsonString["risk_history"].length)
         var risks = [jsonString.length]
@@ -63,8 +63,8 @@ $.ajax({
                 success: function(data) {
 
                     var jsonString = []
-                    //jsonString = data["risk_history"]
-                    jsonString = globalTestJsonString["risk_history"]
+                    jsonString = data["risk_history"]
+                    //jsonString = globalTestJsonString["risk_history"]
                     var risks = [jsonString.length]
                                 //console.log(jsonString)        
 
@@ -101,8 +101,8 @@ var yearFun = function (){
         success: function(data) {
 
             var jsonString = []
-            //jsonString = data["risk_history"]
-            jsonString = globalTestJsonString["risk_history"]
+            jsonString = data["risk_history"]
+            //jsonString = globalTestJsonString["risk_history"]
 
             var risks = [jsonString.length]
             for (i = 0; i<jsonString.length;i++){
@@ -135,8 +135,9 @@ var allFun = function (){
         success: function(data) {
 
             var jsonString = []
-            //jsonString = data["risk_history"]
-            jsonString = globalTestJsonString["risk_history"]
+
+            jsonString = data["risk_history"]
+            //jsonString = globalTestJsonString["risk_history"]
            
             var risks = [jsonString.length]
             for (i = 0; i<jsonString.length;i++){
@@ -203,8 +204,8 @@ var options = {
                 success: function(data) {
 
                     var jsonString = []
-                 //   jsonString = data["risk_history"]\
-                    jsonString = globalTestJsonString["risk_history"]
+                    jsonString = data["risk_history"]
+                 //   jsonString = globalTestJsonString["risk_history"]
                     var risks = [jsonString.length]
                     for (i = 0; i<jsonString.length;i++){
                         risk = jsonString[i]

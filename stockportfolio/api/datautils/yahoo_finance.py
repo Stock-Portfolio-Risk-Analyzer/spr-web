@@ -95,8 +95,8 @@ def get_company_name(symbol):
     df = pd.read_csv(fpath)
     company_info = df[df.Ticker == symbol]
     code = company_info['Name'].keys()[0]
-    company_sector = company_info.to_dict()['Name'][code]
-    return company_sector
+    company_name = company_info.to_dict()['Name'][code]
+    return company_name
 
 
 def get_company_sector(symbol):
@@ -108,9 +108,6 @@ def get_company_sector(symbol):
     fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
     df = pd.read_csv(fpath)
     company_info = df[df.Ticker == symbol]
-    try:
-        code = company_info['Name'].keys()[0]
-        company_sector = company_info.to_dict()['Sector'][code]
-    except KeyError:
-        return "No data for {}".format(symbol)
+    code = company_info['Name'].keys()[0]
+    company_sector = company_info.to_dict()['Sector'][code]
     return company_sector
