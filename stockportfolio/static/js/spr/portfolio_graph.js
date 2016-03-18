@@ -27,7 +27,7 @@ var globalTestJsonString =  {
                         }
 $.ajax({
     dataType: "json",
-    url: "/api/portfolio/3", 
+    url: "/api/user/" + currentUser_id + "/getportfolio", 
     success: function(data) {
 
         var jsonString = []
@@ -59,7 +59,7 @@ $.ajax({
             timeformat: "%a"
             $.ajax({
                 dataType: "json",
-                url: "/api/portfolio/3", 
+                url: "/api/user/" + currentUser_id + "/getportfolio", 
                 success: function(data) {
 
                     var jsonString = []
@@ -97,7 +97,7 @@ var yearFun = function (){
 
     $.ajax({
         dataType: "json",
-        url: "/api/portfolio/3", 
+        url: "/api/user/" + currentUser_id + "/getportfolio", 
         success: function(data) {
 
             var jsonString = []
@@ -131,7 +131,7 @@ var allFun = function (){
 
     $.ajax({
         dataType: "json",
-        url: "/api/portfolio/3",  
+        url: "/api/user/" + currentUser_id + "/getportfolio",  
         success: function(data) {
 
             var jsonString = []
@@ -200,7 +200,7 @@ var options = {
 
             $.ajax({
                 dataType: "json",
-                url: "/api/portfolio/3", 
+                url: "/api/user/" + currentUser_id + "/getportfolio", 
                 success: function(data) {
 
                     var jsonString = []
