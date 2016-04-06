@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from stockportfolio.api.models import Portfolio
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 from stockportfolio.api import api
 import json
 
@@ -23,12 +24,14 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             url % reverse('add_stock', kwargs={'portfolio_id': self.portfolio_id})
         )
+        request.user = self.user
         response = api.add_stock(request, portfolio_id=self.portfolio_id)
         self.assertEqual(response.status_code, 200)
 
         request = self.factory.get(
             reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
         )
+        request.user = self.user
         response = api.get_portfolio(request, portfolio_id=self.portfolio_id)
         portfolio = json.loads(response.content)
         aapl = portfolio['stocks'][0]
@@ -48,6 +51,7 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             url % reverse('add_stock', kwargs={'portfolio_id': self.portfolio_id})
         )
+        request.user = self.user
         response = api.add_stock(request, portfolio_id=self.portfolio_id)
         self.assertEqual(response.status_code, 200)
 
@@ -56,6 +60,7 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             url % reverse('remove_stock', kwargs={'portfolio_id': self.portfolio_id})
         )
+        request.user = self.user
         response = api.remove_stock(request, portfolio_id=self.portfolio_id)
         self.assertEqual(response.status_code, 200)
 
@@ -63,6 +68,7 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
         )
+        request.user = self.user
         response = api.get_portfolio(request, portfolio_id=self.portfolio_id)
         portfolio = json.loads(response.content)
         self.assertEqual(len(portfolio['stocks']), 0)
@@ -71,6 +77,7 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             reverse('create_portfolio', kwargs={'user_id': self.user.id})
         )
+        request.user = self.user
         response = api.create_portfolio(request, user_id=self.user.id)
         self.assertEqual(response.status_code, 200)
 
@@ -79,7 +86,7 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             reverse('get_portfolio_by_user', kwargs={'user_id': self.user.id})
         )
-
+        request.user = self.user
         response = api.get_portfolio_by_user(request, user_id=self.user.id)
         self.assertEqual(response.status_code, 200)
         portfolio = json.loads(response.content)
@@ -96,6 +103,7 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             reverse('delete_portfolio', kwargs={'portfolio_id': self.portfolio_id})
         )
+        request.user = self.user
         response = api.delete_portfolio(request, portfolio_id=self.portfolio_id)
         self.assertEqual(response.status_code, 200)
 
@@ -103,7 +111,8 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
         )
-        with self.assertRaises(Portfolio.DoesNotExist):
+        request.user = self.user
+        with self.assertRaises(Http404):
             api.get_portfolio(request, portfolio_id=self.portfolio_id)
 
     def test_get_portfolio_by_user(self):
@@ -125,6 +134,7 @@ class ApiTestCase(TestCase):
         request = self.factory.get(
             reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
         )
+        request.user = self.user
         request.portfolio = self.portfolio
         response = api.get_portfolio(request, portfolio_id=self.portfolio_id)
         self.assertEqual(response.status_code, 200)
