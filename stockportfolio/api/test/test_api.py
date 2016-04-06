@@ -2,7 +2,6 @@ from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from stockportfolio.api.models import Portfolio
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from stockportfolio.api import api
 import json
@@ -128,6 +127,19 @@ class ApiTestCase(TestCase):
         expected_content.pop('date_created', None)
         received_content = json.loads(response.content)
         received_content.pop('date_created', None)
+        self.assertEqual(expected_content, received_content)
+
+    def test_get_list_of_portfolios(self):
+        request = self.factory.get(
+            reverse('get_portfolio_list_by_user',
+                    kwargs={'user_id': self.user.id})
+        )
+        request.user = self.user
+        response = api.get_list_of_portfolios(request, self.user.id)
+        self.assertEqual(response.status_code, 200)
+        expected_content = json.loads('{"portfolio_list": [{"id": 1, '
+                                      '"name": null}]}')
+        received_content = json.loads(response.content)
         self.assertEqual(expected_content, received_content)
 
     def test_get_portfolio(self):

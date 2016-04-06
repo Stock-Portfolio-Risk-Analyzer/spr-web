@@ -103,7 +103,6 @@ def get_list_of_portfolios(request, user_id):
     return HttpResponse(content=json.dumps({"portfolio_list" : p_list}), status=200, content_type='application/json')
 
 
-
 def get_portfolio(request, portfolio_id):
     """
 
