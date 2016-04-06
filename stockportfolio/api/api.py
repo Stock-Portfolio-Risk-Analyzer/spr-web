@@ -95,7 +95,7 @@ def get_list_of_portfolios(request, user_id):
     portfolios = user.portfolio_set.all()
     p_list = []
     for p in portfolios:
-        p_basic_info = {"id": p.id, "name": p.portfolio_name}
+        p_basic_info = {"id": p.pk, "name": p.portfolio_name}
         p_list.append(p_basic_info)
     return HttpResponse(content=json.dumps({"portfolio_list" : p_list}), status=200, content_type='application/json')
 

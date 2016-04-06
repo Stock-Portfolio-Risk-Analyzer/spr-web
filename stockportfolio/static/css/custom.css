@@ -2050,6 +2050,10 @@ h4.graph_title {
     margin-right: 10px;
 }
 
+#sidebar-menu {
+    margin-top: 30px;
+}
+
 #sidebar-menu .fa {
     width: 26px;
     opacity: .99;
