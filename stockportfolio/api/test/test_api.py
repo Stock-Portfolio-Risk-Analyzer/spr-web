@@ -1,6 +1,6 @@
 from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from stockportfolio.api.models import Portfolio
 from django.http import Http404
 from stockportfolio.api import api
@@ -96,8 +96,7 @@ class ApiTestCase(TestCase):
         expected_content.pop('date_created', None)
         self.assertEqual(expected_content, portfolio)
 
-    def test_delete_portfolio(self):
-
+    def test_delete_portfolio_authorized_user(self):
         # delete the portfolio
         request = self.factory.get(
             reverse('delete_portfolio', kwargs={'portfolio_id': self.portfolio_id})
@@ -114,7 +113,24 @@ class ApiTestCase(TestCase):
         with self.assertRaises(Http404):
             api.get_portfolio(request, portfolio_id=self.portfolio_id)
 
-    def test_get_portfolio_by_user(self):
+    def test_delete_portfolio_unauthorized_user(self):
+        # delete the portfolio
+        request = self.factory.get(
+            reverse('delete_portfolio', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        request.user = AnonymousUser()
+        response = api.delete_portfolio(request, portfolio_id=self.portfolio_id)
+        self.assertEqual(response.status_code, 403)
+
+        # get the portfolio
+        request = self.factory.get(
+            reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        request.user = AnonymousUser()
+        response = api.get_portfolio(request, portfolio_id=self.portfolio_id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_portfolio_by_user_authorized_user(self):
         request = self.factory.get(
             reverse('get_portfolio_by_user', kwargs={'user_id': self.user.id})
         )
@@ -129,6 +145,22 @@ class ApiTestCase(TestCase):
         received_content.pop('date_created', None)
         self.assertEqual(expected_content, received_content)
 
+    def test_get_portfolio_by_user_unauthorized_user(self):
+        request = self.factory.get(
+            reverse('get_portfolio_by_user', kwargs={'user_id': self.user.id})
+        )
+        request.user = AnonymousUser()
+        response = api.get_portfolio_by_user(request, self.user.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_portfolio_by_user_non_existent_user(self):
+        request = self.factory.get(
+            reverse('get_portfolio_by_user', kwargs={'user_id': 100})
+        )
+        request.user = AnonymousUser()
+        with self.assertRaises(Http404):
+            api.get_portfolio_by_user(request, 100)
+
     def test_get_list_of_portfolios(self):
         request = self.factory.get(
             reverse('get_portfolio_list_by_user',
@@ -142,7 +174,16 @@ class ApiTestCase(TestCase):
         received_content = json.loads(response.content)
         self.assertEqual(expected_content, received_content)
 
-    def test_get_portfolio(self):
+    def test_get_list_of_portfolios_non_existent_user(self):
+        request = self.factory.get(
+            reverse('get_portfolio_list_by_user',
+                    kwargs={'user_id': 100})
+        )
+        request.user = self.user
+        with self.assertRaises(Http404):
+            api.get_list_of_portfolios(request, 100)
+
+    def test_get_portfolio_authorized_user(self):
         request = self.factory.get(
             reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
         )
@@ -157,3 +198,20 @@ class ApiTestCase(TestCase):
         received_content = json.loads(response.content)
         received_content.pop('date_created', None)
         self.assertEqual(expected_content, received_content)
+
+    def test_get_portfolio_unauthorized_user(self):
+        request = self.factory.get(
+            reverse('get_portfolio', kwargs={'portfolio_id': self.portfolio_id})
+        )
+        request.user = AnonymousUser()
+        request.portfolio = self.portfolio
+        response = api.get_portfolio(request, portfolio_id=self.portfolio_id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_portfolio_non_existent_portfolio(self):
+        request = self.factory.get(
+            reverse('get_portfolio', kwargs={'portfolio_id': 100})
+        )
+        request.user = self.user
+        with self.assertRaises(Http404):
+            api.get_portfolio(request, portfolio_id=100)
