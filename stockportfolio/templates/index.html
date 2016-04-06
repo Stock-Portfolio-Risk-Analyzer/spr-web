@@ -18,17 +18,19 @@
 {% include "modal/modify_portfolio.html" %}
 <script>
     {% if user %}
-        var currentUser_id = {{user.pk}};
-        var user_portfolio = null;
-        url_getportfolio = "/api/user/" + currentUser_id + "/getportfolio";
-        $.ajax({
-            url: url_getportfolio,
-            success: function (data) {
-                user_portfolio = data;
-            },
-            async:false
-        });
-
+        function getDefaultPortfolio() {
+            currentUser_id = {{user.pk}};
+            user_portfolio = null;
+            url_getportfolio = "/api/user/" + currentUser_id + "/getportfolio";
+            $.ajax({
+                url: url_getportfolio,
+                success: function (data) {
+                    user_portfolio = data;
+                },
+                async: false
+            });
+        }
+        getDefaultPortfolio();
     {% endif %}
 </script>
 
