@@ -40,7 +40,6 @@ def remove_stock(request, portfolio_id):
             return HttpResponse(status=200)
     return HttpResponse(status=400)
 
-
 def create_portfolio(request, user_id):
     """
     Creates a new portfolio model.
@@ -141,6 +140,35 @@ def modify_portfolio_form_post(request):
                                         status=400,
                                         content_type="application/json charset=utf-8")
 
+def stock_rec(request, portfolio_id):
+    """
+    Returns stock recommendations in several categories based on a specific
+    portfolio
+    :param request
+    :param portfolio_id
+    """
+    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
+    p_risk = portfolio.risk_value
+    # may need to adjust this to account for that fact that relative risk and
+    # and stock beta are not directly comparable
+    less_risk    = Stock.objects.exclude(stock_beta__lt=p_risk)
+    more_risk    = Stock.objects.exclude(stock_beta__gt=p_risk)
+    diverse      = _diversify(portfolio) 
+    # stock w/ in a 20% range of current portfolio riskiness
+    stable_stock = Stock.objects.exclude(
+                        stock_beta__gt=1.1 * p_risk
+                   ).exclude(
+                           stock_beta__lt=0.9 * p_risk
+                   )
+
+def _diversify(portfolio):
+    """
+    :param portfolio
+    :return stocks from various sectors not present in portfolio
+    """
+    stocks = portfolio.stocks
+
+
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
     stock_name = get_company_name(stock_ticker)
@@ -219,3 +247,5 @@ def _calculate_sector_allocations(portfolio):
         sector_allocations_pct[sector] = float(_mkt_value/total_mkt_value)
 
     return sector_allocations_pct
+
+

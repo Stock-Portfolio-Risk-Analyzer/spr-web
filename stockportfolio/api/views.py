@@ -37,8 +37,6 @@ def profile(request):
     if request.user.email != email:
         request.user.email = email
         request.user.save()
-        # r = RegistrationManager()
-        # r.resend_activation_mail(request.user.email,"", request)
     return redirect('dashboard')
 
 
