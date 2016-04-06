@@ -151,22 +151,33 @@ def stock_rec(request, portfolio_id):
     p_risk = portfolio.risk_value
     # may need to adjust this to account for that fact that relative risk and
     # and stock beta are not directly comparable
-    less_risk    = Stock.objects.exclude(stock_beta__lt=p_risk)
-    more_risk    = Stock.objects.exclude(stock_beta__gt=p_risk)
-    diverse      = _diversify(portfolio) 
+    less_risk = Stock.objects.exclude(stock_beta__lt=p_risk)
+    more_risk = Stock.objects.exclude(stock_beta__gt=p_risk)
+    diverse = _diversify_by_sector(portfolio) 
     # stock w/ in a 20% range of current portfolio riskiness
-    stable_stock = Stock.objects.exclude(
+    stable = Stock.objects.exclude(
                         stock_beta__gt=1.1 * p_risk
                    ).exclude(
                            stock_beta__lt=0.9 * p_risk
                    )
+    rec_dict = {'less_risk':less_risk,
+                'more_risk':more_risk,
+                'diverse': diverse,
+                'stable': stable }
+    return HttpResponse(content=json.dumps(rect_dict), status=200, 
+                        content_type='application/json')
 
-def _diversify(portfolio):
+def _diversify_by_sector(portfolio):
     """
     :param portfolio
     :return stocks from various sectors not present in portfolio
     """
-    stocks = portfolio.stocks
+    sectors = list(portfolio.stocks.values_list('stock_sector').distinct())
+    q = Stock.objects.all()
+    for sector in sectors:
+        q.exclude(stock_sector=sector)
+    return list(q) 
+    
 
 
 

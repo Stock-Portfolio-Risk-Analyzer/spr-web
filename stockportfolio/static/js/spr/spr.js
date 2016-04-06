@@ -1,6 +1,12 @@
 window.onload = sprInit()
+
 function sprInit() {
-    var url = "http://" + window.location.host + "/api/";
+    fetchStock()
+    loadStockRec() 
+}
+
+function fetchStock() {
+    var url = location.protocol +"//"+ window.location.host + "/api/";
     var stocks = document.body.getElementsByTagName('stock-price');
     var requests={};
     for (var idx = 0; idx < stocks.length; idx++) {
@@ -15,4 +21,16 @@ function sprInit() {
             }
         }
     }
+}
+
+function loadStockRec(portfolioId) {
+    // somehow get current portfolio
+    var url = "/api/" + portfolioId + "/stock_rec";
+    request = new XMLHttpRequest();
+    request.open("POST", url, true);
+    request.send();
+    request.onreadystatechange = updateRecs 
+}
+
+function updateRecs() {
 }

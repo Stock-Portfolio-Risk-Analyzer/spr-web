@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^modify_account/(?P<username>\w+)/$', views.modify_account, name='modify_account'),
     url(r'^portfolio/modify$', api.modify_portfolio_form_post, name="modify_portfolio_form_post"),
     url(r'^utils/calculate-rri/$', views.calculate_all_rris, name='utils_calculate_rri'),
+    url(r'^portfolio/(?P<portfolio_id>\d+)/stock_rec$', api.stock_rec, name="stock_rec")
 ]
