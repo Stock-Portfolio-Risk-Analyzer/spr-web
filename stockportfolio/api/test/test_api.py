@@ -85,7 +85,7 @@ class ApiTestCase(TestCase):
         portfolio = json.loads(response.content)
         expected_content = json.loads('{"risk_history": [], "portfolio_id": 1, "sector_allocations": {}, '
                               '"date_created": "2016-03-17 02:35:55.273000", "stocks": [], '
-                              '"portfolio_userid": 1}')
+                              '"portfolio_userid": 1, "name": null}')
         portfolio.pop('date_created', None)
         expected_content.pop('date_created', None)
         self.assertEqual(expected_content, portfolio)
@@ -115,7 +115,7 @@ class ApiTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         expected_content = json.loads('{"risk_history": [], "portfolio_id": 1, "sector_allocations": {}, '
                                       '"date_created": "2016-03-17 02:35:55.273000", "stocks": [], '
-                                      '"portfolio_userid": 1}')
+                                      '"portfolio_userid": 1, "name": null}')
         expected_content.pop('date_created', None)
         received_content = json.loads(response.content)
         received_content.pop('date_created', None)
@@ -130,7 +130,7 @@ class ApiTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         expected_content = json.loads('{"risk_history": [], "portfolio_id": 1, "sector_allocations": {}, '
                                       '"date_created": "2016-03-17 02:35:55.273000", "stocks": [], '
-                                      '"portfolio_userid": 1}')
+                                      '"portfolio_userid": 1, "name": null}')
         expected_content.pop('date_created', None)
         received_content = json.loads(response.content)
         received_content.pop('date_created', None)
