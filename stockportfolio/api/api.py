@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
-from stockportfolio.api.models import Portfolio, Stock
+from stockportfolio.api.models import Portfolio, Stock, UserSettings
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 
 def add_stock(request, portfolio_id):
@@ -78,7 +78,11 @@ def get_portfolio_by_user(request, user_id):
     user = User.objects.get(pk=user_id)
     if user is None:
         raise Http404
-    portfolio = user.portfolio_set.all().first()
+    user_settings = UserSettings.objects.get_or_create(user=user)
+    if user_settings.default_portfolio:
+        portfolio = user_settings.default_portfolio
+    else:
+        portfolio = user.portfolio_set.all().first()
     if portfolio is None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
     return get_portfolio(request, portfolio.pk)

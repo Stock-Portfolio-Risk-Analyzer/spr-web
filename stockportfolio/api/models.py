@@ -41,3 +41,12 @@ class Portfolio(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.portfolio_id, self.portfolio_risk)
+
+
+class UserSettings(models.Model):
+    """
+
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    default_portfolio = models.ForeignKey(
+        Portfolio, on_delete=models.SET_NULL, null=True)
