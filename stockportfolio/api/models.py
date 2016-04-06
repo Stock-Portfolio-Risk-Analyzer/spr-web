@@ -35,6 +35,7 @@ class Portfolio(models.Model):
 
     """
     portfolio_id = models.AutoField(primary_key=True)
+    portfolio_name = models.CharField(max_length=50, null=True, blank=True)
     portfolio_stocks = models.ManyToManyField(Stock)
     portfolio_user = models.ForeignKey(User)
     portfolio_risk = models.ManyToManyField(Risk)

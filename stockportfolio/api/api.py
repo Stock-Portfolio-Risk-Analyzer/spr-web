@@ -78,7 +78,7 @@ def get_portfolio_by_user(request, user_id):
     user = User.objects.get(pk=user_id)
     if user is None:
         raise Http404
-    user_settings = UserSettings.objects.get_or_create(user=user)
+    user_settings = UserSettings.objects.get_or_create(user=user)[0]
     if user_settings.default_portfolio:
         portfolio = user_settings.default_portfolio
     else:
@@ -86,6 +86,19 @@ def get_portfolio_by_user(request, user_id):
     if portfolio is None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
     return get_portfolio(request, portfolio.pk)
+
+def get_list_of_portfolios(request, user_id):
+    user = User.objects.get(pk=user_id)
+    if user is None:
+        raise Http404
+    user_settings = UserSettings.objects.get_or_create(user=user)[0]
+    portfolios = user.portfolio_set.all()
+    p_list = []
+    for p in portfolios:
+        p_basic_info = {"id": p.id, "name": p.portfolio_name}
+        p_list.append(p_basic_info)
+    return HttpResponse(content=json.dumps({"portfolio_list" : p_list}), status=200, content_type='application/json')
+
 
 
 def get_portfolio(request, portfolio_id):
@@ -101,6 +114,7 @@ def get_portfolio(request, portfolio_id):
         raise Http404
     else:
         portfolio_dict = {'portfolio_id': portfolio.portfolio_id,
+                          'name': portfolio.portfolio_name,
                           'portfolio_userid': portfolio.portfolio_user.pk,
                           'stocks': [],
                           'risk_history': [],
