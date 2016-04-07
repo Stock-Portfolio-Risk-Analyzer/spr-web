@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
-from stockportfolio.api.models import Portfolio, Stock, UserSettings
+from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
 
@@ -110,6 +110,8 @@ def get_portfolio(request, portfolio_id):
     """
     assert(request is not None)
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+    rank = PortfolioRank.objects.filter(
+        portfolio=portfolio).order_by('date').first()
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     else:
@@ -118,7 +120,8 @@ def get_portfolio(request, portfolio_id):
                           'portfolio_userid': portfolio.portfolio_user.pk,
                           'stocks': [],
                           'risk_history': [],
-                          'date_created': '{}'.format(datetime.now())}
+                          'date_created': '{}'.format(datetime.now()),
+                          'rank': rank}
 
         for stock in portfolio.portfolio_stocks.all():
             portfolio_dict['stocks'].append(_calculate_stock_info(stock))
