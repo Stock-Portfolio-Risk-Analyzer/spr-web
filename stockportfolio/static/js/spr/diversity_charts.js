@@ -105,7 +105,7 @@ function loadDiversityGraphs() {
     value_div.innerHTML = "$" + totalValueOfStocks.toFixed(2)
 
     var risk_div = document.getElementById("portfolio_risk")
-    risk_div.innerHTML = "" + user_portfolio.risk_history
+    risk_div.innerHTML = "" + user_portfolio.risk_history[0].risk_value.toFixed(2)
 
 //Make Portfolio Table dynamic
     //remove all elements on reload, except hidden sample row.
@@ -126,7 +126,7 @@ function loadDiversityGraphs() {
         $("table#portfolio").append($clone)
     }
     //Load Rank
-    $("#risk_rank").innerHTML = "" + user_portfolio.rank
+    $("#risk_rank").html(user_portfolio.rank)
 }
 
 
