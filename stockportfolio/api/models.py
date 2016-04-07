@@ -51,3 +51,15 @@ class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     default_portfolio = models.ForeignKey(
         Portfolio, on_delete=models.SET_NULL, null=True)
+
+
+class PortfolioRank(models.Model):
+    """
+
+    """
+    class Meta:
+        unique_together = (("date", "portfolio"), )
+
+    date = models.DateTimeField(auto_now=True, db_index=True)
+    portfolio = models.ForeignKey(Portfolio)
+    value = models.IntegerField()
