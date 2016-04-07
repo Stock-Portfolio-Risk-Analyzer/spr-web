@@ -29,7 +29,7 @@ function loadAllGraphs() {
             risk = jsonString[i]
             risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
         }
-        console.log(risks)
+        $("#placeholder3xx3").empty();
         $.plot($("#placeholder3xx3"), [{
             label: "Beta",
             data: risks,
@@ -55,7 +55,7 @@ function loadAllGraphs() {
             risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
         }
 
-
+        $("#placeholder3xx3").empty();
         $.plot($("#placeholder3xx3"), [{
             label: "Beta",
             data: risks,
@@ -79,6 +79,8 @@ function loadAllGraphs() {
         }
         options["xaxis"]["min"] = (new Date(jsonString[0]["risk_date"])).getTime()
         options["xaxis"]["max"] = (new Date()).getTime()
+
+        $("#placeholder3xx3").empty();
         $.plot($("#placeholder3xx3"), [{
             label: "Beta",
             data: risks,
@@ -136,7 +138,7 @@ function loadAllGraphs() {
         risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
     }
 
-
+    $("#placeholder3xx3").empty();
     $.plot("#placeholder3xx3", [{
         label: "Beta",
         data: risks,

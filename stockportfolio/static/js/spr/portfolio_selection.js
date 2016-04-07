@@ -8,7 +8,7 @@ function repopulateListOfPortfolios() {
     }
     $(".portfolio-list").html(html);
     $(".portfolio-list li").click(function(){
-        console.log($(this).data("portfolioid"))
+        refreshToPortfolio($(this).data("portfolioid"));
     });
 
 }

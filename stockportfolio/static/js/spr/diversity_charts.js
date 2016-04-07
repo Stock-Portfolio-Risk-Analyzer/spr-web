@@ -1,15 +1,10 @@
-
 // Data for the portfolio diversity donut chart
+myDoughnut = null
+myDoughnut2 = null
 function loadDiversityGraphs() {
+    stocks = user_portfolio.stocks;
     var doughnutDataForDiversity = []
     var arrayOfStocks = user_portfolio.stocks
-    var xkcd = [
-        {"name": "Apple Inc", "ticker": "AAPL", "value": 100, "risk": 2.1, "quantity": 2, "type": "Equity"},
-        {"name": "Yahoo Inc", "ticker": "YHOO", "value": 50, "risk": 3.2, "quantity": 2, "type": "Equity"},
-        {"name": "Chesapeake", "ticker": "CHK", "value": 20, "risk": 4.3, "quantity": 1, "type": "Equity"},
-        {"name": "MasterCard", "ticker": "MA", "value": 40, "risk": 5.4, "quantity": 3, "type": "Equity"}
-    ]
-
     var arrayOfColors = ["#26B99A", "#3498DB", "#BDC3C7", "#455C73", "#9B59B6"];
     var numOfStocks = arrayOfStocks.length
     var totalValueOfStocks = 0
@@ -34,6 +29,7 @@ function loadDiversityGraphs() {
     }
 
     var table = document.getElementById("donut_diversity")
+    $("#donut_diversity tr").remove()
 
     for (var i = 0; i < numOfStocks; i++) {
         var row = table.insertRow(i)
@@ -76,7 +72,7 @@ function loadDiversityGraphs() {
 
 
     var table = document.getElementById("donut_sector_diversity")
-
+    $("#donut_sector_diversity tr").remove()
     for (var i = 0; i < numOfSectors; i++) {
 
         valueOfSector = valueOfSectors[namesOfSectors[i]]
@@ -91,17 +87,29 @@ function loadDiversityGraphs() {
     }
 
 //Create both the charts
-    var myDoughnut = new Chart(document.getElementById("canvas1").getContext("2d")).Doughnut(doughnutDataForDiversity);
-    var myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForSectorDiversity);
+    if(myDoughnut != null){
+        myDoughnut.clear();
+    }
+    if(myDoughnut2 != null){
+        myDoughnut2.clear();
+    }
+    myDoughnut = new Chart(document.getElementById("canvas1").getContext("2d")).Doughnut(doughnutDataForDiversity)
+    myDoughnut2 = new Chart(document.getElementById("canvas2").getContext("2d")).Doughnut(doughnutDataForSectorDiversity)
 
 //Make Portfolio Value/Risk dynamic
     var value_div = document.getElementById("portfolio_value")
     value_div.innerHTML = "$" + totalValueOfStocks.toFixed(2)
 
     var risk_div = document.getElementById("portfolio_risk")
-    risk_div.innerHTML = "N/A"
+    risk_div.innerHTML = "" + user_portfolio.risk_history
 
 //Make Portfolio Table dynamic
+    //remove all elements on reload, except hidden sample row.
+    var $clone = $("table#portfolio").find('tr.hide.sample').remove().clone();
+    console.log($clone)
+    $("table#portfolio tbody tr").remove()
+    $("table#portfolio").append($clone)
+
     for (var i = 0; i < stocks.length; i++) {
         var stock = stocks[i];
         var $clone = $("table#portfolio").find('tr.hide.sample').clone(true).removeClass("hide")

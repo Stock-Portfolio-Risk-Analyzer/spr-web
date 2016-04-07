@@ -134,7 +134,7 @@ def get_portfolio(request, portfolio_id):
         return HttpResponse(content=json.dumps(portfolio_dict), status=200, content_type='application/json')
 
 
-def modify_portfolio_form_post(request):
+def modify_portfolio_form_post(request, portfolio_id):
     if request.method == 'POST':
         data = request.POST.get("data", None)
         data = json.loads(data)
