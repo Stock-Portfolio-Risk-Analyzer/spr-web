@@ -25,5 +25,6 @@ function refreshToPortfolio(portfolioId) {
         loadDiversityGraphs();
         loadAllGraphs();
         repopulateListOfPortfolios(portfolioId);
+        populate_table();
 }
 getDefaultPortfolio();

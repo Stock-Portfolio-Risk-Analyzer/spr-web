@@ -58,7 +58,7 @@ def create_portfolio(request, user_id):
     if user is not None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
         portfolio.save()
-        return HttpResponse(status=200)
+        return HttpResponse(json.dumps({"id" : portfolio.pk}), status=200)
     else:
         raise Http404
 
@@ -140,11 +140,11 @@ def modify_portfolio_form_post(request, portfolio_id):
         data = json.loads(data)
         invalid_stocks = _verify_stock_ticker_validity(data["symbols"], data["quantities"])
         if data is not None and len(invalid_stocks) == 0:
+            user_portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
             for i in range(len(data["symbols"])):
                 stock = data["symbols"][str(i)]
                 quantity = int(data["quantities"][str(i)])
                 user_id = request.user.id
-                user_portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
                 if user_portfolio.portfolio_user.pk is not request.user.pk:
                     return HttpResponse(status=403)
                 user_has_stock = user_portfolio.portfolio_stocks.filter(stock_ticker=stock).exists()

@@ -125,7 +125,9 @@ function loadDiversityGraphs() {
         $clone.find("td.market_value").text(stock.mkt_value)
         $("table#portfolio").append($clone)
     }
-
+    //Load Rank
+    $("#risk_rank").innerHTML = "" + user_portfolio.rank
 }
+
 
 loadDiversityGraphs();
