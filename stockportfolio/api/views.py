@@ -5,7 +5,7 @@ from django.template.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from stockportfolio.api.models import Portfolio, Risk
-from stockportfolio.api.utils import update_rri_for_all_portfolios
+from stockportfolio.api.utils import update_rri_for_all_portfolios, update_rank_for_all_portfolios
 from registration.models import RegistrationManager
 import string
 import hashlib
@@ -57,6 +57,7 @@ def user_profile(request, user_id):
 
 def calculate_all_rris(request):
     update_rri_for_all_portfolios()
+    update_rank_for_all_portfolios()
     return HttpResponse(status=200)
 
 
