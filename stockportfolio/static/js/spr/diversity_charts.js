@@ -87,6 +87,10 @@ function loadDiversityGraphs() {
     }
 
 //Create both the charts
+    $("#canvas1").remove();
+    $("#canvas2").remove();
+    $("#canvas1-container").append('<canvas id="canvas1" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>');
+    $("#canvas2-container").append('<canvas id="canvas2" height="140" width="140" style="margin: 15px 10px 10px 0"></canvas>');
     if(myDoughnut != null){
         myDoughnut.clear();
     }
