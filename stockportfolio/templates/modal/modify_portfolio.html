@@ -11,6 +11,7 @@
                     <strong>Oh snap!</strong> <span id="text"></span>
                     </div>
                 <form id="modify-portfolio-form" action="" method="post">
+                    <input form="modify-portfolio-form" required type="text" id="pname" name="pname" placeholder="Enter Portfolio Name."/>
                     <table id="portfolio-table" class="table table-striped responsive-utilities jambo_table">
                         <thead>
                         <tr class="headings">
@@ -19,9 +20,10 @@
                             <th></th>
                         </tr>
                         </thead>
+                        <tbody>
                         <tr class="even pointer hide clone">
                             <td id="inputTd">
-                                <input form="modify-portfolio-form" required type="text" id="symbol"
+                                      <input form="modify-portfolio-form" required type="text" id="symbol"
                                        placeholder="Enter symbol here" name="symbol"/>
                             </td>
                             <td id="quantityTd">
@@ -32,6 +34,8 @@
                                                                                        class="fa fa-2x fa-close"></i></a>
                             </td>
                         </tr>
+                        </tbody>
+
                     </table>
                     <input type="hidden" id="stock-modify-count" name="stock_count" value="0">
                     <input type="hidden" id="csrf-token" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

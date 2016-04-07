@@ -152,6 +152,9 @@ def modify_portfolio_form_post(request, portfolio_id):
                         user_portfolio.portfolio_stocks.filter(stock_ticker=stock).update(stock_quantity=quantity)
                 elif quantity > 0:
                     _add_stock_helper(user_portfolio, quantity, stock)
+            if data["name"]:
+                user_portfolio.portfolio_name = data["name"]
+                user_portfolio.save()
             return HttpResponse(json.dumps({"success" : "true"}))
         err_message = ["The following stock symbols are invalid:"]
         err_message.extend(invalid_stocks)
