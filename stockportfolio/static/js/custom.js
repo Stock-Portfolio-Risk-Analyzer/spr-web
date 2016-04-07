@@ -49,14 +49,13 @@ $(function () {
 });
 
 /* Sidebar Menu active class */
-/* TODO: Reimplement this functionality to ignore links with #section */
-//$(function () {
-//    var url = window.location;
-//    $('#sidebar-menu a[href="' + url + '"]').parent('li').addClass('current-page');
-//    $('#sidebar-menu a').filter(function () {
-//        return this.href == url;
-//    }).parent('li').addClass('current-page').parent('ul').slideDown().parent().addClass('active');
-//});
+$(function () {
+    var url = window.location;
+    $('#sidebar-menu a[href="' + url + '"]').parent('li');
+    $('#sidebar-menu a').filter(function () {
+        return this.href == url;
+    }).parent('li').addClass('current-page').parent('ul').slideDown().parent().addClass('active');
+});
 
 /** ******  /left menu  *********************** **/
 /** ******  right_col height flexible  *********************** **/
