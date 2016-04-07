@@ -25,7 +25,10 @@ def dashboard(request):
 
 def landing(request):
     """Renders the landing page"""
-    return render_to_response('landing.html')
+    if request.user.is_anonymous():
+        return render_to_response('landing.html')
+    else:
+        return redirect("/dashboard/")
 
 
 def profile(request):
