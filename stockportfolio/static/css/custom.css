@@ -1276,7 +1276,7 @@ table.tile_info td i {
 }
 
 table.tile_info td:first-child {
-    width: 83%;
+    width: 63%;
 }
 
 td span {
