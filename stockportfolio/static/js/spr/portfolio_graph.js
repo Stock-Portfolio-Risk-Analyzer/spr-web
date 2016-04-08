@@ -151,6 +151,12 @@ function loadAllGraphs() {
         }
     }], options);
 
+    return [weekFun, yearFun, allFun];
+
 }
 
-loadAllGraphs();
+// Need to get these functions back out as global variables
+var graphingVars = loadAllGraphs();
+var weekFun = graphingVars[0],
+    yearFun = graphingVars[1],
+    allFun = graphingVars[2];
