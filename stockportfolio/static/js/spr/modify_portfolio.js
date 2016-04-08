@@ -28,7 +28,7 @@ function clear_table() {
 
 $("#add-row").click(function () {
     var currentCount = parseInt($("#stock-modify-count").val())
-    var $clone = $("#portfolio-table").find('tr.clone').clone(true).removeClass("hide").removeClass('clone')
+    var $clone = $("#portfolio-table").find('tr.clone').clone(true).removeClass("hide").removeClass('clone').addClass("perishable")
     $clone.find("input#symbol").attr("name", "symbol_" + currentCount)
     $clone.find("input#quantity").attr("name", "quantity_" + currentCount)
     $("#portfolio-table").append($clone)
