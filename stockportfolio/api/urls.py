@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^portfolio/create/(?P<user_id>\w+)$', api.create_portfolio, name="create_portfolio"),
     url(r'^portfolio/(?P<portfolio_id>\d+)/delete$', api.delete_portfolio, name="delete_portfolio"),
     url(r'^portfolio/(?P<portfolio_id>\d+)$', api.get_portfolio, name="get_portfolio"),
-    url(r'^modify_account/(?P<username>\w+)/$', views.modify_account, name='modify_account'),
     url(r'^portfolio/(?P<portfolio_id>\d+)/modify$', api.modify_portfolio_form_post, name="modify_portfolio_form_post"),
     url(r'^utils/calculate-rri/$', views.calculate_all_rris, name='utils_calculate_rri'),
 ]
