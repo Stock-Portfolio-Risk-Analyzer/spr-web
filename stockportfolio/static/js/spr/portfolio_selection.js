@@ -33,13 +33,16 @@ function getListOfPortfolios(){
 
 $("#add-portfolio").click(function(){
     var url_portfolio_list = "/api/portfolio/create/" + currentUser_id
-        $.ajax({
+    var portfolio_id
+    $.ajax({
             url: url_portfolio_list,
             success: function (data) {
                 portfolio_id = data.id;
             },
+            dataType: "json",
             async:false
         });
-     refreshToPortfolio(portfolio_id);
+    refreshToPortfolio(portfolio_id);
+    $("#modifyPortfolio").modal("show")
 })
 repopulateListOfPortfolios(user_portfolio.portfolio_id);
