@@ -85,6 +85,7 @@ $("#save-button").click(function(e) {
         dataType: "json",
         success: function(results){
             refreshToPortfolio(user_portfolio.portfolio_id)
+            $('#modifyPortfolio').modal('hide');
         },
         error: function(data) {
             $("#modify-error #text").text(data.responseJSON.message)
@@ -94,4 +95,11 @@ $("#save-button").click(function(e) {
     e.preventDefault();
 });
 
-populate_table();
+$('#modifyPortfolio').on('hidden.bs.modal', function() {
+    clear_table();
+    $("#modify-error").hide()
+});
+
+$('#modifyPortfolio').on('show.bs.modal', function() {
+    populate_table();
+});
