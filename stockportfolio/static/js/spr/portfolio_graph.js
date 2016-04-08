@@ -1,3 +1,4 @@
+var weekFun, yearFun, allFun;
 function loadAllGraphs() {
     var jsonString = []
     jsonString = user_portfolio["risk_history"]
@@ -12,7 +13,7 @@ function loadAllGraphs() {
     var dayBefore = new Date()
     dayBefore.setDate(dayBefore.getDate() - 1)
 
-    var weekFun = function () {
+     weekFun = function () {
         options["xaxis"]["minTickSize"] = [1, "day"]
         var currentTime = new Date()
         var oneWeekAgo = new Date();
@@ -41,7 +42,7 @@ function loadAllGraphs() {
             }
         }], options);
     }
-    var yearFun = function () {
+    yearFun = function () {
         var currentTime = new Date()
         options["xaxis"]["min"] = (new Date(currentTime.getFullYear() - 1, 0, 1)).getTime()
         options["xaxis"]["max"] = currentTime.getTime()
@@ -68,7 +69,7 @@ function loadAllGraphs() {
         }], options);
 
     }
-    var allFun = function () {
+    allFun = function () {
 
         jsonString = user_portfolio["risk_history"]
 
@@ -150,13 +151,8 @@ function loadAllGraphs() {
             fillColor: "#fff"
         }
     }], options);
-
-    return [weekFun, yearFun, allFun];
-
 }
 
 // Need to get these functions back out as global variables
-var graphingVars = loadAllGraphs();
-var weekFun = graphingVars[0],
-    yearFun = graphingVars[1],
-    allFun = graphingVars[2];
+loadAllGraphs();
+
