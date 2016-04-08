@@ -105,7 +105,11 @@ function loadDiversityGraphs() {
     value_div.innerHTML = "$" + totalValueOfStocks.toFixed(2)
 
     var risk_div = document.getElementById("portfolio_risk")
-    risk_div.innerHTML = "" + user_portfolio.risk_history[0].risk_value.toFixed(2)
+    if(user_portfolio.risk_history.length > 0){
+        risk_div.innerHTML = "" + user_portfolio.risk_history[0].risk_value.toFixed(2)
+    } else {
+        risk_div.innerHTML = "N/A"
+    }
 
 //Make Portfolio Table dynamic
     //remove all elements on reload, except hidden sample row.
@@ -126,7 +130,11 @@ function loadDiversityGraphs() {
         $("table#portfolio").append($clone)
     }
     //Load Rank
-    $("#risk_rank").html(user_portfolio.rank)
+    if(user_portfolio.rank != null){
+        $("#risk_rank").html(user_portfolio.rank)
+    } else {
+        $("#risk_rank").html("N/A")
+    }
 }
 
 
