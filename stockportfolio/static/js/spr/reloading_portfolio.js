@@ -24,6 +24,7 @@ function refreshToPortfolio(portfolioId) {
         });
         loadDiversityGraphs();
         loadAllGraphs();
-        repopulateListOfPortfolios();
+        repopulateListOfPortfolios(portfolioId);
+        populate_table();
 }
 getDefaultPortfolio();

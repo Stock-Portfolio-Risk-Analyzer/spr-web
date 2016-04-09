@@ -6,7 +6,6 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^$', views.landing, name='landing'),
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
-    url(r'^profile/$', views.profile, name='profile'),
     url(r'^api/', include('stockportfolio.api.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('registration.backends.default.urls'))

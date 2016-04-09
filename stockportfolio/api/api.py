@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
-from stockportfolio.api.models import Portfolio, Stock, UserSettings
+from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
 
@@ -57,7 +57,7 @@ def create_portfolio(request, user_id):
     if user is not None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
         portfolio.save()
-        return HttpResponse(status=200)
+        return HttpResponse(json.dumps({"id" : portfolio.pk}), status=200)
     else:
         raise Http404
 
@@ -109,6 +109,10 @@ def get_portfolio(request, portfolio_id):
     """
     assert(request is not None)
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+    rank = PortfolioRank.objects.filter(
+        portfolio=portfolio).order_by('date').first()
+    if rank:
+        rank = rank.value
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     else:
@@ -117,7 +121,8 @@ def get_portfolio(request, portfolio_id):
                           'portfolio_userid': portfolio.portfolio_user.pk,
                           'stocks': [],
                           'risk_history': [],
-                          'date_created': '{}'.format(datetime.now())}
+                          'date_created': '{}'.format(datetime.now()),
+                          'rank': rank}
 
         for stock in portfolio.portfolio_stocks.all():
             portfolio_dict['stocks'].append(_calculate_stock_info(stock))
@@ -136,11 +141,11 @@ def modify_portfolio_form_post(request, portfolio_id):
         data = json.loads(data)
         invalid_stocks = _verify_stock_ticker_validity(data["symbols"], data["quantities"])
         if data is not None and len(invalid_stocks) == 0:
+            user_portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
             for i in range(len(data["symbols"])):
                 stock = data["symbols"][str(i)]
                 quantity = int(data["quantities"][str(i)])
                 user_id = request.user.id
-                user_portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
                 if user_portfolio.portfolio_user.pk is not request.user.pk:
                     return HttpResponse(status=403)
                 user_has_stock = user_portfolio.portfolio_stocks.filter(stock_ticker=stock).exists()
@@ -151,6 +156,9 @@ def modify_portfolio_form_post(request, portfolio_id):
                         user_portfolio.portfolio_stocks.filter(stock_ticker=stock).update(stock_quantity=quantity)
                 elif quantity > 0:
                     _add_stock_helper(user_portfolio, quantity, stock)
+            if data["name"]:
+                user_portfolio.portfolio_name = data["name"]
+                user_portfolio.save()
             return HttpResponse(json.dumps({"success" : "true"}))
         err_message = ["The following stock symbols are invalid:"]
         err_message.extend(invalid_stocks)

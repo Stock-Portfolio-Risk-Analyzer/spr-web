@@ -41,7 +41,7 @@ class Portfolio(models.Model):
     portfolio_risk = models.ManyToManyField(Risk)
 
     def __str__(self):
-        return '{} {}'.format(self.portfolio_id, self.portfolio_risk)
+        return self.portfolio_name if self.portfolio_name else "Unnamed"
 
 
 class UserSettings(models.Model):
