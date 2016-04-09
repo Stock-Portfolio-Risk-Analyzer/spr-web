@@ -1,143 +1,47 @@
-window.onload = sprInit
-function sprInit() {
+window.onload = function sprInit() {
     attachEvents()
-}
 
-bigAssJSON = {
-    "stable": [{
-        "stock_id": 1,
-        "stock_quantity": 0,
-        "stock_name": "ABC Corporation",
-        "stock_beta": 1.5,
-        "stock_sector": "Consumer Goods"
-    }, {
-        "stock_id": 2,
-        "stock_quantity": 0,
-        "stock_name": "Real Good Goods",
-        "stock_beta": 0.8,
-        "stock_sector": "Finances"
-    }, {
-        "stock_id": 88,
-        "stock_quantity": 0,
-        "stock_name": "Generic LLC",
-        "stock_beta": 1.1,
-        "stock_sector": "LMAO"
-    }, {
-        "stock_id": 12,
-        "stock_quantity": 0,
-        "stock_name": "Big Guys",
-        "stock_beta": 1.9,
-        "stock_sector": "asgsgasd"
-    }],
-    "low": [{
-        "stock_id": 1,
-        "stock_quantity": 0,
-        "stock_name": "ABC Corporation",
-        "stock_beta": 1.5,
-        "stock_sector": "Consumer Goods"
-    }, {
-        "stock_id": 2,
-        "stock_quantity": 0,
-        "stock_name": "Real Good Goods",
-        "stock_beta": 0.8,
-        "stock_sector": "Finances"
-    }, {
-        "stock_id": 88,
-        "stock_quantity": 0,
-        "stock_name": "Generic LLC",
-        "stock_beta": 1.1,
-        "stock_sector": "LMAO"
-    }, {
-        "stock_id": 12,
-        "stock_quantity": 0,
-        "stock_name": "Big Guys",
-        "stock_beta": 1.9,
-        "stock_sector": "asgsgasd"
-    }],
-    "diverse": [{
-        "stock_id": 1,
-        "stock_quantity": 0,
-        "stock_name": "ABC Corporation",
-        "stock_beta": 1.5,
-        "stock_sector": "Consumer Goods"
-    }, {
-        "stock_id": 2,
-        "stock_quantity": 0,
-        "stock_name": "Real Good Goods",
-        "stock_beta": 0.8,
-        "stock_sector": "Finances"
-    }, {
-        "stock_id": 88,
-        "stock_quantity": 0,
-        "stock_name": "Generic LLC",
-        "stock_beta": 1.1,
-        "stock_sector": "LMAO"
-    }, {
-        "stock_id": 12,
-        "stock_quantity": 0,
-        "stock_name": "Big Guys",
-        "stock_beta": 1.9,
-        "stock_sector": "asgsgasd"
-    }],
-    "high": [{
-        "stock_id": 1,
-        "stock_quantity": 0,
-        "stock_name": "ABC Corporation",
-        "stock_beta": 1.5,
-        "stock_sector": "Consumer Goods"
-    }, {
-        "stock_id": 2,
-        "stock_quantity": 0,
-        "stock_name": "Real Good Goods",
-        "stock_beta": 0.8,
-        "stock_sector": "Finances"
-    }, {
-        "stock_id": 88,
-        "stock_quantity": 0,
-        "stock_name": "Generic LLC",
-        "stock_beta": 1.1,
-        "stock_sector": "LMAO"
-    }, {
-        "stock_id": 12,
-        "stock_quantity": 0,
-        "stock_name": "Big Guys",
-        "stock_beta": 1.9,
-        "stock_sector": "asgsgasd"
-    }]
 }
 
 function attachEvents() {
-    //TODO: pull from back-end
-    var json = bigAssJSON
-    var modals = document.getElementsByClassName("rec-modal")
-    for (i=0; i < modals.length; i++) {
-        var modal = modals[i]
-        var k = modal.id.replace(/Modal/g, "")
-        modal.addEventListener("click", function(){updateStockRec(k)})
-        /*var k = modal.id.replace(/Modal/g, "")
-        var stocks = json[k] 
-        var modalBody = document.getElementById(k+"-rec-body")
-        var list = document.createElement("ul")
-        for (j=0; j < stocks.length; j++) {
-            var item = document.createElement("li")   
-            var name = document.createTextNode(stocks[j]["stock_name"])
-            item.appendChild(name)
-            list.appendChild(item)
-        }
-        modalBody.appendChild(list)*/       
-    }
+    // for some reason, addEventListener will only attach an event listener 
+    // to the first element in a loop. that's the reason for this monstrosity 
+    document.getElementById("stableModal").onclick=updateStockRec("stable")
+    document.getElementById("highModal").onclick=updateStockRec("high")
+    document.getElementById("lowModal").onclick=updateStockRec("low")
+    document.getElementById("diverseModal").onclick=updateStockRec("diverse")
+    
 }
 
 function updateStockRec(recType) {
-    var json = bigAssJSON
+    var json = undefined // TODO: pull this from back-end
     var modalBody = document.getElementById(recType+"-rec-body")
-    var list  document.createElement("ul")
-    var stocks = json[k]
+    var list  = document.createElement("ul")
+    list.className += "list-unstyled top_profiles scroll-view"
+    var stocks = json[recType]
     for(i=0;i<stocks.length;i++){
-        var item = document.createElement("li")
-        var name = document.createTextNode(stocks[i]["stock_name"]
-        item.appendChild(name)
+        item = stockElement(stocks[i])
         list.appendChild(item)
     }
     modalBody.appendChild(list) 
+}
+
+function newElem(type, html, classN) {
+    var e = document.createElement(type)
+    e.innerHTML = html
+    e.className = classN
+    return e
+}
+
+function stockElement(stock) {
+    var elem = newElem("li", "", "media-event")
+    var div  = newElem("div", "", "media-body")
+    var name = newElem("h4", stock["stock_name"], "")
+    div.appendChild(name)
+    var info = stock["stock_ticker"] + " | " +
+               stock["stock_sector"] + " | " + stock["stock_beta"]
+    var p = newElem("p", info, "")
+    div.appendChild(p)
+    elem.appendChild(div)
+    return elem
 }
