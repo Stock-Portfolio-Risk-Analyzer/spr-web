@@ -179,15 +179,15 @@ def stock_rec(request, portfolio_id):
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     risks = portfolio.portfolio_risk.all()
-    #if len(risks) == 0:
-    #    err = 'No recommendations available at this time.'
-    #    err_dict = { 'low':err,
-    #                 'high': err,
-    #                 'stable':err,
-    #                 'diverse':err }
-    #    return HttpResponse(content=json.dumps(err_dict), status=200, 
-    #                    content_type='application/json')
-    p_risk = 1.2 #risks[0].risk_value
+    if len(risks) == 0:
+        err = 'No recommendations available at this time.'
+        err_dict = { 'low':err,
+                     'high': err,
+                     'stable':err,
+                     'diverse':err }
+        return HttpResponse(content=json.dumps(err_dict), status=200, 
+                        content_type='application/json')
+    p_risk = risks[0].risk_value 
     jsonify = lambda x: { i:x.__dict__[i] 
                           for i in x.__dict__ if i !=  "_state" }
     # may need to adjust this to account for that fact that relative risk and
