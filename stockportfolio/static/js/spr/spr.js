@@ -41,7 +41,8 @@ function updateStockRec(json, recType) {
     var list  = document.createElement("ul")
     list.className += "list-unstyled top_profiles scroll-view"
     var stocks = recs[recType]
-    if (stocks === undefined) {
+    console.log(stocks)
+    if (stocks === undefined || stocks.length === 0) {
         var item = newElem("p", "", "")
         item.innerHTML = "No recommendations right now. Check again later!"
         list.appendChild(item)
