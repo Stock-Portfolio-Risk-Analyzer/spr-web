@@ -10,6 +10,6 @@ branches:
     - master
     - develop
 before_install:                                                                                                                                                           
-    - sudo apt-get -y libblas-dev liblapack-dev libatlas-base-dev gfortran
+    - sudo apt-get install -y libblas-dev liblapack-dev libatlas-base-dev gfortran
 install: "pip install -r requirements.txt"
 script: "python manage.py test"
