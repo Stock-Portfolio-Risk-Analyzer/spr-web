@@ -1,6 +1,8 @@
 from django.contrib import admin
-from stockportfolio.api.models import Stock, Portfolio, Risk
+import stockportfolio.api.models as models
 # Register your models here.
-admin.site.register(Stock)
-admin.site.register(Portfolio)
-admin.site.register(Risk)
+admin.site.register(models.Stock)
+admin.site.register(models.Portfolio)
+admin.site.register(models.Risk)
+admin.site.register(models.UserSettings)
+admin.site.register(models.PortfolioRank)
