@@ -27,12 +27,12 @@ var globalTestJsonString =  {
                         }
 $.ajax({
     dataType: "json",
-    url: "/api/portfolio/1", 
+    url: "/api/portfolio/3", 
     success: function(data) {
 
         var jsonString = []
-        jsonString = globalTestJsonString["risk_history"]
-
+        //jsonString = globalTestJsonString["risk_history"]
+        jsonString = data["risk_history"]
         //jsonString = globalTestJsonString
         //console.log(jsonString["risk_history"].length)
         var risks = [jsonString.length]
@@ -59,12 +59,12 @@ $.ajax({
             timeformat: "%a"
             $.ajax({
                 dataType: "json",
-                url: "/api/portfolio/1", 
+                url: "/api/portfolio/3", 
                 success: function(data) {
 
                     var jsonString = []
-                    //jsonString = data["risk_history"]
-                    jsonString = globalTestJsonString["risk_history"]
+                    jsonString = data["risk_history"]
+                    //jsonString = globalTestJsonString["risk_history"]
                     var risks = [jsonString.length]
                                 //console.log(jsonString)        
 
@@ -97,12 +97,12 @@ var yearFun = function (){
 
     $.ajax({
         dataType: "json",
-        url: "/api/portfolio/1", 
+        url: "/api/portfolio/3", 
         success: function(data) {
 
             var jsonString = []
-            //jsonString = data["risk_history"]
-            jsonString = globalTestJsonString["risk_history"]
+            jsonString = data["risk_history"]
+            //jsonString = globalTestJsonString["risk_history"]
 
             var risks = [jsonString.length]
             for (i = 0; i<jsonString.length;i++){
@@ -131,12 +131,13 @@ var allFun = function (){
 
     $.ajax({
         dataType: "json",
-        url: "/api/portfolio/1",  
+        url: "/api/portfolio/3",  
         success: function(data) {
 
             var jsonString = []
-            //jsonString = data["risk_history"]
-            jsonString = globalTestJsonString["risk_history"]
+
+            jsonString = data["risk_history"]
+            //jsonString = globalTestJsonString["risk_history"]
            
             var risks = [jsonString.length]
             for (i = 0; i<jsonString.length;i++){
@@ -199,12 +200,12 @@ var options = {
 
             $.ajax({
                 dataType: "json",
-                url: "/api/portfolio/1", 
+                url: "/api/portfolio/3", 
                 success: function(data) {
 
                     var jsonString = []
-                 //   jsonString = data["risk_history"]\
-                    jsonString = globalTestJsonString["risk_history"]
+                    jsonString = data["risk_history"]
+                 //   jsonString = globalTestJsonString["risk_history"]
                     var risks = [jsonString.length]
                     for (i = 0; i<jsonString.length;i++){
                         risk = jsonString[i]

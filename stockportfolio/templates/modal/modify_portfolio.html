@@ -78,12 +78,11 @@
             $clone.find("input#symbol").attr("name", "symbol_" + currentCount)
             $clone.find("input#quantity").attr("name", "quantity_" + currentCount)
             $("#portfolio-table").append($clone)
-            $("#stock-modify-count").val(currentCount)
+            $("#stock-modify-count").val(currentCount+1)
         });
         $("#delete-row").click(function () {
             $(this).closest("tr").find("#quantity").val(0)
             $(this).closest("tr").hide()
-            $("#stock-modify-count").val(currentCount)
         });
 
         $("#save-button").click(function(e) {
