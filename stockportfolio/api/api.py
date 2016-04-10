@@ -176,23 +176,39 @@ def stock_rec(request, portfolio_id):
     :param portfolio_id
     """
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-    p_risk = portfolio.risk_value
+    if portfolio.portfolio_user.pk is not request.user.pk:
+        return HttpResponse(status=403)
+    risks = portfolio.portfolio_risk.all()
+    #if len(risks) == 0:
+    #    err = 'No recommendations available at this time.'
+    #    err_dict = { 'low':err,
+    #                 'high': err,
+    #                 'stable':err,
+    #                 'diverse':err }
+    #    return HttpResponse(content=json.dumps(err_dict), status=200, 
+    #                    content_type='application/json')
+    p_risk = 1.2 #risks[0].risk_value
+    jsonify = lambda x: { i:x.__dict__[i] 
+                          for i in x.__dict__ if i !=  "_state" }
     # may need to adjust this to account for that fact that relative risk and
     # and stock beta are not directly comparable
-    less_risk = Stock.objects.exclude(stock_beta__lt=p_risk)
-    more_risk = Stock.objects.exclude(stock_beta__gt=p_risk)
-    diverse = _diversify_by_sector(portfolio) 
+    less_risk = map(jsonify, 
+                    list(Stock.objects.exclude(stock_beta__lt=p_risk)))
+    more_risk = map(jsonify, 
+                    list(Stock.objects.exclude(stock_beta__gt=p_risk)))
+    diverse   = map(jsonify, 
+                    list(_diversify_by_sector(portfolio))) 
     # stock w/ in a 20% range of current portfolio riskiness
-    stable = Stock.objects.exclude(
-                        stock_beta__gt=1.1 * p_risk
+    stable = map(jsonify, list(Stock.objects.exclude(
+                         stock_beta__gt=(1.1 * p_risk)
                    ).exclude(
                            stock_beta__lt=0.9 * p_risk
-                   )
-    rec_dict = {'less_risk':less_risk,
-                'more_risk':more_risk,
+                   )))
+    rec_dict = {'low':less_risk,
+                'high':more_risk,
                 'diverse': diverse,
                 'stable': stable }
-    return HttpResponse(content=json.dumps(rect_dict), status=200, 
+    return HttpResponse(content=json.dumps(rec_dict), status=200, 
                         content_type='application/json')
 
 def _diversify_by_sector(portfolio):
@@ -200,7 +216,8 @@ def _diversify_by_sector(portfolio):
     :param portfolio
     :return stocks from various sectors not present in portfolio
     """
-    sectors = list(portfolio.stocks.values_list('stock_sector').distinct())
+    sectors = list(portfolio.portfolio_stocks.
+                   values_list('stock_sector').distinct())
     q = Stock.objects.all()
     for sector in sectors:
         q.exclude(stock_sector=sector)
