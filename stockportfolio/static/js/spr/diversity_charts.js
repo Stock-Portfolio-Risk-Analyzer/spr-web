@@ -141,7 +141,8 @@ function loadDiversityGraphs() {
                 $('#stockInterfaceModal').modal('show');
             }
         });
-    
+    });
+
     //Load Rank
     if(user_portfolio.rank != null){
         $("#risk_rank").html(user_portfolio.rank)
