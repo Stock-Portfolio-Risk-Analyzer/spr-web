@@ -18,7 +18,7 @@ def dashboard(request):
         return redirect("/")
     email = string.lower(string.strip(request.user.email, string.whitespace))
     g_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email).hexdigest()
-    user_settings = UserSettings.objects.get(user=request.user)
+    user_settings = UserSettings.objects.get_or_create(user=request.user)[0]
     form = UpdateProfile(instance=request.user)
     form.fields['default_portfolio'].queryset = Portfolio.objects.filter(
         portfolio_user=request.user)
