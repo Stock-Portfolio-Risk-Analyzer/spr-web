@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^modify_account/$', views.modify_account, name='modify_account'),
     url(r'^portfolio/(?P<portfolio_id>\d+)/modify$', api.modify_portfolio_form_post, name="modify_portfolio_form_post"),
     url(r'^utils/calculate-rri/$', views.calculate_all_rris, name='utils_calculate_rri'),
+    url(r'^(?P<ticker>[A-Z]+)/details', views.stock_interface, name='stock_interface')
 ]
