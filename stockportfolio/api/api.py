@@ -97,7 +97,8 @@ def get_list_of_portfolios(request, user_id):
     for p in portfolios:
         p_basic_info = {"id": p.pk, "name": p.portfolio_name}
         p_list.append(p_basic_info)
-    return HttpResponse(content=json.dumps({"portfolio_list": p_list}), status=200, content_type='application/json')
+    return HttpResponse(content=json.dumps({"portfolio_list": p_list}), 
+                        status=200, content_type='application/json')
 
 
 def get_portfolio(request, portfolio_id):
@@ -132,28 +133,35 @@ def get_portfolio(request, portfolio_id):
 
         portfolio_dict['sector_allocations'] = _calculate_sector_allocations(portfolio)
 
-        return HttpResponse(content=json.dumps(portfolio_dict), status=200, content_type='application/json')
+        return HttpResponse(content=json.dumps(portfolio_dict), 
+                            status=200, content_type='application/json')
 
 
 def modify_portfolio_form_post(request, portfolio_id):
     if request.method == 'POST':
         data = request.POST.get("data", None)
         data = json.loads(data)
-        invalid_stocks = _verify_stock_ticker_validity(data["symbols"], data["quantities"])
+        invalid_stocks = _verify_stock_ticker_validity(data["symbols"], 
+                                                       data["quantities"])
         if data is not None and len(invalid_stocks) == 0:
-            user_portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+            user_portfolio = get_object_or_404(Portfolio, 
+                                               portfolio_id=portfolio_id)
             for i in range(len(data["symbols"])):
                 stock = data["symbols"][str(i)]
                 quantity = int(data["quantities"][str(i)])
                 user_id = request.user.id
                 if user_portfolio.portfolio_user.pk is not request.user.pk:
                     return HttpResponse(status=403)
-                user_has_stock = user_portfolio.portfolio_stocks.filter(stock_ticker=stock).exists()
+                user_has_stock = user_portfolio.portfolio_stocks.filter(
+                                                stock_ticker=stock).exists()
                 if user_has_stock:
                     if quantity <= 0:
-                        user_portfolio.portfolio_stocks.all().get(stock_ticker=stock).delete()
+                        user_portfolio.portfolio_stocks.all().get(
+                                                   stock_ticker=stock).delete()
                     else:
-                        user_portfolio.portfolio_stocks.filter(stock_ticker=stock).update(stock_quantity=quantity)
+                        user_portfolio.portfolio_stocks.filter(
+                                stock_ticker=stock).update(
+                                        stock_quantity=quantity)
                 elif quantity > 0:
                     _add_stock_helper(user_portfolio, quantity, stock)
             if data["name"]:
@@ -165,8 +173,8 @@ def modify_portfolio_form_post(request, portfolio_id):
         err_message = " ".join(err_message)
         err_message = json.dumps({"success" : "false","message" : err_message})
         return HttpResponse(content=err_message,
-                                        status=400,
-                                        content_type="application/json charset=utf-8")
+                            status=400,
+                            content_type="application/json charset=utf-8")
 
 def stock_rec(request, portfolio_id):
     """
@@ -189,9 +197,10 @@ def stock_rec(request, portfolio_id):
                         content_type='application/json')
     p_risk = risks[0].risk_value 
     jsonify = lambda x: { i:x.__dict__[i] 
-                          for i in x.__dict__ if i !=  "_state" }
-    # may need to adjust this to account for that fact that relative risk and
-    # and stock beta are not directly comparable
+                         # Django inserts a "_state" attribute into every
+                         # model. We don't need it in our json, so it's 
+                         # removed here
+                         for i in x.__dict__ if i !=  "_state" }
     less_risk = map(jsonify, 
                     list(Stock.objects.exclude(stock_beta__lt=p_risk)))
     more_risk = map(jsonify, 
@@ -204,10 +213,10 @@ def stock_rec(request, portfolio_id):
                    ).exclude(
                            stock_beta__lt=0.9 * p_risk
                    )))
-    rec_dict = {'low':less_risk,
-                'high':more_risk,
-                'diverse': diverse,
-                'stable': stable }
+    rec_dict = {'low'    :less_risk[:5],
+                'high'   :more_risk[:5],
+                'diverse':diverse[:5],
+                'stable' :stable[:5] }
     return HttpResponse(content=json.dumps(rec_dict), status=200, 
                         content_type='application/json')
 
@@ -230,8 +239,10 @@ def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
     stock_name = get_company_name(stock_ticker)
     stock_sector = get_company_sector(stock_ticker)
     try:
-        stock = Stock.objects.create(stock_name=stock_name, stock_ticker=stock_ticker,
-                                     stock_quantity=stock_quantity, stock_sector=stock_sector)
+        stock = Stock.objects.create(stock_name=stock_name, 
+                                     stock_ticker=stock_ticker,
+                                     stock_quantity=stock_quantity, 
+                                     stock_sector=stock_sector)
         stock.save()
         portfolio.portfolio_stocks.add(stock)
         return True
@@ -277,7 +288,8 @@ def _calculate_risk(risk):
     :param risk: (Risk)
     :return: (dict)
     """
-    risk_dict = {'risk_value': risk.risk_value, 'risk_date': '{}'.format(risk.risk_date)}
+    risk_dict = {'risk_value': risk.risk_value, 
+                 'risk_date': '{}'.format(risk.risk_date)}
     return risk_dict
 
 
@@ -291,10 +303,11 @@ def _calculate_sector_allocations(portfolio):
     for stock in portfolio.portfolio_stocks.all():
         current_price = get_current_price(stock.stock_ticker)
         mkt_value = float(current_price*stock.stock_quantity)
+        sector = get_company_sector(stock.stock_ticker)
         try:
-            sector_allocations_raw[get_company_sector(stock.stock_ticker)] += mkt_value
+            sector_allocations_raw[sector] += mkt_value
         except KeyError:
-            sector_allocations_raw[get_company_sector(stock.stock_ticker)] = mkt_value
+            sector_allocations_raw[sector] = mkt_value
 
     # calculate sector allocations percentage
     total_mkt_value = sum(sector_allocations_raw.values())
