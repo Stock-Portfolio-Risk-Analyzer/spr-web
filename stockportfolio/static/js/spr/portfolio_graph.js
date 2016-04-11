@@ -13,7 +13,7 @@ function loadAllGraphs() {
     var dayBefore = new Date()
     dayBefore.setDate(dayBefore.getDate() - 1)
 
-     weekFun = function () {
+     weekFun = function (id) {
         options["xaxis"]["minTickSize"] = [1, "day"]
         var currentTime = new Date()
         var oneWeekAgo = new Date();
@@ -30,8 +30,9 @@ function loadAllGraphs() {
             risk = jsonString[i]
             risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
         }
-        $("#placeholder3xx3").empty();
-        $.plot($("#placeholder3xx3"), [{
+        id = '#' + id
+        $(id).empty();
+        $.plot($(id), [{
             label: "Beta",
             data: risks,
             lines: {
@@ -42,7 +43,7 @@ function loadAllGraphs() {
             }
         }], options);
     }
-    yearFun = function () {
+    yearFun = function (id) {
         var currentTime = new Date()
         options["xaxis"]["min"] = (new Date(currentTime.getFullYear() - 1, 0, 1)).getTime()
         options["xaxis"]["max"] = currentTime.getTime()
@@ -55,9 +56,9 @@ function loadAllGraphs() {
             risk = jsonString[i]
             risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
         }
-
-        $("#placeholder3xx3").empty();
-        $.plot($("#placeholder3xx3"), [{
+        id = '#' + id
+        $(id).empty();
+        $.plot($(id), [{
             label: "Beta",
             data: risks,
             lines: {
@@ -69,7 +70,7 @@ function loadAllGraphs() {
         }], options);
 
     }
-    allFun = function () {
+    allFun = function (id) {
 
         jsonString = user_portfolio["risk_history"]
 
@@ -80,9 +81,9 @@ function loadAllGraphs() {
         }
         options["xaxis"]["min"] = (new Date(jsonString[0]["risk_date"])).getTime()
         options["xaxis"]["max"] = (new Date()).getTime()
-
-        $("#placeholder3xx3").empty();
-        $.plot($("#placeholder3xx3"), [{
+        id = '#' + id
+        $(id).empty();
+        $.plot($(id), [{
             label: "Beta",
             data: risks,
             lines: {
@@ -139,8 +140,8 @@ function loadAllGraphs() {
         risks[i] = new Array(new Date(risk["risk_date"]).getTime(), risk["risk_value"])
     }
 
-    $("#placeholder3xx3").empty();
-    $.plot("#placeholder3xx3", [{
+    $("#dashboard_graph").empty();
+    $.plot("#dashboard_graph", [{
         label: "Beta",
         data: risks,
 
