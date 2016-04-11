@@ -1,7 +1,6 @@
 from datautils import rri as rri
 from stockportfolio.api.models import Portfolio, Risk, PortfolioRank
-from scipy.stats import rankdata
-
+import numpy
 
 def update_rri_for_all_portfolios():
     for portfolio in Portfolio.objects.all():
@@ -24,11 +23,12 @@ def update_rank_for_all_portfolios():
         else:
             risk = risk_object.risk_value
         risks.append((portfolio.portfolio_id, risk))
-    risk_values = zip(*risks)[1]
-    rank_values = len(risk_values) - rankdata(risk_values,
-                                              method='ordinal') + 1
+    risk_values = numpy.array(zip(*risks)[1])
+    temp = risk_values.argsort()[::-1]
+    rank_values = numpy.empty(len(risk_values), int)
+    rank_values[temp] = numpy.arange(len(risk_values))
     ranks = zip(zip(*risks)[0], rank_values)
     for portfolio_id, rank in ranks:
         portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-        rank = PortfolioRank(value=rank, portfolio=portfolio)
+        rank = PortfolioRank(value=rank+1, portfolio=portfolio)
         rank.save()
