@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import pandas as pd
 import numpy as np
 import yahoo_finance
 
@@ -37,13 +38,7 @@ def compute_daily_change_for_range(symbol, start_date, end_date):
     return: list of daily change (Type -> list float)
     """
     symbol_data = yahoo_finance.get_stock_data(symbol, start_date, end_date)
-    closing_price = list(symbol_data["Close"])
-
-    daily_change = []
-    for i in range(0, len(closing_price)-1):
-        daily_change.append(((closing_price[i+1] - closing_price[i])/closing_price[i])*100)
-
-    return daily_change
+    return list(symbol_data['Close'].pct_change()*100)[1:]
 
 
 def compute_covariance(a, b):
@@ -52,17 +47,7 @@ def compute_covariance(a, b):
     Parameter: Two lists of integers/floats
     Return: float
     """
-
-    a_mean = (sum(a)/len(a))
-    b_mean = (sum(b)/len(b))
-
-    total = 0
-
-    for i in range(0, len(a)):
-        total += ((a[i] - a_mean) * (b[i] - b_mean))
-
-    return (total/(len(a)-1))
-
+    return np.cov(np.array([a, b]))[0, 1]
 
 def compute_variance(a):
     """
@@ -148,5 +133,3 @@ def compute_portfolio_rri_for_range(stocks, start_date, end_date):
     portfolio_rri = (total_rri / total_quantity)
 
     return portfolio_rri
-
-print compute_daily_change_for_past_given_days("GOOG", 10)
