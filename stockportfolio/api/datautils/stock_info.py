@@ -81,9 +81,9 @@ def get_company_sector(symbol):
     return company_name
 
 def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
-    """ 
+    """
     Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-                number_of_days_back -> number of days back from today 
+                number_of_days_back -> number of days back from today
                         for which you want the closing price
                         (Type -> integer)
     return: list of daily closing prices (Type -> list float)
@@ -98,3 +98,50 @@ def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
         graphing_tuples.append(value_timestamps[i])
         graphing_tuples.append(round(values[i],3))
     return graphing_tuples
+
+def get_company_rri_for_a_week(symbol):
+    """
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+    return: List [ [date1, rri], [date2, rri], .... [date7, rri] ]
+    """
+    rri_list = []
+
+    for i in [7, 6, 5, 4, 3, 2, 1]:
+        start_date = date.today() - timedelta(days = i)
+        end_date   = date.today() - timedelta(days = i-1)
+        day_rri    = [str(start_date), compute_stock_rri_for_range(symbol, start_date, end_date)]
+        rri_list.append(day_rri)
+
+    return rri_list
+
+def get_company_rri_for_a_month(symbol):
+    """
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+    return: List [ [date1, rri], [date2, rri], .... [date30, rri] ]
+    """
+    rri_list = []
+    month_range = range(100)[1:31]
+    month_range.reverse()
+    for i in month_range:
+        start_date = date.today() - timedelta(days = i)
+        end_date   = date.today() - timedelta(days = i-1)
+        day_rri    = [str(start_date), compute_stock_rri_for_range(symbol, start_date, end_date)]
+        rri_list.append(day_rri)
+
+    return rri_list
+
+def get_company_rri_for_a_year(symbol):
+    """
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+    return: List [ [date1, rri], [date2, rri], .... [date365, rri] ]
+    """
+    rri_list = []
+    month_range = range(400)[1:366]
+    month_range.reverse()
+    for i in month_range:
+        start_date = date.today() - timedelta(days = i)
+        end_date   = date.today() - timedelta(days = i-1)
+        day_rri    = [str(start_date), compute_stock_rri_for_range(symbol, start_date, end_date)]
+        rri_list.append(day_rri)
+
+    return rri_list
