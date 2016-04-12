@@ -98,7 +98,7 @@ def get_company_rri_for_a_week(symbol):
 def get_company_rri_for_a_month(symbol):
     """
     Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-    return: List [ [date1, rri], [date2, rri], .... [date7, rri] ]
+    return: List [ [date1, rri], [date2, rri], .... [date30, rri] ]
     """
     rri_list = []
     month_range = range(100)[1:31]
@@ -114,7 +114,7 @@ def get_company_rri_for_a_month(symbol):
 def get_company_rri_for_a_year(symbol):
     """
     Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-    return: List [ [date1, rri], [date2, rri], .... [date7, rri] ]
+    return: List [ [date1, rri], [date2, rri], .... [date365, rri] ]
     """
     rri_list = []
     month_range = range(400)[1:366]
