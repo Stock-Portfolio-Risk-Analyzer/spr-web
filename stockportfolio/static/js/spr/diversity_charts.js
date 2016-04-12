@@ -129,6 +129,20 @@ function loadDiversityGraphs() {
         $clone.find("td.market_value").text(stock.mkt_value)
         $("table#portfolio").append($clone)
     }
+
+    $("#portfolio tr").bind("click",function() {
+        var ticker = $(this).closest("tr").find(".symbol").text();
+        var tickerUrl = "/api/" + ticker + "/details";
+        $.ajax({
+            url: tickerUrl,
+            type: 'GET',
+            success: function(data) {
+                $('#stockInterface').html(data);
+                $('#stockInterfaceModal').modal('show');
+            }
+        });
+    });
+
     //Load Rank
     if(user_portfolio.rank != null){
         $("#risk_rank").html(user_portfolio.rank)

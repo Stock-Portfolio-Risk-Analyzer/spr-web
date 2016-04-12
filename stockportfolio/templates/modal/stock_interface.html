@@ -1,0 +1,117 @@
+    <div class="modal fade" id="stockInterfaceModal" tabindex="-1" role="dialog">
+
+
+      <div class="modal-dialog">
+
+        <div class="modal-content" style="width:1200px;  margin: 0 -280px;" >
+
+          <div class="modal-header" style = "white-space: nowrap;">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h1 class="modal-title"><b>{{stock_name}}</b></h1>
+          </div>
+
+          <div class="modal-body">
+            <h2 style = "font-size:26px"><b>Ticker:</b> {{stock_ticker}}</h2>
+            <h2 style = "font-size:26px"><b>Sector:</b> {{stock_sector}}</h2>
+
+              <div class="row">
+                  <div class="col-md-6">
+                    <div class="dashboardaph x_panel" >
+                      <div class="row x_title">
+                          <div class="col-md-6">
+                              <h3>Risk Variation (Today) </h3>
+                          </div>
+                      </div>
+                      <div class="x_content">
+                          <div class="demo-container" style="height:250px">
+                              <div id="risk_graph" class="demo-placeholder" style="width: 100%; height:250px;"></div>
+                          </div>
+                      </div>
+                      <span class="input-group-btn">
+                          <button id = "week" onclick = "plotValues('risk_graph','rri_week')" class="btn btn-default" type="button">In a week </button>
+                      </span>
+                      <span class="input-group-btn">
+                          <button id = "year" onclick = "plotValues('risk_graph','rri_month')"class="btn btn-default" type="button">In a month </button>
+                      </span>
+                      <span class="input-group-btn">
+                          <button id = "all" onclick = "plotValues('risk_graph','rri_year')"class="btn btn-default" type="button">In a year
+                          </button>
+                      </span>
+                    </div>
+
+                    <div class="dashboardaph x_panel" >
+                      <div class="row x_title">
+                          <div class="col-md-6">
+                              <h3>Stock Value Variation (Weekly) </h3>
+                          </div>
+                      </div>
+                      <div class="x_content">
+                          <div class="demo-container" style="height:250px">
+                              <div id="value_graph" class="demo-placeholder" style="width: 100%; height:250px;"></div>
+                          </div>
+                      </div>
+                      <span class="input-group-btn">
+                          <button id = "week" onclick = "plotValues('value_graph', 'week')" class="btn btn-default" type="button">In a week </button>
+                      </span>
+                      <span class="input-group-btn">
+                          <button id = "year" onclick = "plotValues('value_graph', 'month')"class="btn btn-default" type="button">In a month</button>
+                      </span>
+                      <span class="input-group-btn">
+                          <button id = "all" onclick = "plotValues('value_graph', 'year')"class="btn btn-default" type="button">In a year
+                          </button>
+                      </span>
+                    </div>
+
+                  </div>
+
+                  <div class="col-md-6">
+
+                        <div class="panel panel-default">
+
+                        <div class="panel-heading">
+                        <span class="glyphicon glyphicon-list-alt"></span>
+                          <b>News</b>
+                        </div>
+
+                        <div class="panel-body" style="height:750px;">
+                            <ul id="menu">
+                                {% for entry in stock_feeds %}
+                                    <li class="news-item"><a href="{{entry.link}}">{{entry.title}}</a>
+                                      <br></br>
+                                    </li>
+                                {%endfor%}
+                            </ul>
+                        </div>
+
+                        <div class="panel-footer"></div>
+                              <script type="text/javascript">
+                                var monthly_values = "{{stock_values_month_back}}";
+                                var weekly_values = "{{stock_values_week_back}}";
+                                var annual_values = "{{stock_values_year_back}}";
+                                var monthly_values_rri = "{{rri_values_month_back}}";
+                                var weekly_values_rri = "{{rri_values_week_back}}";
+                                var annual_values_rri = "{{rri_values_year_back}}";
+                                $(function () {
+                                      var myElement = document.querySelector("#menu");
+                                      myElement.style.listStyleType = "none";
+                                      $("#menu").bootstrapNews({
+                                          newsPerPage: 17,
+                                          autoplay: false,
+
+                                          onToDo: function () {
+                                          }
+                                      });
+                                  });
+                                  plotValues('value_graph', 'week')
+                              </script>
+                        </div>
+
+                  </div>
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
