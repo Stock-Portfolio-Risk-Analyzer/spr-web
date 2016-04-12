@@ -1,7 +1,6 @@
 from stockportfolio.settings.base import *
 
 import os
-DEBUG = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('SPARKPOST_SMTP_HOST')
 EMAIL_PORT = os.environ.get('SPARKPOST_SMTP_PORT')
