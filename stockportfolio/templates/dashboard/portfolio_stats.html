@@ -1,3 +1,5 @@
+<script type="text/javascript" src="../static/js/spr/search.js"></script>
+<script type="text/javascript" src="../static/js/jquery.min.js"></script>
 <div class="right_col text-centered" role="main">
 <div class="row tile_count">
     <div class="animated flipInY col-md-4 col-sm-4 col-xs-12 tile_stats_count">
@@ -29,9 +31,9 @@
         <div class="title_right">
             <div class="col-xs-10 col-xs-offset-1 form-group top_search">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Compare with...">
+                    <input type="text" id="search_entry" class="form-control" placeholder="Search Stock..">
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">Go!</button>
+                        <button class="btn btn-default" onclick="search()" id="stock_search">Go!</button>
                    </span>
                 </div>
             </div>
