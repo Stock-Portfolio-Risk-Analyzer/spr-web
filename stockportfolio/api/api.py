@@ -111,7 +111,7 @@ def get_portfolio(request, portfolio_id):
     assert(request is not None)
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     rank = PortfolioRank.objects.filter(
-        portfolio=portfolio).order_by('date').first()
+        portfolio=portfolio).order_by('-date').first()
     if rank:
         rank = rank.value
     if portfolio.portfolio_user.pk is not request.user.pk:

@@ -7,6 +7,7 @@ from collections import OrderedDict
 from datetime import datetime as dt
 from rri import *
 from datetime import date, timedelta
+import yahoo_finance
 
 def get_company_industry(symbol):
     """
@@ -64,3 +65,17 @@ def get_company_sector(symbol):
     code = company_info['Name'].keys()[0]
     company_name = company_info.to_dict()['Sector'][code]
     return company_name
+
+def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
+    """ 
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+                number_of_days_back -> number of days back from today 
+                        for which you want the closing price
+                        (Type -> integer)
+    return: list of daily closing prices (Type -> list float)
+    """
+    start_date = date.today() - timedelta(days=number_of_days_back)
+    end_date = date.today()
+    symbol_data = yahoo_finance.get_stock_data(symbol, start_date, end_date)
+    closing_price = list(symbol_data["Close"])
+    return closing_price
