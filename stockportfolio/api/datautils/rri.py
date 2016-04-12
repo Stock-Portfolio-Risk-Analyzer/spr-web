@@ -89,8 +89,8 @@ def compute_stock_rri_for_range(symbol, start_date, end_date):
     index_daily_change  = compute_daily_change_for_range("NYA", start_date, end_date)
 
     covariance_val = compute_covariance(stock_daily_change, index_daily_change)
-    vairance_val = compute_variance(index_daily_change)
-    rri = covariance_val/vairance_val
+    variance_val = compute_variance(index_daily_change)
+    rri = covariance_val/variance_val
     return (rri + 1)
 
 
