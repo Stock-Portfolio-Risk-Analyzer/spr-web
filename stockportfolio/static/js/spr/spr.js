@@ -68,7 +68,7 @@ function stockElement(stock) {
     var name = newElem("h4", stock["stock_name"], "")
     div.appendChild(name)
     var info = stock["stock_ticker"] + " | " +
-               stock["stock_sector"] + " | " + stock["stock_beta"]
+               stock["stock_sector"]
     var p = newElem("p", info, "")
     div.appendChild(p)
     elem.appendChild(div)

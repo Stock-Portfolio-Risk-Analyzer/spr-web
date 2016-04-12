@@ -213,10 +213,10 @@ def stock_rec(request, portfolio_id):
                    ).exclude(
                            stock_beta__lt=0.9 * p_risk
                    )))
-    rec_dict = {'low'    :less_risk[:5],
-                'high'   :more_risk[:5],
-                'diverse':diverse[:5],
-                'stable' :stable[:5] }
+    rec_dict = {'low'    :less_risk[:4],
+                'high'   :more_risk[:4],
+                'diverse':diverse[:4],
+                'stable' :stable[:4] }
     return HttpResponse(content=json.dumps(rec_dict), status=200, 
                         content_type='application/json')
 
