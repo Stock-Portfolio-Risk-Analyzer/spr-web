@@ -145,4 +145,3 @@ NOSE_ARGS = [
     '--cover-package=stockportfolio',
     '--cover-branches',
 ]
-
