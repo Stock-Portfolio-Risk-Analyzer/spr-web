@@ -105,9 +105,9 @@ def compute_portfolio_rri_for_today(stocks, number_of_days_back):
     """
     total_rri = 0.0
     total_quantity = 0
-    for i in range(len(stocks)):
-        ticker = stocks[i].stock_ticker
-        quantity = stocks[i].stock_quantity
+    for stock in stocks:
+        ticker = stock.stock_ticker
+        quantity = stock.stock_quantity
         stock_rri = compute_stock_rri_for_today(ticker, number_of_days_back)
         total_rri = total_rri + (stock_rri * quantity)
         total_quantity = total_quantity + quantity
