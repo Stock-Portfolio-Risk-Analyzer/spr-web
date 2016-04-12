@@ -71,8 +71,8 @@ def compute_stock_rri_for_today(symbol, number_of_days_back):
     index_daily_change  = compute_daily_change_for_past_given_days("NYA", number_of_days_back)
 
     covariance_val = compute_covariance(stock_daily_change, index_daily_change)
-    vairance_val   = compute_variance(index_daily_change)
-    rri = covariance_val/vairance_val
+    variance_val   = compute_variance(index_daily_change)
+    rri = covariance_val/variance_val
     return (rri + 1)
 
 
@@ -110,7 +110,6 @@ def compute_portfolio_rri_for_today(stocks, number_of_days_back):
         total_quantity = total_quantity + quantity
 
     portfolio_rri = (total_rri / total_quantity)
-
     return portfolio_rri
 
 
