@@ -13,7 +13,17 @@ function loadAllGraphs() {
         }
         return string
     }
+    function parseStringToArrayRRI(string){
+        string = string.substring(1,string.length-1)
+        string = string.split(", ")
+        for (i = 0; i<string.length; i +=2){
+            string[i] = new Date(string[i].substring(5,string[i].length-5))
+        }
+        console.log(string)
+        return string
+    }
     plotValues = function (id, timePeriod) {
+        console.log(timePeriod)
         switch (timePeriod) {
             case "week" :
                 var data = weekly_values;
@@ -24,8 +34,23 @@ function loadAllGraphs() {
             case "year" :
                 var data = annual_values;
                 break;
+            case "rri_year" :
+                var data = annual_values_rri;
+                break;
+            case "rri_month" :
+                var data = monthly_values_rri;
+                break;
+            case "rri_week" :
+                var data = weekly_values_rri;
+                break;
         }
-        data = parseStringToArray(data)
+        if (timePeriod.includes("rri_")){
+            data = parseStringToArrayRRI(data)
+            console.log(data)
+
+        } else {
+            data = parseStringToArray(data)
+        }
         options["xaxis"]["min"] = (data[0].getTime())
         options["xaxis"]["max"] = (new Date()).getTime()
         tupledData = []

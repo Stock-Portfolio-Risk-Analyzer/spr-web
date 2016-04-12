@@ -23,14 +23,14 @@ def get_company_industry(symbol):
     return company_name
 
 def get_company_rri_for_today(symbol, number_of_days_back):
-	"""
-	Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-	        	number_of_days_back ->  number of days back from today
-	                    				for which you want rri
-	                    				(Type -> integer)
-	return: float
-	"""
-	return compute_stock_rri_for_today(symbol, number_of_days_back)
+    """
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+                number_of_days_back ->  number of days back from today
+                                        for which you want rri
+                                        (Type -> integer)
+    return: float
+    """
+    return compute_stock_rri_for_today(symbol, number_of_days_back)
 
 def get_company_rri_for_range(symbol, start_date, end_date):
     """
@@ -39,6 +39,20 @@ def get_company_rri_for_range(symbol, start_date, end_date):
     return: float
     """
     return compute_stock_rri_for_range(symbol, start_date, end_date)
+
+def get_company_rri_for_days_back(symbol,days_back):
+    """
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+    return: List [ [date1, rri], [date2, rri], .... [date7, rri] ]
+    """
+    rri_list = []
+    for i in range(days_back+5,5,-1):
+        start_date = date.today() - timedelta(days = i)
+        end_date   = date.today() - timedelta(days = i -5)
+        rri_list.append(str(start_date))
+        rri_list.append(round(compute_stock_rri_for_range(symbol, start_date, end_date),3))
+
+    return rri_list
 
 def get_company_name(symbol):
     """

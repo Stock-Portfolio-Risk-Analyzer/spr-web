@@ -30,13 +30,13 @@
                           </div>
                       </div>
                       <span class="input-group-btn">
-                          <button id = "week" onclick = "weekFun('risk_graph')" class="btn btn-default" type="button">In week </button>
+                          <button id = "week" onclick = "plotValues('risk_graph','rri_week')" class="btn btn-default" type="button">In a week </button>
                       </span>
                       <span class="input-group-btn">
-                          <button id = "year" onclick = "yearFun('risk_graph')"class="btn btn-default" type="button">In year </button>
+                          <button id = "year" onclick = "plotValues('risk_graph','rri_month')"class="btn btn-default" type="button">In a month </button>
                       </span>
                       <span class="input-group-btn">
-                          <button id = "all" onclick = "allFun('risk_graph')"class="btn btn-default" type="button">Since the beginning
+                          <button id = "all" onclick = "plotValues('risk_graph','rri_year')"class="btn btn-default" type="button">In a year
                           </button>
                       </span>
                     </div>
@@ -90,9 +90,10 @@
                                 var monthly_values = "{{stock_values_month_back}}";
                                 var weekly_values = "{{stock_values_week_back}}";
                                 var annual_values = "{{stock_values_year_back}}";
-                                var daily_values = "{{stock_values_day_back}}";
-
-                                  $(function () {
+                                var monthly_values_rri = "{{rri_values_month_back}}";
+                                var weekly_values_rri = "{{rri_values_week_back}}";
+                                var annual_values_rri = "{{rri_values_year_back}}";
+                                $(function () {
                                       var myElement = document.querySelector("#menu");
                                       myElement.style.listStyleType = "none";
                                       $("#menu").bootstrapNews({

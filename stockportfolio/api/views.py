@@ -90,6 +90,8 @@ def stock_interface(request,ticker):
         'stock_feeds' : sanitized_feed,
         'stock_values_month_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,30),
         'stock_values_week_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,7),
-        'stock_values_year_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,365)
+        'stock_values_year_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,365),
+        'rri_values_week_back' : stock_info.get_company_rri_for_days_back(ticker,7),
+        'rri_values_month_back' : stock_info.get_company_rri_for_days_back(ticker,30)
     }
     return render_to_response('modal/stock_interface.html', context)
