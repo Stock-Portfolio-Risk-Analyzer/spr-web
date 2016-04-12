@@ -4,6 +4,7 @@ from . import views
 from . import api
 urlpatterns = [
     url(r'^(?P<symbol>[A-Z]+)/$', views.ticker, name='ticker'),
+    url(r'^name/(?P<symbol>[A-Z]+)/$', views.company_name, name='company_name'),
     url(r'^user/(?P<portfolio_id>\d+)$', views.user_profile, name="user_profile"),
     url(r'^user/(?P<user_id>\d+)/getportfolio$', api.get_portfolio_by_user, name="get_portfolio_by_user"),
     url(r'^user/(?P<user_id>\d+)/getportfoliolist$', api.get_list_of_portfolios, name="get_portfolio_list_by_user"),

@@ -46,6 +46,10 @@ def ticker(request, symbol):
     # any api errors bubble up to the user
     return HttpResponse(yf.get_current_price(symbol))
 
+def company_name(request, symbol):
+    # any api errors bubble up to the user
+    return HttpResponse(yf.get_company_name(symbol))
+
 
 def user_profile(request, user_id):
     user = User.objects.get(user_id)

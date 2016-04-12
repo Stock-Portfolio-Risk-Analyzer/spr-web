@@ -18,7 +18,11 @@
 <body class="nav-md">
 {% include "modal/modify_account.html" %}
 {% include "modal/modify_portfolio.html" %}
+
+{% include "modal/search_stock.html" %}
+
 {% include "modal/recommendation.html" %}
+
 <script>
     {% if user %}
         currentUser_id = {{user.pk}};
