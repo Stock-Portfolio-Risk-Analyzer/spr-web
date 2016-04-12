@@ -147,3 +147,5 @@ def compute_portfolio_rri_for_range(stocks, start_date, end_date):
     portfolio_rri = (total_rri / total_quantity)
 
     return portfolio_rri
+
+print compute_daily_change_for_past_given_days("GOOG", 10)

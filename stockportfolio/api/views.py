@@ -1,6 +1,7 @@
 from django.shortcuts import render, render_to_response, redirect
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from datautils import yahoo_finance as yf
+from datautils import stock_info
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
@@ -86,6 +87,9 @@ def stock_interface(request,ticker):
         'stock_name': yf.get_company_name(ticker),
         'stock_ticker': ticker,
         'stock_sector': yf.get_company_sector(ticker),
-        'stock_feeds' : sanitized_feed
+        'stock_feeds' : sanitized_feed,
+        'stock_values_month_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,30),
+        'stock_values_week_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,7),
+        'stock_values_year_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,365)
     }
     return render_to_response('modal/stock_interface.html', context)

@@ -44,7 +44,7 @@
                     <div class="dashboardaph x_panel" >
                       <div class="row x_title">
                           <div class="col-md-6">
-                              <h3>Stock Value Variation (Today) </h3>
+                              <h3>Stock Value Variation (Weekly) </h3>
                           </div>
                       </div>
                       <div class="x_content">
@@ -53,13 +53,13 @@
                           </div>
                       </div>
                       <span class="input-group-btn">
-                          <button id = "week" onclick = "weekFun('value_graph')" class="btn btn-default" type="button">In week </button>
+                          <button id = "week" onclick = "plotValues('value_graph', 'week')" class="btn btn-default" type="button">In a week </button>
                       </span>
                       <span class="input-group-btn">
-                          <button id = "year" onclick = "yearFun('value_graph')"class="btn btn-default" type="button">In year </button>
+                          <button id = "year" onclick = "plotValues('value_graph', 'month')"class="btn btn-default" type="button">In a month</button>
                       </span>
                       <span class="input-group-btn">
-                          <button id = "all" onclick = "allFun('value_graph')"class="btn btn-default" type="button">Since the beginning
+                          <button id = "all" onclick = "plotValues('value_graph', 'year')"class="btn btn-default" type="button">In a year
                           </button>
                       </span>
                     </div>
@@ -75,7 +75,7 @@
                           <b>News</b>
                         </div>
 
-                        <div class="panel-body" style="height:725px;">
+                        <div class="panel-body" style="height:750px;">
                             <ul id="menu">
                                 {% for entry in stock_feeds %}
                                     <li class="news-item"><a href="{{entry.link}}">{{entry.title}}</a>
@@ -87,30 +87,23 @@
 
                         <div class="panel-footer"></div>
                               <script type="text/javascript">
+                                var monthly_values = "{{stock_values_month_back}}";
+                                var weekly_values = "{{stock_values_week_back}}";
+                                var annual_values = "{{stock_values_year_back}}";
+                                var daily_values = "{{stock_values_day_back}}";
+
                                   $(function () {
                                       var myElement = document.querySelector("#menu");
                                       myElement.style.listStyleType = "none";
                                       $("#menu").bootstrapNews({
-                                          newsPerPage: 18,
+                                          newsPerPage: 17,
                                           autoplay: false,
 
                                           onToDo: function () {
                                           }
                                       });
                                   });
-                                  //this will be risk_value graph
-                                  $("#risk_graph").empty();
-                                  // $.plot("#dashboard_graph", [{
-                                  //     label: "Beta",
-                                  //     data: risks,
-
-                                  //     lines: {
-                                  //         fillColor: "rgba(250, 202, 89, 0.12)"
-                                  //     },
-                                  //     points: {
-                                  //         fillColor: "#fff"
-                                  //     }
-                                  // }], options);
+                                  plotValues('value_graph', 'week')
                               </script>
                         </div>
 
