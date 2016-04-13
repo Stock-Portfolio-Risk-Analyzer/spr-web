@@ -29,7 +29,7 @@ class TestStockInfo(unittest.TestCase):
         number_of_days_back = 4
         pre_rri  = compute_stock_rri_for_today(netflix.stock_ticker, number_of_days_back)
         this_rri = get_company_rri_for_today(netflix.stock_ticker, number_of_days_back)
-        self.assertTrue(pre_rri, this_rri)
+        self.assertAlmostEqual(pre_rri, this_rri, places=3)
 
     def test_compute_stock_rri_for_range(self):
         """ Tests the compute_stock_rri_for_range function """
