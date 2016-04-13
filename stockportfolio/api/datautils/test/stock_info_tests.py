@@ -62,9 +62,3 @@ class TestStockInfo(unittest.TestCase):
         price_list = get_price_for_number_of_days_back_from_today(apple.stock_ticker, number_of_days_back)
         self.assertTrue(len(price_list) == number_of_days_back or len(price_list) == (number_of_days_back + 1))
         
-    def test_get_company_rri_for_a_week(self):
-        """ Tests get_company_rri_for_a_week function """
-        apple = Mock()
-        apple.stock_ticker = 'AAPL'
-        rri_list = get_company_rri_for_a_week(apple.stock_ticker)
-        self.assertTrue(math.isnan(len(rri_list)))
