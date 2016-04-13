@@ -8,7 +8,7 @@ import math
 """
 Test methods in rri.py
 Author: Shivam Gupta (sgupta40@illinois.edu)
-        Laurynas Tamulevičius
+        Laurynas Tamulevicius
 """
 
 
@@ -29,7 +29,8 @@ class TestStockInfo(unittest.TestCase):
         number_of_days_back = 4
         pre_rri  = compute_stock_rri_for_today(netflix.stock_ticker, number_of_days_back)
         this_rri = get_company_rri_for_today(netflix.stock_ticker, number_of_days_back)
-        self.assertAlmostEqual(pre_rri, this_rri, places=3)
+        self.assertTrue(math.isnan(pre_rri))
+        self.assertTrue(math.isnan(this_rri))
 
     def test_compute_stock_rri_for_range(self):
         """ Tests the compute_stock_rri_for_range function """
@@ -45,7 +46,7 @@ class TestStockInfo(unittest.TestCase):
         fb.stock_ticker = 'FB'
         industry = get_company_name(fb.stock_ticker)
         self.assertTrue(industry == "Facebook, Inc.")
-        
+
     def test_get_company_sector(self):
         """ Tests the get_company_sector function """
         google = Mock()
