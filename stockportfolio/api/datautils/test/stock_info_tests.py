@@ -19,7 +19,7 @@ class TestStockInfo(unittest.TestCase):
         apple = Mock()
         apple.stock_ticker = 'AAPL'
         industry = get_company_industry(apple.stock_ticker)
-        self.assertAlmostEqual(industry, "Electronic Equipment")
+        self.assertTrue(industry == "Electronic Equipment")
 
     def test_get_company_rri_for_today(self):
         """ Tests the get_company_rri_for_today function """
