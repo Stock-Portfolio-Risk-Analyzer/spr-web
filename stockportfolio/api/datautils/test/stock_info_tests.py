@@ -6,7 +6,7 @@ from mock import Mock
 import math
 
 """
-Test methods in rri.py
+Test methods in stock_info.py
 Author: Shivam Gupta (sgupta40@illinois.edu)
         Laurynas Tamulevicius
 """
@@ -53,3 +53,18 @@ class TestStockInfo(unittest.TestCase):
         google.stock_ticker = 'GOOG'
         industry = get_company_sector(google.stock_ticker)
         self.assertTrue(industry == "Technology")
+    
+    def test_get_price_for_number_of_days_back_from_today(self):
+        """ Tests get_price_for_number_of_days_back_from_today function """
+        apple = Mock()
+        apple.stock_ticker = 'AAPL'
+        number_of_days_back = 1
+        price_list = get_price_for_number_of_days_back_from_today(apple.stock_ticker, number_of_days_back)
+        self.assertTrue(len(price_list) == number_of_days_back or len(price_list) == (number_of_days_back + 1))
+        
+    def test_get_company_rri_for_a_week(self):
+        """ Tests get_company_rri_for_a_week function """
+        apple = Mock()
+        apple.stock_ticker = 'AAPL'
+        rri_list = get_company_rri_for_a_week(apple.stock_ticker)
+        self.assertTrue(len(rri_list) == 7)
