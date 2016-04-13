@@ -67,4 +67,4 @@ class TestStockInfo(unittest.TestCase):
         apple = Mock()
         apple.stock_ticker = 'AAPL'
         rri_list = get_company_rri_for_a_week(apple.stock_ticker)
-        self.assertTrue(len(rri_list) == 7)
+        self.assertTrue(math.isnan(len(rri_list)))
