@@ -1,50 +1,52 @@
 <!DOCTYPE html>
 <html>
-<!-- Based on the admin template at https://github.com/kimlabs/gentelella/ used 
+<!-- Based on the admin template at https://github.com/kimlabs/gentelella/ used
      under the MIT license which is includedin it's original form in License.txt-->
 <head>
     <title>SPRA | {{ user.get_username }}'s profile</title>
     {% load staticfiles %}
+    <link href="{% static "images/favicon.ico" %}" rel="icon">
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
     <link href="{% static "fonts/css/font-awesome.min.css" %}" rel="stylesheet">
     <link href="{% static "css/animate.min.css" %}" rel="stylesheet">
     <link href="{% static "css/custom.css" %}" rel="stylesheet">
     <script src="{% static "js/jquery.min.js" %} "></script>
     <script src="{% static "js/chartjs/chart.min.js" %} "></script>
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 
 =======
     <script src="{% static "js/spr/stock_value_graph.js" %}"></script>
 >>>>>>> Stashed changes
+=======
+    <script src="{% static "js/jquery.bootstrap.newsbox.min.js" %}"></script>
+    <script src="{% static "js/spr/stock_value_graph.js" %}"></script>
+>>>>>>> 695a5d986fda40152264489416f4e3abd600e882
 </head>
 <body class="nav-md">
 {% include "modal/modify_account.html" %}
 {% include "modal/modify_portfolio.html" %}
+
+{% include "modal/search_stock.html" %}
+
+{% include "modal/recommendation.html" %}
+
 <script>
     {% if user %}
-        var currentUser_id = {{user.pk}};
-        var user_portfolio = null;
-            url_getportfolio = "/api/user/" + currentUser_id + "/getportfolio";
-            $.ajax({
-                url: url_getportfolio,
-                success: function (data) {
-                    user_portfolio = data;
-                },
-                async:false
-            });
-
+        currentUser_id = {{user.pk}};
+        user_portfolio = null;
     {% endif %}
 </script>
 
 <div class="container body">
     <div class="main_container">
-        <div class="col-md-3 left_col">
+        <div class="col-md-3 left_col" style="overflow: hidden;">
             <div class="left_col scroll-view">
                 <div class="navbar nav_title" style="border: 0;">
                     <a href="index.html" class="site_title"><i class="fa fa-money"></i> <span>SPRA</span></a>
                 </div>
                 <div class="clearfix"></div>
-                <div class="profile">
+                <div class="profile clearfix">
                     <div class="profile_pic">
                         <img src="{{ gravatar }}" class="img-circle profile_img">
                     </div>
@@ -55,14 +57,22 @@
                     </div>
                 </div>
 
-                <br/>
+
 
                 <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section ">
+                        <ul class="nav side_menu portfolios_menu">
+                            <li><a><i class="fa fa-suitcase"></i> Portfolios</a>
+                                {% include "dashboard/portfolios.html" %}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
         {% include "dashboard/user_dropdown.html" %}
         {% include "dashboard/portfolio_stats.html" %}
+        {% include "dashboard/stock_rec.html" %}
         {% include "dashboard/portfolio_table.html" %}
         {% include "dashboard/portfolio_graph.html" %}
         {% include "dashboard/portfolio_diversity.html" %}
@@ -76,11 +86,10 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-<<<<<<< Updated upstream
-=======
+
 <div id="stockInterface">
 </div>
->>>>>>> Stashed changes
+
 <script src="{% static "js/bootstrap.min.js" %}"></script>
 
 <script type="text/javascript" src="{% static "js/flot/jquery.flot.js" %}"></script>
@@ -92,15 +101,16 @@
 <script type="text/javascript" src="{% static "js/flot/jquery.flot.stack.js" %}"></script>
 <script type="text/javascript" src="{% static "js/flot/curvedLines.js" %}"></script>
 <script type="text/javascript" src="{% static "js/flot/jquery.flot.resize.js" %}"></script>
-<<<<<<< Updated upstream
-=======
 <script type="text/javascript" src="{% static "js/nicescroll/jquery.nicescroll.min.js" %} "></script>
 <script src="{% static "js/jquery.bootstrap.newsbox.min.js" %}"></script>
 <script type="text/javascript" src="{% static "js/custom.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/reloading_portfolio.js" %}"></script>
->>>>>>> Stashed changes
 <script type="text/javascript" src="{% static "js/spr/portfolio_graph.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/diversity_charts.js" %}"></script>
+<script type="text/javascript" src="{% static "js/spr/modify_portfolio.js" %}"></script>
+<script type="text/javascript" src="{% static "js/spr/portfolio_selection.js" %}"></script>
+<script type="text/javascript" src="{% static "js/spr/spr.js" %}"></script>
+
 
 </body>
 </html>

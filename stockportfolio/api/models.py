@@ -35,9 +35,31 @@ class Portfolio(models.Model):
 
     """
     portfolio_id = models.AutoField(primary_key=True)
+    portfolio_name = models.CharField(max_length=50, null=True, blank=True)
     portfolio_stocks = models.ManyToManyField(Stock)
     portfolio_user = models.ForeignKey(User)
     portfolio_risk = models.ManyToManyField(Risk)
 
     def __str__(self):
-        return '{} {}'.format(self.portfolio_id, self.portfolio_risk)
+        return self.portfolio_name if self.portfolio_name else "Unnamed"
+
+
+class UserSettings(models.Model):
+    """
+
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    default_portfolio = models.ForeignKey(
+        Portfolio, on_delete=models.SET_NULL, null=True)
+
+
+class PortfolioRank(models.Model):
+    """
+
+    """
+    class Meta:
+        unique_together = (("date", "portfolio"), )
+
+    date = models.DateTimeField(auto_now=True, db_index=True)
+    portfolio = models.ForeignKey(Portfolio)
+    value = models.IntegerField()

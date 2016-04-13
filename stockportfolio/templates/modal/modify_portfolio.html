@@ -11,8 +11,8 @@
                     <strong>Oh snap!</strong> <span id="text"></span>
                     </div>
                 <form id="modify-portfolio-form" action="" method="post">
+                    <input form="modify-portfolio-form" required type="text" id="pname" name="pname" placeholder="Enter Portfolio Name."/>
                     <table id="portfolio-table" class="table table-striped responsive-utilities jambo_table">
-                        {% csrf_token %}
                         <thead>
                         <tr class="headings">
                             <th>Symbol</th>
@@ -20,9 +20,10 @@
                             <th></th>
                         </tr>
                         </thead>
+                        <tbody>
                         <tr class="even pointer hide clone">
                             <td id="inputTd">
-                                <input form="modify-portfolio-form" required type="text" id="symbol"
+                                      <input form="modify-portfolio-form" required type="text" id="symbol"
                                        placeholder="Enter symbol here" name="symbol"/>
                             </td>
                             <td id="quantityTd">
@@ -33,11 +34,15 @@
                                                                                        class="fa fa-2x fa-close"></i></a>
                             </td>
                         </tr>
+                        </tbody>
+
                     </table>
                     <input type="hidden" id="stock-modify-count" name="stock_count" value="0">
+                    <input type="hidden" id="csrf-token" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                     <button id="add-row" class="btn btn-primary">Add Row</button>
                     <button id="save-button" class="btn btn-primary">Save</button>
                 </form>
+                <button id="delete-portfolio-button" class="btn btn-danger">Permanently Remove Portfolio</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -45,85 +50,4 @@
 
 <script>
     $("#modify-error").hide()
-    {%  if user.is_authenticated %}
-        var $user = {{ user.pk }}
-        var $url = "/api/user/" + $user + "/getportfolio";
-        raw_json = $.ajax({
-            url: $url,
-            success: function (data) {
-                populate_table(data);
-            }
-        });
-
-        function populate_table(data) {
-            stocks = data.stocks;
-            var currentCount = parseInt($("#stock-modify-count").val())
-            for (var i = 0; i < stocks.length; i++) {
-                var stock = stocks[i];
-                var $clone = $("#portfolio-table").find('tr.clone').clone(true).removeClass("hide").removeClass('clone')
-                $clone.find("input#symbol").val(stock.ticker).attr("readonly", "readonly")
-                $clone.find("input#symbol").attr("name", "symbol_" + currentCount)
-                $clone.find("input#quantity").val(stock.quantity)
-                $clone.find("input#quantity").attr("name", "quantity_" + currentCount)
-                $("#portfolio-table").append($clone)
-                currentCount += 1
-            }
-            $("#stock-modify-count").val(currentCount)
-        }
-
-        $("#add-row").click(function () {
-            var currentCount = parseInt($("#stock-modify-count").val())
-            var $clone = $("#portfolio-table").find('tr.clone').clone(true).removeClass("hide").removeClass('clone')
-            $clone.find("input#symbol").attr("name", "symbol_" + currentCount)
-            $clone.find("input#quantity").attr("name", "quantity_" + currentCount)
-            $("#portfolio-table").append($clone)
-            $("#stock-modify-count").val(currentCount+1)
-        });
-        $("#delete-row").click(function () {
-            $(this).closest("tr").find("#quantity").val(0)
-            $(this).closest("tr").hide()
-        });
-
-        $("#save-button").click(function(e) {
-            $clone = $('#modify-portfolio-form')
-            $clone.find("tr.hide.clone").remove()
-            var form = {};
-            form["symbols"] = {}
-            form["quantities"] = {}
-            $.each($clone.serializeArray(),
-                    function(i, field) {
-                        var dict = ""
-                        if(field.name.indexOf("symbol") > -1){
-                            var i = field.name.split("_").pop()
-                            form["symbols"][i] = field.value
-                        } else if (field.name.indexOf("quantity") > -1) {
-                            var i = field.name.split("_").pop()
-                            form["quantities"][i] = field.value
-                        }
-                    });
-            delete form["csrfmiddlewaretoken"]
-            delete form["stock_count"]
-            delete form["symbol"]
-            delete form["quantity"]
-            $.ajax({
-                url : "/api/portfolio/modify",
-                type: "post",
-                data : {
-                    "data": JSON.stringify(form),
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                dataType: "json",
-                success: function(results){
-                    window.location.href = "/dashboard";
-                },
-                error: function(data) {
-                    $("#modify-error #text").text(data.responseJSON.message)
-                    $("#modify-error").show()
-                }
-            })
-            e.preventDefault();
-        });
-
-    {% endif %}
-
 </script>

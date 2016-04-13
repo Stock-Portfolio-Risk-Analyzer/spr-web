@@ -26,7 +26,6 @@ def get_stock_data(symbol, start_date=None, end_date=None):
 
     # log.info("Loading symbol: {}".format(symbol))
     symbol_data = web.DataReader(symbol, 'yahoo', start_date, end_date)
-
     return symbol_data
 
 
