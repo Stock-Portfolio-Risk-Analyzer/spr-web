@@ -28,8 +28,9 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.register_complete()
         self.activation()
         self.confirm_activation()
-        #self.login()
-        #self.dashboard()
+        self.login()
+        self.dashboard()
+        self.modify_account()
 
     def wait(self, fn, time=20):
         WebDriverWait(self.driver, time).until(fn)
@@ -76,6 +77,8 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     def activation(self):
         test_profile = RegistrationProfile.objects.get(activated=False)
         test_user = test_profile.user
+        self.assertFalse(test_profile.activated)
+        self.assertFalse(test_user.is_active)
         test_user.is_active = True
         test_profile.activated = True
         test_user.save()
@@ -88,14 +91,29 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     def login(self):
         self.driver.get(self.live_server_url)
-        WebDriverWait(self.driver, self.timeout.until(
-                        EC.title_contains('Stock Portfolio Risk Analyzer'))) 
-        self.driver.find_element_by_partial_link_text('Login')
+        WebDriverWait(self.driver, self.timeout).until(
+                        EC.title_contains('Stock Portfolio Risk Analyzer')) 
+        self.driver.find_element_by_partial_link_text('Login').click()
         # redirect to login
         self.wait(self.new_page)
-        
+        self.assertEqual(self.driver.title, 'User test')
+        username_box = self.driver.find_element_by_id('id_username')
+        username_box.send_keys(self.un)
+        password_box = self.driver.find_element_by_id('id_password')
+        password_box.send_keys(self.pw)
+        self.driver.find_element_by_xpath("//*[contains(text(), 'Sign in')]").click() 
             
     def dashboard(self):
-        self.driver.get('self.live_server_url'+ '/dashboard/')       
+        self.driver.get(self.live_server_url + '/dashboard/')       
         self.wait(self.new_page, 60)
+        body = self.driver.find_element_by_tag_name('body')
         self.assertEqual(self.driver.title, 'SPRA | %s\'s profile' % (self.un))
+    
+    def modify_account(self):
+       ma = self.driver.find_elements_by_xpath("//*[@data-target='#userAccountModal']") 
+       self.assertEqual(len(ma), 1)
+       ma[0].click()
+       username_box = self.driver.find_elements_by_xpath("//*[@value='%s']" % (self.un))[0]
+       self.un = 'test_user_2'
+       username_box.send_keys(self.un)
+       self.driver.find_element_by_id("submit-id-submit").click()  
