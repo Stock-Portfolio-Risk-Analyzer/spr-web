@@ -1,10 +1,12 @@
 import json
+import numpy as np
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
 from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank
-from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
+from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector, get_market_cap
 from django.shortcuts import get_object_or_404
+from random import shuffle
 
 
 def add_stock(request, portfolio_id):
@@ -44,6 +46,7 @@ def remove_stock(request, portfolio_id):
             stock.delete()
             return HttpResponse(status=200)
     return HttpResponse(status=400)
+
 
 def create_portfolio(request, user_id):
     """
@@ -176,6 +179,7 @@ def modify_portfolio_form_post(request, portfolio_id):
                             status=400,
                             content_type="application/json charset=utf-8")
 
+
 def stock_rec(request, portfolio_id):
     """
     Returns stock recommendations in several categories based on a specific
@@ -186,53 +190,91 @@ def stock_rec(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
+
     risks = portfolio.portfolio_risk.all()
+    stocks = portfolio.portfolio_stocks.all()
+
     if len(risks) == 0:
         err = 'No recommendations available at this time.'
         err_dict = { 'low':err,
                      'high': err,
                      'stable':err,
                      'diverse':err }
-        return HttpResponse(content=json.dumps(err_dict), status=200, 
+        return HttpResponse(content=json.dumps(err_dict),
+                            status=200,
+                            content_type='application/json')
+    avg_p_risk = np.average(risk.risk_value for risk in risks)
+    mkt_cap_avg = np.average(get_market_cap(stock.stock_ticker) for stock in stocks)
+    jsonify = lambda x: { i:x.__dict__[i] for i in x.__dict__ if i !=  "_state" }
+    less_risk = _less_risky(jsonify, avg_p_risk, mkt_cap_avg)
+    more_risk = _more_risky(jsonify, avg_p_risk, mkt_cap_avg)
+    diverse   = _diversify(jsonify, portfolio)
+    stable = _stable(jsonify, avg_p_risk, mkt_cap_avg)
+
+    rec_dict = {
+                'low'    : shuffle(less_risk)[:4],
+                'high'   : shuffle(more_risk)[:4],
+                'diverse': shuffle(diverse)[:4],
+                'stable' : shuffle(stable)[:4]
+                }
+
+    return HttpResponse(content=json.dumps(rec_dict),
+                        status=200,
                         content_type='application/json')
-    p_risk = risks[0].risk_value 
-    jsonify = lambda x: { i:x.__dict__[i] 
-                         # Django inserts a "_state" attribute into every
-                         # model. We don't need it in our json, so it's 
-                         # removed here
-                         for i in x.__dict__ if i !=  "_state" }
-    less_risk = map(jsonify, 
-                    list(Stock.objects.exclude(stock_beta__lt=p_risk)))
-    more_risk = map(jsonify, 
-                    list(Stock.objects.exclude(stock_beta__gt=p_risk)))
-    diverse   = map(jsonify, 
-                    list(_diversify_by_sector(portfolio))) 
-    # stock w/ in a 20% range of current portfolio riskiness
-    stable = map(jsonify, list(Stock.objects.exclude(
-                         stock_beta__gt=(1.1 * p_risk)
-                   ).exclude(
-                           stock_beta__lt=0.9 * p_risk
-                   )))
-    rec_dict = {'low'    :less_risk[:4],
-                'high'   :more_risk[:4],
-                'diverse':diverse[:4],
-                'stable' :stable[:4] }
-    return HttpResponse(content=json.dumps(rec_dict), status=200, 
-                        content_type='application/json')
+
+
+def _stable(jsonify, p_risk, mkt_cap_avg):
+    stable_stocks = list(Stock.objects.exclude(stock_beta__gt=(1.1 * p_risk)).
+                         exclude(stock_beta__lt=0.9 * p_risk))
+
+    # stable stocks should have similar market cap as our portfolio average
+    for stock in stable_stocks:
+        if get_market_cap(stock) <= .9*mkt_cap_avg:
+            stable_stocks.remove(stock)
+        elif get_market_cap(stock) >= 1.1*mkt_cap_avg:
+            stable_stocks.remove(stock)
+    return map(jsonify, stable_stocks)
+
+
+def _diversify(jsonify, portfolio):
+    return map(jsonify, list(_diversify_by_sector(portfolio)))
+
+
+def _more_risky(jsonify, p_risk, mkt_cap_avg):
+    more_risky_stocks = list(Stock.objects.exclude(stock_beta__gt=p_risk))
+
+    # riskier stocks should have less market cap than our portfolio average
+    for stock in more_risky_stocks:
+        if get_market_cap(stock) >= mkt_cap_avg:
+            more_risky_stocks.remove(stock)
+
+    return map(jsonify, more_risky_stocks)
+
+
+def _less_risky(jsonify, p_risk, mkt_cap_avg):
+    less_risky_stocks = Stock.objects.exclude(stock_beta__lt=p_risk)
+
+    # less risky stocks should have less market cap than our portfolio average
+    for stock in less_risky_stocks:
+        if get_market_cap(stock) >= mkt_cap_avg:
+            less_risky_stocks.remove(stock)
+
+    return map(jsonify, less_risky_stocks)
+
 
 def _diversify_by_sector(portfolio):
     """
     :param portfolio
     :return stocks from various sectors not present in portfolio
     """
-    sectors = list(portfolio.portfolio_stocks.
-                   values_list('stock_sector').distinct())
+    sectors = list(portfolio.portfolio_stocks.values_list('stock_sector').distinct())
+    wanted_sectors = shuffle(sectors)[:4]
     q = Stock.objects.all()
-    for sector in sectors:
-        q.exclude(stock_sector=sector)
-    return list(q) 
+    for wanted_sector in wanted_sectors:
+        for sector in sectors:
+            q.exclude(stock_sector=sector)
+    return list(q)
     
-
 
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker):

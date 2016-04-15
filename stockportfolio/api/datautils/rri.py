@@ -1,4 +1,6 @@
 from datetime import date, timedelta
+from functools import partial
+import scipy.stats
 import pandas as pd
 import numpy as np
 import yahoo_finance
@@ -116,3 +118,58 @@ def compute_portfolio_rri_for_range(stocks, start_date, end_date):
         total_rri = total_rri + (stock_rri * quantity)
         total_quantity = total_quantity + quantity
     return (total_rri / total_quantity)
+
+
+def compute_portfolio_returns(stocks, start_date, end_date):
+    """
+    Get weighted returns of a portfolio from start_date to end_date
+    (assuming we bought the portfolio on start_date and held through end_date)
+    :param stocks: (dict) {symbol: quantity}
+    :param start_date: (DateTime)
+    :param end_date: (DateTime)
+    :return: (Series) of daily returns
+    """
+    date_range = pd.date_range(start_date, end_date)
+    portfolio_returns = pd.Series(data=[1]*len(date_range), index=date_range)
+    for symbol, quantity in stocks.iteritems():
+        symbol_returns = yahoo_finance.get_pct_returns(symbol, start_date, end_date)
+        portfolio_returns = portfolio_returns*quantity*symbol_returns
+    return portfolio_returns
+
+
+def calculate_alpha_beta(returns, benchmark_returns=None):
+    """
+    Calculates alpha and beta.
+    :param returns:
+    :param benchmark_returns: (
+    :return: (float) alpha, (float) beta
+    """
+    ret_index = returns.index
+    beta, alpha = scipy.stats.linregress(benchmark_returns.loc[ret_index].values, returns.values)[:2]
+    return alpha * 30, beta
+
+def compute_portfolio_rolling_beta(stocks, start_date, end_date, rolling_window=30):
+    """
+    Calculate the rolling beta of the strategy from start_date to end_date
+    :param stocks: (dict) {symbol: quantity}
+    :param returns: (daily simulated returns of the strategy)
+    :param start_date: (DateTime)
+    :param end_date: (DateTime)
+    :param rolling_window: (int) rolling window for which to compute the beta,
+                                 default is 1 month
+    :return: (series) of rolling beta
+    """
+    portfolio_returns = compute_portfolio_returns(stocks, start_date, end_date)
+    factor_returns = yahoo_finance.get_pct_returns('SPY', start_date, end_date)  # the benchmark
+    if factor_returns.ndim > 1:
+        # apply column-wise
+        return factor_returns.apply(partial(compute_portfolio_rolling_beta, portfolio_returns),
+                                    rolling_window=rolling_window)
+    else:
+        rolling_beta = pd.Series(index=portfolio_returns.index)
+        for beg, end in zip(portfolio_returns.index[0:-rolling_window],
+                            portfolio_returns.index[rolling_window:]):
+            rolling_beta.loc[end] = calculate_alpha_beta(portfolio_returns.loc[beg:end],
+                                      factor_returns.loc[beg:end])[1]
+        return rolling_beta
+
