@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
+import datetime
 
 
 class Risk(models.Model):
@@ -9,10 +10,15 @@ class Risk(models.Model):
     """
     risk_id = models.AutoField(primary_key=True)
     risk_value = models.FloatField(default=0.0)
-    risk_date = models.DateTimeField(auto_now=True)
+    risk_date = models.DateTimeField()
 
     def __str__(self):
         return '{} @ {}'.format(self.risk_value, self.risk_date)
+
+    def save(self, *args, **kwargs):
+        if not self.risk_date:
+            self.risk_date = datetime.datetime.now()
+        super(Risk, self).save(*args, **kwargs)
 
 
 class Stock(models.Model):
