@@ -27,9 +27,14 @@ def dashboard(request):
     form.fields['default_portfolio'].queryset = Portfolio.objects.filter(
         portfolio_user=request.user)
     form.fields['default_portfolio'].initial = user_settings.default_portfolio
+
+    stock_tickers = Stock.objects.all().values_list("stock_ticker")
+    #stock_tickers = ['GOOG','AAMZ']
     context = {
         "user": request.user, "gravatar": g_url,
-        "form": form}
+        "form": form,
+        "stock_tickers" : stock_tickers
+              }
     context.update(csrf(request))
     return render_to_response("index.html", context)
 
