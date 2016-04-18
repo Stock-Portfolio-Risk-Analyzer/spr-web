@@ -1,7 +1,12 @@
+import csv
 import json
 from datetime import datetime
+
+import pandas as pd
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
+
+from stockportfolio.api.forms import PortfolioUploadForm
 from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
@@ -219,6 +224,51 @@ def stock_rec(request, portfolio_id):
                 'stable' :stable[:4] }
     return HttpResponse(content=json.dumps(rec_dict), status=200, 
                         content_type='application/json')
+
+def download_porfolio_data(request, portfolio_id):
+    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
+    if portfolio.portfolio_user.pk is not request.user.pk:
+        return HttpResponse(status=403)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio.portfolio_name + '.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])
+    for stock in portfolio.portfolio_stocks.all():
+        writer.writerow([stock.stock_ticker, stock.stock_name, stock.stock_sector, stock.stock_quantity, stock.stock_beta]);
+    return response
+
+
+
+def upload_portfolio_data(request):
+    if request.method == 'POST':
+        form = PortfolioUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            portfolio_id = _parse_portfolio_file(request.FILES['file'], request.user)
+            if portfolio_id is None:
+                return HttpResponse(status=500)
+            return HttpResponse(content=json.dumps({"portfolio_id": portfolio_id}), status=200,
+                                content_type='application/json')
+        return HttpResponse(status=500)
+
+def _parse_portfolio_file(file, user):
+    df = pd.read_csv(file, header=0)
+    portfolio = Portfolio.objects.create(portfolio_user=user)
+    for row in df:
+        stock_name = get_company_name(row["name"])
+        stock_sector = get_company_sector(row["symbol"])
+        try:
+            stock = Stock.objects.create(stock_name=stock_name,
+                                         stock_ticker=row["symbol"],
+                                         stock_quantity=row["quantity"],
+                                         stock_sector=stock_sector)
+            stock.save()
+            portfolio.portfolio_stocks.add(stock)
+            return portfolio.pk
+        except None:
+            return None
+
+
+
 
 def _diversify_by_sector(portfolio):
     """

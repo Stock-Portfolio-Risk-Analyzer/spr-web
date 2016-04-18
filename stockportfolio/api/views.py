@@ -10,7 +10,7 @@ from stockportfolio.api.utils import update_rri_for_all_portfolios, update_rank_
 from registration.models import RegistrationManager
 import string
 import hashlib
-from stockportfolio.api.forms import UpdateProfile
+from stockportfolio.api.forms import UpdateProfile, PortfolioUploadForm
 from django.core.urlresolvers import reverse
 import feedparser
 import re
@@ -27,9 +27,12 @@ def dashboard(request):
     form.fields['default_portfolio'].queryset = Portfolio.objects.filter(
         portfolio_user=request.user)
     form.fields['default_portfolio'].initial = user_settings.default_portfolio
+    upload_portfolio_form = PortfolioUploadForm()
     context = {
         "user": request.user, "gravatar": g_url,
-        "form": form}
+        "form": form,
+        "upload_portfolio_form": upload_portfolio_form
+    }
     context.update(csrf(request))
     return render_to_response("index.html", context)
 

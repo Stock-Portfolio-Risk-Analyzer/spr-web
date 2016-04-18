@@ -60,3 +60,7 @@ class UpdateProfile(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+class PortfolioUploadForm(forms.Form):
+    portfolio_title = forms.CharField(max_length=200)
+    file = forms.FileField()
