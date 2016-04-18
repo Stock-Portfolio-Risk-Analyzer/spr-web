@@ -62,5 +62,4 @@ class UpdateProfile(forms.ModelForm):
         return user
 
 class PortfolioUploadForm(forms.Form):
-    portfolio_title = forms.CharField(max_length=200)
     file = forms.FileField()

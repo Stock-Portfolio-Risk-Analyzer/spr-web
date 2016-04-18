@@ -3,9 +3,7 @@ $("#upload-portfolio").click(function(){
 });
 
 $('#uploadportfolioform').submit(function(e){
-    data = new FormData();
-    data.append("file", $(this).find("#id_file").input.files[0])
-
+    var data = new FormData($(this).get(0));
     $.ajax({
         url: $(this).attr('action'),
         type: $(this).attr('method'),
