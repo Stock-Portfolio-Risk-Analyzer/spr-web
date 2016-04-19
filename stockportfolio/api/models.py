@@ -21,6 +21,13 @@ class Risk(models.Model):
         super(Risk, self).save(*args, **kwargs)
 
 
+class Price(models.Model):
+    """
+
+    """
+    value = models.FloatField()
+    date = models.DateTimeField()
+
 class Stock(models.Model):
     """
 
@@ -30,6 +37,7 @@ class Stock(models.Model):
     stock_name = models.CharField(max_length=200)
     stock_sector = models.CharField(max_length=200, default="Other")
     stock_risk = models.ManyToManyField(Risk)
+    stock_price = models.ManyToManyField(Price)
 
     def __str__(self):
         return '{} {}'.format(self.stock_id, self.stock_ticker)
