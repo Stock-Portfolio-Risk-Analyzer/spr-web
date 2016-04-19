@@ -47,21 +47,23 @@ def update_rri_for_all_stocks():
 
 
 def precompute_rri_for_all_stocks():
-        stocks_to_precompute = (Stock.objects.values('stock_id')
-                                .annotate(Count('stock_risk')).order_by()
-                                .filter(stock_risk__count__lt=30))
-        stocks = (Stock.objects
-                  .filter(stock_id__in=[
-                          item['stock_id'] for item in stocks_to_precompute])
-                  .order_by('stock_id'))
+    stocks_to_precompute = (Stock.objects.values('stock_id')
+                            .annotate(Count('stock_risk')).order_by()
+                            .filter(stock_risk__count__lt=30))
+    stocks = (Stock.objects
+              .filter(stock_id__in=[
+                      item['stock_id'] for item in stocks_to_precompute])
+              .order_by('stock_id'))
 
-        for stock in stocks:
-            try:
-                rris = stock_info.get_company_rri_for_days_back(stock.stock_ticker, 30)
-                for date, value in rris:
-                    risk = Risk(risk_value=value, risk_date=date)
-                    risk.save()
-                    stock.stock_risk.add(risk)
-                    stock.save()
-            except:
-                continue
+    for stock in stocks:
+        try:
+            rris = stock_info.get_company_rri_for_days_back(
+                stock.stock_ticker, 30)
+            for date, value in rris:
+                risk = Risk(risk_value=value, risk_date=date)
+                risk.save()
+                stock.stock_risk.add(risk)
+                stock.save()
+        except:
+            continue
+
