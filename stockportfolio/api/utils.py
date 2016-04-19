@@ -108,3 +108,12 @@ def _calculate_risk(risk):
     return {'risk_value': risk.risk_value,
             'risk_date': '{}'.format(risk.risk_date)}
 
+
+def _calculate_price(price):
+    """
+
+    :param price: (Price)
+    :return: (dict)
+    """
+    return {'price_value': price.value,
+            'price_date': '{}'.format(price.date)}

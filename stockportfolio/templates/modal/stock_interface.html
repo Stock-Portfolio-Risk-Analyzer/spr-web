@@ -87,6 +87,9 @@
 
                         <div class="panel-footer"></div>
                               <script type="text/javascript">
+                                var risk_history = '{{ risk_history | safe }}',
+                                    price_history = '{{ price_history | safe }}';
+                                // Larry get rid of the variables below this and use the ones above please
                                 var monthly_values = "{{stock_values_month_back}}";
                                 var weekly_values = "{{stock_values_week_back}}";
                                 var annual_values = "{{stock_values_year_back}}";

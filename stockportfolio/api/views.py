@@ -14,7 +14,8 @@ from stockportfolio.api.forms import UpdateProfile
 from django.core.urlresolvers import reverse
 import feedparser
 import re
-
+import json
+from stockportfolio.api.utils import _calculate_risk, _calculate_price
 
 
 def dashboard(request):
@@ -87,15 +88,20 @@ def stock_interface(request,ticker):
             'link': entry.link,
             'description': description + "..."
             })
+    stock = Stock.objects.get(stock_ticker=ticker)
+    risk_history = []
+    price_history = []
+    for risk in stock.stock_risk.all().order_by('risk_date'):
+        risk_history.append(_calculate_risk(risk))
+    for price in stock.stock_price.all().order_by('date'):
+        price_history.append(_calculate_price(price))
+
     context = {
-        'stock_name': yf.get_company_name(ticker),
+        'stock_name': stock.stock_name,
         'stock_ticker': ticker,
-        'stock_sector': yf.get_company_sector(ticker),
+        'stock_sector': stock.stock_sector,
         'stock_feeds' : sanitized_feed,
-        'stock_values_month_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,30),
-        'stock_values_week_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,7),
-        'stock_values_year_back' : stock_info.get_price_for_number_of_days_back_from_today(ticker,365),
-        'rri_values_week_back' : '',
-        'rri_values_month_back' : ''
+        'risk_history': json.dumps(risk_history),
+        'price_history': json.dumps(price_history)
     }
     return render_to_response('modal/stock_interface.html', context)
