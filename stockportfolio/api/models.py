@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
-import datetime
+from django.utils import timezone
 
 
 class Risk(models.Model):
@@ -17,7 +17,7 @@ class Risk(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.risk_date:
-            self.risk_date = datetime.datetime.now()
+            self.risk_date = timezone.now()
         super(Risk, self).save(*args, **kwargs)
 
 
