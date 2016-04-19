@@ -8,10 +8,10 @@ from django.db.models import Count
 
 def merge_duplicate_stocks(apps, schema_editor):
     Stock = apps.get_model('api', 'Stock')
-    dupes = (Stock.objects.values('stock_id')
+    dupes = (Stock.objects.values('stock_ticker')
              .annotate(Count('stock_id')).order_by()
              .filter(stock_id__count__gt=1))
-    qs = (Stock.objects.filter(stock_id__in=[item['stock_id'] for item in dupes])
+    qs = (Stock.objects.filter(stock_ticker__in=[item['stock_ticker'] for item in dupes])
           .order_by('stock_id'))
 
     if not qs:
