@@ -95,8 +95,7 @@ def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
     value_timestamps = symbol_data.index
     values = symbol_data["Close"]
     for i in range(len(values)):
-        graphing_tuples.append(value_timestamps[i])
-        graphing_tuples.append(round(values[i],3))
+        graphing_tuples.append((value_timestamps[i], round(values[i],3)))
     return graphing_tuples
 
 def get_company_rri_for_a_week(symbol):

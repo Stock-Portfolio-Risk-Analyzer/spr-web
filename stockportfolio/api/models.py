@@ -28,6 +28,12 @@ class Price(models.Model):
     value = models.FloatField()
     date = models.DateTimeField()
 
+    def save(self, *args, **kwargs):
+        if not self.date:
+            self.date = timezone.now()
+        super(Price, self).save(*args, **kwargs)
+
+
 class Stock(models.Model):
     """
 

@@ -1,6 +1,7 @@
 from datautils import rri as rri
 from datautils import stock_info as stock_info
-from stockportfolio.api.models import Portfolio, Risk, PortfolioRank, Stock
+from datautils import yahoo_finance as yf
+from stockportfolio.api.models import Portfolio, Risk, PortfolioRank, Stock, Price
 import numpy
 from django.db.models import Count
 
@@ -46,6 +47,14 @@ def update_rri_for_all_stocks():
         stock.save()
 
 
+def update_price_for_all_stocks():
+    for stock in Stock.objects.all():
+        price = Price(value=yf.get_current_price(stock.stock_ticker))
+        price.save()
+        stock.stock_price.add(price)
+        stock.save()
+
+
 def precompute_rri_for_all_stocks():
     stocks_to_precompute = (Stock.objects.values('stock_id')
                             .annotate(Count('stock_risk')).order_by()
@@ -67,3 +76,24 @@ def precompute_rri_for_all_stocks():
         except:
             continue
 
+
+def precompute_prices_for_all_stocks():
+    stocks_to_precompute = (Stock.objects.values('stock_id')
+                            .annotate(Count('stock_price')).order_by()
+                            .filter(stock_price__count__lt=365))
+    stocks = (Stock.objects
+              .filter(stock_id__in=[
+                      item['stock_id'] for item in stocks_to_precompute])
+              .order_by('stock_id'))
+
+    for stock in stocks:
+        try:
+            prices = stock_info.get_price_for_number_of_days_back_from_today(
+                stock.stock_ticker, 365)
+            for timestamp, value in prices:
+                price = Price(value=value, date=timestamp.to_datetime())
+                price.save()
+                stock.stock_price.add(price)
+                stock.save()
+        except:
+            continue
