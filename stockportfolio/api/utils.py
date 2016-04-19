@@ -97,3 +97,14 @@ def precompute_prices_for_all_stocks():
                 stock.save()
         except:
             continue
+
+
+def _calculate_risk(risk):
+    """
+
+    :param risk: (Risk)
+    :return: (dict)
+    """
+    return {'risk_value': risk.risk_value,
+            'risk_date': '{}'.format(risk.risk_date)}
+

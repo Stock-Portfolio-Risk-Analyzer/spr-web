@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponse
 from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank, StockPortfolio
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
+from stockportfolio.api.utils import _calculate_risk
 
 
 def add_stock(request, portfolio_id):
@@ -283,17 +284,6 @@ def _calculate_stock_info(stock_portfolio):
                   'mkt_value': mkt_value,
                   'sector': stock.stock_sector}
     return stock_dict
-
-
-def _calculate_risk(risk):
-    """
-
-    :param risk: (Risk)
-    :return: (dict)
-    """
-    risk_dict = {'risk_value': risk.risk_value,
-                 'risk_date': '{}'.format(risk.risk_date)}
-    return risk_dict
 
 
 def _calculate_sector_allocations(portfolio):
