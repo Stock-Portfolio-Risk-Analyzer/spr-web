@@ -10,7 +10,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     
     def setUp(self):
         super(SeleniumTestCase, self).setUp()
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.Chrome()
         self.driver.maximize_window()
         self.timeout = 20
         self.new_page = lambda driver: driver.find_element_by_tag_name('body')
