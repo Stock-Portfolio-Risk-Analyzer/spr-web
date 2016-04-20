@@ -17,10 +17,22 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.un    = 'test_user'
         self.pw    = 'Passw0rd@1234'
         self.email = 'test@test.net'
- 
+        self.create_portfolios()
+    
     def tearDown(self):
         self.driver.quit()
         super(SeleniumTestCase, self).tearDown()
+    
+    def create_portfolios(self):
+        self.portfolios = []
+        p1 = {'portfolio_name': 'test portfolio one',
+              'stock_symbol'  : 'AAPL',
+              'stock_amount'  : '10'}
+        p2 = {'portfolio_name': 'test portfolio two',
+              'stock_symbol'  : 'GOOG',
+              'stock_amount'  : '3'}
+        self.portfolios.append(p1)
+        self.portfolios.append(p2)
 
     def test_runner(self):
         self.landing()
@@ -30,7 +42,9 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.confirm_activation()
         self.login()
         self.dashboard()
-        self.modify_account()
+        #self.modify_account()
+        self.add_portfolios()
+        #self.persistent_portfolios()
 
     def wait(self, fn, time=20):
         WebDriverWait(self.driver, time).until(fn)
@@ -116,4 +130,37 @@ class SeleniumTestCase(StaticLiveServerTestCase):
        username_box = self.driver.find_elements_by_xpath("//*[@value='%s']" % (self.un))[0]
        self.un = 'test_user_2'
        username_box.send_keys(self.un)
-       self.driver.find_element_by_id("submit-id-submit").click()  
+       self.driver.find_element_by_id('submit-id-submit').click() 
+
+    def add_portfolios(self):
+        self.assertEqual(self.driver.title, 'SPRA | %s\'s profile' % (self.un))
+        for p in self.portfolios:
+            add_btn  = self.driver.find_element_by_id('add-portfolio')
+            add_btn.click()
+            # fill out portfolio form
+            portfolio_name = self.driver.find_element_by_id('pname')
+            portfolio_name.send_keys(p['portfolio_name'])
+            row_btn  = self.driver.find_element_by_id('add-row')
+            save_btn = self.driver.find_element_by_id('save-button')
+            row_btn.click()
+            symbol = self.driver.find_element_by_id('symbol')
+            symbol.send_keys(p['stock_symbol'])
+            quantity = self.driver.find_element_by_id('quantity')
+            quantity.send_keys(p['stock_amount'])
+            save_btn.click()
+    
+    def persistent_portfolios(self):
+        plist = self.driver.find_elements_by_class_name('portfolio-list')
+        self.assertEqual(len(plist), 1) 
+        portfolios = plist[0].find_elements_by_tag_name('li')
+        self.assertEqual(plist[0], "")
+        self.assertEqual(len(portfolios), 2)
+        for p in portfolios:
+            pname = p.find_elements_by_tag_name('a').text
+            isName = self.portfolios[0]['portfolio_name'] == pname or self.portfolios[1]['portfolio_name'] == pname
+            self.assertTrue(pname)
+
+    def download_portfolio(self):
+        dl_button = self.driver.find_element_by_id('download-portfolio')
+        dl_button.click()
+
