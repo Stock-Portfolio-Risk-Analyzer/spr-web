@@ -80,7 +80,7 @@ def precompute_rri_for_all_stocks():
 def precompute_prices_for_all_stocks():
     stocks_to_precompute = (Stock.objects.values('stock_id')
                             .annotate(Count('stock_price')).order_by()
-                            .filter(stock_price__count__lt=365))
+                            .filter(stock_price__count__lt=100))
     stocks = (Stock.objects
               .filter(stock_id__in=[
                       item['stock_id'] for item in stocks_to_precompute])
