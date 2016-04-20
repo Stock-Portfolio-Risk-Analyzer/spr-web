@@ -1,0 +1,23 @@
+{% load crispy_forms_tags %}
+<div class="modal fade" id="uploadPortfolioModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Upload Portfolio</h4>
+      </div>
+      <div class="modal-body">
+          {% if form.is_multipart %}
+              <form enctype="multipart/form-data" id="uploadportfolioform" method="post" action="/api/portfolio/upload">
+          {% else %}
+                <form id="uploadportfolioform" method="post" action="/api/portfolio/upload">
+            {% endif %}
+            {% crispy upload_portfolio_form %}
+              <button form="uploadportfolioform" type="submit" id="upload-file" class="btn btn-primary">Upload</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
