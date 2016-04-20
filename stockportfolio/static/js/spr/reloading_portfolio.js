@@ -26,5 +26,6 @@ function refreshToPortfolio(portfolioId) {
         loadAllGraphs();
         repopulateListOfPortfolios(portfolioId);
         populate_table();
+        setDownloadLink();
 }
 getDefaultPortfolio();
