@@ -13,8 +13,16 @@
           </div>
 
           <div class="modal-body">
-            <h2 style = "font-size:26px"><b>Ticker:</b> {{stock_ticker}}</h2>
-            <h2 style = "font-size:26px"><b>Sector:</b> {{stock_sector}}</h2>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h2 style = "font-size:26px"><b>Ticker:</b> {{stock_ticker}}</h2>
+                <h2 style = "font-size:26px"><b>Sector:</b> {{stock_sector}}</h2>
+              </div>
+              <div class="col-md-6">
+                <h2 style = "font-size:26px"><b>Current Value:</b> {{current_price}} $</h2>
+              </div>
+            </div>
 
               <div class="row">
                   <div class="col-md-6">
@@ -34,10 +42,6 @@
                       </span>
                       <span class="input-group-btn">
                           <button id = "year" onclick = "plotValues('risk_graph','rri_month')"class="btn btn-default" type="button">In a month </button>
-                      </span>
-                      <span class="input-group-btn">
-                          <button id = "all" onclick = "plotValues('risk_graph','rri_year')"class="btn btn-default" type="button">In a year
-                          </button>
                       </span>
                     </div>
 
@@ -67,7 +71,6 @@
                   </div>
 
                   <div class="col-md-6">
-
                         <div class="panel panel-default">
 
                         <div class="panel-heading">
@@ -87,15 +90,8 @@
 
                         <div class="panel-footer"></div>
                               <script type="text/javascript">
-                                var risk_history = '{{ risk_history | safe }}',
-                                    price_history = '{{ price_history | safe }}';
-                                // Larry get rid of the variables below this and use the ones above please
-                                var monthly_values = "{{stock_values_month_back}}";
-                                var weekly_values = "{{stock_values_week_back}}";
-                                var annual_values = "{{stock_values_year_back}}";
-                                var monthly_values_rri = "{{rri_values_month_back}}";
-                                var weekly_values_rri = "{{rri_values_week_back}}";
-                                var annual_values_rri = "{{rri_values_year_back}}";
+                                var risk_history_string = '{{ risk_history | safe }}',
+                                price_history_string = '{{ price_history | safe }}';
                                 $(function () {
                                       var myElement = document.querySelector("#menu");
                                       myElement.style.listStyleType = "none";
@@ -108,6 +104,7 @@
                                       });
                                   });
                                   plotValues('value_graph', 'week')
+                                  plotValues('risk_graph', 'rri_week')
                               </script>
                         </div>
 

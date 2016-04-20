@@ -102,6 +102,7 @@ def stock_interface(request,ticker):
         'stock_sector': stock.stock_sector,
         'stock_feeds' : sanitized_feed,
         'risk_history': json.dumps(risk_history),
-        'price_history': json.dumps(price_history)
+        'price_history': json.dumps(price_history),
+        'current_price' : stock.stock_price.all().order_by('date').last().value
     }
     return render_to_response('modal/stock_interface.html', context)
