@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response, redirect
+from django.shortcuts import render, render_to_response, redirect, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from datautils import yahoo_finance as yf
 from datautils import stock_info
@@ -16,6 +16,7 @@ import feedparser
 import re
 import json
 from stockportfolio.api.utils import _calculate_risk, _calculate_price
+from django.db.models import Q
 
 
 def dashboard(request):
@@ -28,9 +29,15 @@ def dashboard(request):
     form.fields['default_portfolio'].queryset = Portfolio.objects.filter(
         portfolio_user=request.user)
     form.fields['default_portfolio'].initial = user_settings.default_portfolio
+
+    stock_tickers = list(Stock.objects.all().values_list("stock_ticker"))
+    stock_tickers.extend(Stock.objects.all().values_list("stock_name"))
+
     context = {
         "user": request.user, "gravatar": g_url,
-        "form": form}
+        "form": form,
+        "stock_tickers": stock_tickers
+    }
     context.update(csrf(request))
     return render_to_response("index.html", context)
 
@@ -46,6 +53,7 @@ def landing(request):
 def ticker(request, symbol):
     # any api errors bubble up to the user
     return HttpResponse(yf.get_current_price(symbol))
+
 
 def company_name(request, symbol):
     # any api errors bubble up to the user
@@ -77,8 +85,11 @@ def modify_account(request):
     form = UpdateProfile(instance=request.user)
     return render(request, 'modal/modify_account.html', {"form": form})
 
-def stock_interface(request,ticker):
+
+def stock_interface(request, ticker):
     ticker = ticker.upper()
+    stock = get_object_or_404(Stock, Q(stock_ticker=ticker) | Q(stock_name__iexact=ticker))
+    ticker = stock.stock_ticker
     feed = feedparser.parse("http://articlefeeds.nasdaq.com/nasdaq/symbols?symbol="+ticker)
     sanitized_feed = []
     for entry in feed.entries:
@@ -87,7 +98,7 @@ def stock_interface(request,ticker):
             'title': entry.title,
             'link': entry.link,
             'description': description + "..."
-            })
+        })
     stock = Stock.objects.get(stock_ticker=ticker)
     risk_history = []
     price_history = []
@@ -100,9 +111,9 @@ def stock_interface(request,ticker):
         'stock_name': stock.stock_name,
         'stock_ticker': ticker,
         'stock_sector': stock.stock_sector,
-        'stock_feeds' : sanitized_feed,
+        'stock_feeds': sanitized_feed,
         'risk_history': json.dumps(risk_history),
         'price_history': json.dumps(price_history),
-        'current_price' : stock.stock_price.all().order_by('date').last().value
+        'current_price': stock.stock_price.all().order_by('date').last().value
     }
     return render_to_response('modal/stock_interface.html', context)
