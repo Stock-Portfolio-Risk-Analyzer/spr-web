@@ -141,6 +141,7 @@ function loadAllGraphs() {
     }
 
     $("#dashboard_graph").empty();
+    console.log(risks)
     $.plot("#dashboard_graph", [{
         label: "Beta",
         data: risks,
