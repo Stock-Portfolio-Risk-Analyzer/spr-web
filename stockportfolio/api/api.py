@@ -230,14 +230,13 @@ def download_porfolio_data(request, portfolio_id):
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio.portfolio_name + '.csv"'
+    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else "portfolio" 
+    response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio_name + '.csv"'
     writer = csv.writer(response)
     writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])
     for stock in portfolio.portfolio_stocks.all():
         writer.writerow([stock.stock_ticker, stock.stock_name, stock.stock_sector, stock.stock_quantity, stock.stock_beta]);
     return response
-
-
 
 def upload_portfolio_data(request):
     if request.method == 'POST':
