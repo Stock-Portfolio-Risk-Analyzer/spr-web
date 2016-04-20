@@ -30,6 +30,9 @@
     <br>
         <div class="title_right">
             <div class="col-xs-10 col-xs-offset-1 form-group top_search">
+                <div class="alert alert-warning fade in hidden" role="alert" id="search-warning">
+                  <h4 class="text-center">Stock not found</h4>
+                </div>
                 <div class="input-group">
                     <input type="text" id="search_entry" class="form-control" placeholder="Search Stock..">
                     <span class="input-group-btn">
@@ -38,4 +41,25 @@
                 </div>
             </div>
         </div>
+    <script type="text/javascript">
+        $("#search_entry").keyup(function(event){
+            if(event.keyCode == 13){
+                $("#stock_search").click();
+            }
+        });
+
+        function parseStringToArray(string){
+                string = string.substring(1,string.length-1)
+                string = string.split(", ")
+                for (i = 0; i<string.length; i++){
+                    string[i] =string[i].substring(7,string[i].length-7)
+                }
+                return string
+            }
+
+        $().ready(function() {
+            var values = parseStringToArray("{{stock_tickers}}");
+            $("#search_entry").autocomplete(values);
+        });
+    </script>
 
