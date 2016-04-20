@@ -1,4 +1,4 @@
-from django.shortcuts import render, render_to_response, redirect
+from django.shortcuts import render, render_to_response, redirect, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from datautils import yahoo_finance as yf
 from datautils import stock_info
@@ -14,6 +14,7 @@ from stockportfolio.api.forms import UpdateProfile
 from django.core.urlresolvers import reverse
 import feedparser
 import re
+from django.db.models import Q
 
 
 
@@ -28,8 +29,9 @@ def dashboard(request):
         portfolio_user=request.user)
     form.fields['default_portfolio'].initial = user_settings.default_portfolio
 
-    stock_tickers = Stock.objects.all().values_list("stock_ticker")
-    #stock_tickers = ['GOOG','AAMZ']
+    stock_tickers = list(Stock.objects.all().values_list("stock_ticker"))
+    stock_tickers.extend(Stock.objects.all().values_list("stock_name"))
+    print(stock_tickers)
     context = {
         "user": request.user, "gravatar": g_url,
         "form": form,
@@ -81,8 +83,11 @@ def modify_account(request):
     form = UpdateProfile(instance=request.user)
     return render(request, 'modal/modify_account.html', {"form": form})
 
+
 def stock_interface(request,ticker):
     ticker = ticker.upper()
+    stock = get_object_or_404(Stock, Q(stock_ticker=ticker) | Q(stock_name__iexact=ticker))
+    ticker = stock.stock_ticker
     feed = feedparser.parse("http://articlefeeds.nasdaq.com/nasdaq/symbols?symbol="+ticker)
     sanitized_feed = []
     for entry in feed.entries:
