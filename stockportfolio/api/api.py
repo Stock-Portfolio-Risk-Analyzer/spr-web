@@ -237,8 +237,11 @@ def download_porfolio_data(request, portfolio_id):
     response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio_name + '.csv"'
     writer = csv.writer(response)
     writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])
-    for stock in portfolio.portfolio_stocks.all():
-        writer.writerow([stock.stock_ticker, stock.stock_name, stock.stock_sector, stock.stock_quantity, stock.stock_beta]);
+    for sp in portfolio.portfolio_stocks.all():
+        stock = sp.stock
+        writer.writerow([stock.stock_ticker, stock.stock_name, 
+                         stock.stock_sector, sp.quantity, 
+                         stock.stock_risk.all().order_by('risk_date').last().risk_value]);
     return response
 
 def upload_portfolio_data(request):
