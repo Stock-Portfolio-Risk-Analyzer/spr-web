@@ -183,6 +183,31 @@ def modify_portfolio_form_post(request, portfolio_id):
         return HttpResponse(content=err_message,
                             status=400,
                             content_type="application/json charset=utf-8")
+def generate_portfolio(request):
+    """
+    Generates a portfolio based on users recommendation
+    based on a specific portfolio
+    :param request
+    """
+    user = request.user
+    user_settings = UserSettings.objects.get_or_create(user=user)[0]
+    if user_settings.default_portfolio:
+        portfolio = user_settings.default_portfolio
+    else:
+        portfolio = user.portfolio_set.all().first()
+    if portfolio is not None:
+        p_risk = portfolio.portfolio_risk.order_by('risk_date').last().risk_value
+    all_stocks = Stock.objects.all()
+    recs = []
+    for stock in all_stocks:
+        stock_risk = stock.stock_risk.all().order_by('risk_date').last().risk_value
+        if stock_risk > p_risk:
+            recs.append(stock.stock_ticker)
+            recs.append(stock_risk)
+    #all_stocks.exclude(stock.stock_risk__lt=portfolio.portfolio_risk)
+    recs.append(p_risk)
+    return HttpResponse(content=json.dumps(recs), status=200,
+                        content_type='application/json')
 
 def stock_rec(request, portfolio_id):
     """
@@ -222,9 +247,9 @@ def stock_rec(request, portfolio_id):
                            stock_beta__lt=0.9 * p_risk
                    )))
     rec_dict = {'low'    :less_risk[:4],
-                'high'   :more_risk[:4],
-                'diverse':diverse[:4],
-                'stable' :stable[:4] }
+                'high'   :more_risk [:4],
+                'diverse':diverse   [:4],
+                'stable' :stable    [:4] }
     return HttpResponse(content=json.dumps(rec_dict), status=200,
                         content_type='application/json')
 

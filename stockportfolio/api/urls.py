@@ -19,5 +19,7 @@ urlpatterns = [
     url(r'^portfolio/upload', api.upload_portfolio_data, name="upload_portfolio_data"),
     url(r'^utils/calculate-rri/$', views.calculate_all_rris, name='utils_calculate_rri'),
     url(r'^portfolio/(?P<portfolio_id>\d+)/stock_rec$', api.stock_rec, name="stock_rec"),
-    url(r'^(?P<ticker>[\w\+. ]+)/details', views.stock_interface, name='stock_interface')
+    url(r'^(?P<ticker>[\w\+. ]+)/details', views.stock_interface, name='stock_interface'),
+    url(r'^portfolio/generate_portfolio$', api.generate_portfolio, name="generate_portfolio")
+
 ]
