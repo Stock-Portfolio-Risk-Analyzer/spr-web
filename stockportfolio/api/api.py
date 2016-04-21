@@ -2,10 +2,12 @@ import json
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
-from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank, StockPortfolio
+from stockportfolio.api.models import (Portfolio, Stock, UserSettings,
+    PortfolioRank, StockPortfolio, PortfolioValue)
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
 from stockportfolio.api.utils import _calculate_risk
+import operator
 
 
 def add_stock(request, portfolio_id):
@@ -47,6 +49,7 @@ def remove_stock(request, portfolio_id):
             return HttpResponse(status=200)
     return HttpResponse(status=400)
 
+
 def create_portfolio(request, user_id):
     """
     Creates a new portfolio model.
@@ -59,7 +62,7 @@ def create_portfolio(request, user_id):
     if user is not None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
         portfolio.save()
-        return HttpResponse(json.dumps({"id" : portfolio.pk}), status=200)
+        return HttpResponse(json.dumps({"id": portfolio.pk}), status=200)
     else:
         raise Http404
 
@@ -222,6 +225,64 @@ def stock_rec(request, portfolio_id):
     return HttpResponse(content=json.dumps(rec_dict), status=200,
                         content_type='application/json')
 
+
+def list_top_portfolios(request, category):
+    """
+    :param category
+        0 - most risky
+        1 - least risky
+        2 - most valuable
+        3 - least valuable
+    """
+    category = int(category)
+    if category < 0 or category > 3:
+        return HttpResponse(status=400)
+    portfolios = []
+    if category == 0 or category == 1:
+        rank = PortfolioRank.objects.order_by('-date').first()
+        if not rank:
+            return HttpResponse(status=400)
+        date = rank.date.date()
+        ranks = PortfolioRank.objects.filter(
+            date__year=date.year, date__month=date.month, date__day=date.day)
+        if category == 0:
+            filtered = ranks.order_by('value').distinct('value')[:10]
+        elif category == 1:
+            filtered = ranks.order_by('-value').distinct('value')[:10]
+    elif category == 2 or category == 3:
+        value = PortfolioValue.objects.order_by('-date').first()
+        if not value:
+            return HttpResponse(status=400)
+        date = value.date.date()
+        values = PortfolioValue.objects.filter(
+            date__year=date.year, date__month=date.month, date__day=date.day)
+        if category == 2:
+            filtered = (values.distinct('portfolio__portfolio_id')
+                        .order_by('portfolio__portfolio_id'))
+            filtered = sorted(
+                filtered, key=operator.attrgetter('value'), reverse=True)[:10]
+        elif category == 3:
+            filtered = (values.distinct('portfolio__portfolio_id')
+                        .order_by('portfolio__portfolio_id'))
+            filtered = sorted(
+                filtered, key=operator.attrgetter('value'))[:10]
+    for idx, fr in enumerate(filtered):
+        p = fr.portfolio
+        rri = p.portfolio_risk.order_by('-risk_date').first()
+        rri = 0 if not rri else rri.risk_value
+        value = p.portfoliovalue_set.order_by('-date').first()
+        value = 0 if not value else value.value
+        p_info = {
+            'id': p.portfolio_id,
+            'rank': idx + 1,
+            'name': p.portfolio_name,
+            'rri': rri,
+            'value': value}
+        portfolios.append(p_info)
+    return HttpResponse(content=json.dumps(portfolios), status=200,
+                        content_type='application/json')
+
+
 def _diversify_by_sector(portfolio):
     """
     :param portfolio
@@ -309,5 +370,3 @@ def _calculate_sector_allocations(portfolio):
         sector_allocations_pct[sector] = float(_mkt_value/total_mkt_value)
 
     return sector_allocations_pct
-
-

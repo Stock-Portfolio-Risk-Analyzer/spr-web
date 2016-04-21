@@ -17,5 +17,6 @@ urlpatterns = [
     url(r'^portfolio/(?P<portfolio_id>\d+)/modify$', api.modify_portfolio_form_post, name="modify_portfolio_form_post"),
     url(r'^utils/calculate-rri/$', views.calculate_all_rris, name='utils_calculate_rri'),
     url(r'^portfolio/(?P<portfolio_id>\d+)/stock_rec$', api.stock_rec, name="stock_rec"),
-    url(r'^(?P<ticker>[\w\+. ]+)/details', views.stock_interface, name='stock_interface')
+    url(r'^(?P<ticker>[\w\+. ]+)/details', views.stock_interface, name='stock_interface'),
+    url(r'^top-ten/(?P<category>\d+)$', api.list_top_portfolios, name='top_portfolios')
 ]
