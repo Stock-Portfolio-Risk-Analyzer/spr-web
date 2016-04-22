@@ -1,4 +1,5 @@
 {% load crispy_forms_tags %}
+
 <div class="modal fade" id="uploadPortfolioModal" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -14,6 +15,7 @@
           {% else %}
                 <form id="uploadportfolioform" method="post" action="/api/portfolio/upload">
             {% endif %}
+            {% csrf_token %}
             {% crispy upload_portfolio_form %}
               <button form="uploadportfolioform" type="submit" id="upload-file" class="btn btn-primary">Upload</button>
           </form>

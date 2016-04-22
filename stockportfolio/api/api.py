@@ -264,9 +264,14 @@ def download_porfolio_data(request, portfolio_id):
     writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])
     for sp in portfolio.portfolio_stocks.all():
         stock = sp.stock
+        last_risk = stock.stock_risk.all().order_by('risk_date').last()
+        if last_risk is None:
+            last_risk = 0
+        else:
+            last_risk = last_risk.risk_value
         writer.writerow([stock.stock_ticker, stock.stock_name, 
-                         stock.stock_sector, sp.quantity, 
-                         stock.stock_risk.all().order_by('risk_date').last().risk_value]);
+                         stock.stock_sector, sp.quantity,
+                         last_risk]);
     return response
 
 def upload_portfolio_data(request):
@@ -281,24 +286,17 @@ def upload_portfolio_data(request):
         return HttpResponse(status=500)
 
 def _parse_portfolio_file(file, user):
-    df = pd.read_csv(file, header=0)
+    df = csv.DictReader(file)
     portfolio = Portfolio.objects.create(portfolio_user=user)
     for row in df:
-        stock_name = get_company_name(row["name"])
-        stock_sector = get_company_sector(row["symbol"])
         try:
-            stock = Stock.objects.create(stock_name=stock_name,
-                                         stock_ticker=row["symbol"],
-                                         stock_quantity=row["quantity"],
-                                         stock_sector=stock_sector)
-            stock.save()
-            portfolio.portfolio_stocks.add(stock)
-            return portfolio.pk
+            stock = Stock.objects.get(stock_ticker=row["symbol"])
+            stockportfolio = StockPortfolio.objects.create(stock=stock, quantity=row["quantity"])
+            stockportfolio.save()
+            portfolio.portfolio_stocks.add(stockportfolio)
         except None:
             return None
-
-
-
+    return portfolio.pk
 
 def _diversify_by_sector(portfolio):
     """
