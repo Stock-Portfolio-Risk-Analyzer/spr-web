@@ -3,6 +3,7 @@ from datautils import stock_info as stock_info
 from datautils import yahoo_finance as yf
 from stockportfolio.api.models import Portfolio, Risk, PortfolioRank, Stock, Price
 import numpy
+import pandas
 from django.db.models import Count
 
 def update_rri_for_all_portfolios():
@@ -97,7 +98,6 @@ def precompute_prices_for_all_stocks():
                 stock.save()
         except:
             continue
-
 
 def _calculate_risk(risk):
     """

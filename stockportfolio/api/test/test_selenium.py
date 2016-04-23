@@ -1,16 +1,17 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth.models import User
 from registration.models import RegistrationProfile
-
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import WebDriverException
+import sys
 
 class SeleniumTestCase(StaticLiveServerTestCase):
     
     def setUp(self):
         super(SeleniumTestCase, self).setUp()
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Firefox()       
         self.driver.maximize_window()
         self.timeout = 20
         self.un    = 'test_user'

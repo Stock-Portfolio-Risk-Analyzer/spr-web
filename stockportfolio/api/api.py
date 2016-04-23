@@ -1,5 +1,6 @@
 import csv
 import json
+import random
 from datetime import datetime
 
 import pandas as pd
@@ -189,24 +190,42 @@ def generate_portfolio(request):
     based on a specific portfolio
     :param request
     """
-    user = request.user
-    user_settings = UserSettings.objects.get_or_create(user=user)[0]
-    if user_settings.default_portfolio:
-        portfolio = user_settings.default_portfolio
-    else:
-        portfolio = user.portfolio_set.all().first()
-    if portfolio is not None:
-        p_risk = portfolio.portfolio_risk.order_by('risk_date').last().risk_value
-    all_stocks = Stock.objects.all()
-    recs = []
-    for stock in all_stocks:
-        stock_risk = stock.stock_risk.all().order_by('risk_date').last().risk_value
+    if request.user.is_anonymous():
+        return HttpResponse(status=403)
+    user_settings = UserSettings.objects.get_or_create(user=request.user)[0]
+    portfolio, p_risk = _get_portfolio_and_risk(user_settings)
+    portfolio_tickers = _fetch_tickers(portfolio)
+    recs = _get_sector_stocks(portfolio, random.randint(4, 10))
+    all_stocks = _all_eligible_stocks(Stock.objects.all())
+    """
+    TODO: sort Stocks by risk
+    workflow:
+        - get recommendations w/o regard to sector
+        - get recommendations wrt sector
+        - get riskier recommendations
+        - get less risk recommendations
+        - unify them together
+        - determine how much of each stock based on 
+            - portfolio value (if no value, use 15,000)
+            - risk rank (if no rank, choose a medium risk of ???)
+    """
+    """
+    for stock in Stock.objects.all():
+        stock_risk = 0
+        try:
+            stock_risk = stock.stock_risk.all().order_by('risk_date').last().risk_value
+        except AttributeError:
+            continue
         if stock_risk > p_risk:
-            recs.append(stock.stock_ticker)
-            recs.append(stock_risk)
-    #all_stocks.exclude(stock.stock_risk__lt=portfolio.portfolio_risk)
-    recs.append(p_risk)
-    return HttpResponse(content=json.dumps(recs), status=200,
+            if portfolio_tickers is not None
+                if stock.stock_ticker is not in portfolio_tickers:
+                    recs.append(stock)
+            else:
+                recs.append(stock)
+    """
+    jsonify = lambda x: { i:x.__dict__[i]
+                         for i in x.__dict__ if i !=  "_state" }
+    return HttpResponse(content=json.dumps(map(jsonify, recs)), status=200,
                         content_type='application/json')
 
 def stock_rec(request, portfolio_id):
@@ -309,9 +328,6 @@ def _diversify_by_sector(portfolio):
     for sector in sectors:
         q.exclude(stock_sector=sector)
     return list(q)
-
-
-
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
     stock_name = get_company_name(stock_ticker)
