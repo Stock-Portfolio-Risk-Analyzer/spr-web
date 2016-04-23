@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import numpy as np
+import Quandl
 import yahoo_finance
 
 """
