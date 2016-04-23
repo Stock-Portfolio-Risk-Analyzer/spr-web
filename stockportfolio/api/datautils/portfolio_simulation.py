@@ -3,6 +3,23 @@ import pandas as pd
 import datetime as dt
 from yahoo_finance import get_stock_data
 
+def get_benchmark_returns(benchmark='SPY', start_date=None, end_date=None, price_field='Adj Close'):
+    """
+    Get the daily (non-cumulative) percent returns for the benchmark.
+    :param start_date: (DateTime)
+    :param end_date: (DateTime)
+    :param benchmark: (str) default: SPY (S&P 500 index)
+    :return: (pd.Series)
+    """
+    if start_date is None:
+        start_date = dt.datetime(year=2008, month=1, day=1)
+    if end_date is None:
+        end_date = dt.datetime.today()
+
+    benchmark_price_series = get_stock_data(benchmark, start_date=start_date, end_date=end_date)[price_field]
+
+    return benchmark_price_series.pct_change().dropna()
+
 def get_portfolio_returns_series(portfolio, start_date=None, end_date=None, price_field='Adj Close'):
     """
     Simulates portfolio returns assuming the portfolio was bought on start_date and held through end_date

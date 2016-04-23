@@ -23,6 +23,31 @@ class TestPortfolioSimulation(unittest.TestCase):
         cls.test_symbol = 'IBM'
         cls.test_qty = 100
 
+        cls.benchmark = 'SPY'
+
+    def test_get_benchmark_returns(self):
+        benchmark_returns = ps.get_benchmark_returns(benchmark=self.benchmark,
+                                                     start_date=self.start_date,
+                                                     end_date=self.end_date,
+                                                     price_field=self.price_field)
+        for day in self.dates:
+            try:
+                prev_day = day-dt.timedelta(days=1)
+                prices = yf.get_stock_data(self.benchmark,
+                                           start_date=prev_day,
+                                           end_date=day)[self.price_field]
+
+                prev_price = prices[prev_day]
+                curr_price = prices[day]
+                change = curr_price-prev_price
+                pct_change = change/prev_price
+
+                self.assertEqual(pct_change, benchmark_returns[day])
+
+            except Exception as e:
+                # no data for this day (i.e. not a trading day)
+                pass
+
     def test_get_portfolio_returns_series(self):
         portfolio_returns_series = ps.get_portfolio_returns_series(self.portfolio,
                                                                    start_date=self.start_date,
