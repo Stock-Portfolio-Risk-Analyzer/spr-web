@@ -47,6 +47,7 @@ def remove_stock(request, portfolio_id):
             return HttpResponse(status=200)
     return HttpResponse(status=400)
 
+
 def create_portfolio(request, user_id):
     """
     Creates a new portfolio model.
@@ -178,6 +179,7 @@ def modify_portfolio_form_post(request, portfolio_id):
                             status=400,
                             content_type="application/json charset=utf-8")
 
+
 def stock_rec(request, portfolio_id):
     """
     Returns stock recommendations in several categories based on a specific
@@ -222,6 +224,7 @@ def stock_rec(request, portfolio_id):
     return HttpResponse(content=json.dumps(rec_dict), status=200,
                         content_type='application/json')
 
+
 def _diversify_by_sector(portfolio):
     """
     :param portfolio
@@ -233,8 +236,6 @@ def _diversify_by_sector(portfolio):
     for sector in sectors:
         q.exclude(stock_sector=sector)
     return list(q)
-
-
 
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker):

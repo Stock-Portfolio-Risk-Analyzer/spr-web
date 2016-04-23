@@ -22,7 +22,7 @@ def get_stock_data(symbol, start_date=None, end_date=None):
         end_date = dt(year=today.year, month=today.month, day=today.day)
 
     if start_date is not None and end_date is not None:
-        assert start_date < end_date, "Start date is later than end date."
+        assert start_date <= end_date, "Start date is later than end date."
 
     # log.info("Loading symbol: {}".format(symbol))
     symbol_data = web.DataReader(symbol, 'yahoo', start_date, end_date)
