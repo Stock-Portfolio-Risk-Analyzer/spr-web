@@ -8,6 +8,25 @@ Author - Shivam Gupta (sgupta40@illinois.edu)
          Rohan Kapoor (rkapoor6@illinois.edu)
 """
 
+def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
+    link = str("WIKI/" + symbol)
+    quandl_key  = "SyH7V4ywJGho77EC6W7C"
+    quandl_data = Quandl.get(link, authtoken=quandl_key, trim_start=start_date, trim_end=end_date)["Close"]
+    verify = []
+
+    if len(yahoo_data) == len(quandl_data):
+        for i in range(0, len(yahoo_data)):
+            tolerance = ( (quandl_data[i] -  (quandl_data[i]*0.02) ) < yahoo_data[i] < (quandl_data[i] +  (quandl_data[i]*0.02) ) )
+            if tolerance:
+                verify.append(1)
+            else:
+                verify.append(0)
+    
+    for i in range(len(verify)):
+        if verify[i] == 0:
+            return yahoo_data
+        else:
+            return quandl_data
 
 def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
     """
