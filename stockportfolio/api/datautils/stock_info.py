@@ -164,3 +164,6 @@ def get_stock_volume_traded_for_a_month(symbol):
     end_date   = date.today()
     volume_list = yahoo_finance.get_stock_data(symbol, start_date, end_date)["Volume"]
     return volume_list
+
+def get_average_stock_volume_traded(list):
+    return int(np.average(list))
