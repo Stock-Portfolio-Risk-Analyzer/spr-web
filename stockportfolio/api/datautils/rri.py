@@ -41,6 +41,9 @@ def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
     end_date = date.today()
     symbol_data = yahoo_finance.get_stock_data(symbol, start_date, end_date)
     closing_price = list(symbol_data["Close"])
+    
+    # Data Integrity
+    closing_price = verify_data_with_quandl(symbol, start_date, end_date, closing_price)
 
     daily_change = []
     for i in range(0, len(closing_price)-1):
@@ -58,7 +61,10 @@ def compute_daily_change_for_range(symbol, start_date, end_date):
     """
     symbol_data = yahoo_finance.get_stock_data(symbol, start_date, end_date)
     closing_price = list(symbol_data["Close"])
-
+    
+    # Data Integrity
+    closing_price = verify_data_with_quandl(symbol, start_date, end_date, closing_price)
+    
     daily_change = []
     for i in range(0, len(closing_price)-1):
         daily_change.append(((closing_price[i+1] - closing_price[i])/closing_price[i])*100)
