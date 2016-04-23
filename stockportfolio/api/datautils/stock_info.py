@@ -8,6 +8,7 @@ from datetime import datetime as dt
 from rri import *
 from datetime import date, timedelta
 import yahoo_finance
+import numpy as np
 
 def get_company_industry(symbol):
     """
