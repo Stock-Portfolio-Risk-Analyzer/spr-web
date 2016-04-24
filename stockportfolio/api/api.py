@@ -197,27 +197,27 @@ def generate_portfolio(request):
         return HttpResponse(status=403)
     upper_bound = random.randint(16, 20)
     lower_bound = random.randint(3, 10)
+    start = time.time()
     user_settings = UserSettings.objects.get_or_create(user=request.user)[0]
     portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(request.user, user_settings)
     portfolio_tickers = rec_utils.fetch_tickers(portfolio)
-    #subset = rec_utils.stock_slice(Stock.objects.all())
-    #all_stocks = rec_utils.all_stocks_sorted_by_risk(subset)
+    all_stocks = rec_utils.stock_slice(Stock.objects.all(), 1000)
+    #all_stocks = rec_utils.get_all_stocks(Stock.objects.all())
     new_portfolio = None; message = ""
     r = random.Random(int(time.time()))
     p_type = r.choice(['safe', 'risky', 'diverse'])
-    all_stocks = rec_utils.get_all_stocks(Stock.objects.all())
     if(p_type == 'safe'):
         message = 'We chose this portfolio to have a lower risk'
         if is_user_portfolio:
             message += ' than your current default portfolio.'
         else:
             ' number than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x < p_risk, 
+        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk, 
                                                 all_stocks,
                                                 random.randint(lower_bound, 
                                                                 upper_bound))
     elif(p_type == 'diverse'):
-        message = 'We chose this portfolio with sector diversity in mind'
+        message = 'We chose this portfolio with sector diversity in mind.'
         new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks, 
                                        random.randint(lower_bound,
                                                       upper_bound), True)
@@ -233,8 +233,12 @@ def generate_portfolio(request):
                                                                upper_bound))
     new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(portfolio,
                                                          new_portfolio)
-    message += ' The targeted range for the portfolio value was ' + str(tlow) + ' to ' + str(thi) + '.'
-    message += ' The actual value is ' + str(v) + '.'
+    
+    end = time.time() - start
+    message += ' The targeted range for the portfolio value was '
+    message += '${:,.2f}'.format(tlow) + ' to ' + '${:,.2f}'.format(thi) + '.'
+    message += ' The actual value is ' + '${:,.2f}'.format(v) + '.'
+    message += ' Portfolio generation took ' + '{:,.2f}'.format(end) + ' seconds.'
     jsonify = lambda x: { i:x.__dict__[i] 
                           for i in x.__dict__ if i !=  "_state" }
     generated_dict = {'message': message,

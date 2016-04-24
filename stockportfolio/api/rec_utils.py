@@ -1,5 +1,4 @@
 import random
-import time
 
 from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank, StockPortfolio
 
@@ -14,8 +13,14 @@ def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     stocks = []
     tickers = []
     sectors = _get_all_sectors(portfolio)
-    while len(stocks) != num_stocks:
+    iterations = 0
+    while len(stocks) < num_stocks:
+        if iterations > 100:
+            return stocks
         new_stock = all_stocks[random.randint(0, len(all_stocks)-1)]
+        if new_stock is None:
+            iterations+=1
+            continue
         if diversify and new_stock.stock_sector in sectors:
            continue
         else:
@@ -24,6 +29,7 @@ def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
            else:
                 stocks.append(new_stock)
                 tickers.append(new_stock.stock_ticker)
+        iterations+=1
     return stocks
 
 def get_recommendations(compare, stocks, num_stocks):
@@ -33,13 +39,16 @@ def get_recommendations(compare, stocks, num_stocks):
     :param stocks: 
     :param num_stocks: number of stocks to fetch
     """
+    iterations = 0;
     recs = []
-    for stock in stocks:
-        if len(recs) == num_stocks:
-            break
-        risk = _get_latest_stock_risk(stock)
+    while len(recs) < num_stocks:
+        if iterations > 100:
+            return recs
+        new_stock = stocks[random.randint(0, len(stocks)-1)]
+        risk = _get_latest_stock_risk(new_stock)
         if compare(risk):
-            recs.append(stock)
+            recs.append(new_stock)
+        iterations+=1
     return recs
 
 def get_portfolio_and_risk(user, user_settings):
@@ -80,14 +89,13 @@ def stock_slice(all_stocks, limit):
     """
     stocks = []
     tickers = []
-    while len(stocks) != limit:
-        idx = random.randint(0, all_stocks.count()-1)
+    count = all_stocks.count()-1
+    while len(stocks) < limit:
+        idx = random.randint(0, count)
         stock = all_stocks[idx]
-        if stock.stock_ticker in tickers:
-            continue
-        else:
-            stocks.append(stock)
+        if stock.stock_ticker not in tickers:
             tickers.append(stock.stock_ticker)
+            stocks.append(stock)
     return stocks
 
 def determine_stock_quantities(curr_portfolio, new_portfolio):
@@ -98,32 +106,36 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
     :param curr_portfolio: portfolio to match
     :param new_portfolio: list of stocks to weight w/ quantities
     """
+    if len(new_portfolio) == 0:
+        return new_portfolio, 0, 0, 0
     tvalue_low, tvalue_high  = _fetch_target_value(curr_portfolio)
     portfolio = []
-    upper = random.randint(10, 15)
-    lower = random.randint(1, 8)
     for stock in new_portfolio:
         p = _get_latest_stock_price(stock)
-        if p > 0.2*tvalue_low:
+        if p == 0:
             continue
-        q = random.randint(1, int((tvalue_high-tvalue_low)/p))
+        if p > 0.2*tvalue_low and len(portfolio) > 5:
+            continue
+        upper = int(((tvalue_high-tvalue_low)/2)/p)
+        if upper == 0:
+            upper = 2
+        q = random.randint(1, upper)
         portfolio.append((stock.stock_ticker, q, p))
     value = _calculate_portfolio_value(portfolio)
     iterations = 0
     portfolio = sorted(portfolio, key=lambda s: s[2])
-    while value < tvalue_low or value > tvalue_high:
-        if iterations == 10:
+    for iterations in range(0, 10):
+        if value > tvalue_low and value < tvalue_high:
             break
-        next_ticker = len(portfolio)-1
+        next_ticker = -1
         s = portfolio[next_ticker]
         if value < tvalue_low:
             portfolio[next_ticker] = (s[0], s[1]+1, s[2]) 
         elif value > tvalue_high:
+            portfolio[next_ticker] = (s[0], s[1]-1, s[2])
             if s[1] == 0:
                 del portfolio[next_ticker]
                 continue
-            portfolio[next_ticker] = (s[0], s[1]-1, s[2])
-        iterations+=1
         value = _calculate_portfolio_value(portfolio)
     return portfolio, value, tvalue_low, tvalue_high
 
