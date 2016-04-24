@@ -1,5 +1,4 @@
 var overalValue;
-var firstTime= true
 var price_history;
 var risk_history;
 var lbl;
@@ -44,11 +43,9 @@ function loadAllGraphs() {
     }
 
     plotValues = function (id, timePeriod) {
-        if (firstTime) {
-            price_history = parseStringToArray(price_history_string)
-            risk_history = parseStringToArray(risk_history_string)
-            firstTime = false
-        }
+        price_history = parseStringToArray(price_history_string)
+        risk_history = parseStringToArray(risk_history_string)
+
         switch (timePeriod) {
             case "week" :
                 var data = getValues(price_history,7)
