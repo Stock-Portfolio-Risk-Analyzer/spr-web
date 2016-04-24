@@ -91,6 +91,13 @@ def stock_slice(all_stocks, limit):
     return stocks
 
 def determine_stock_quantities(curr_portfolio, new_portfolio):
+    """
+    Given an old portfolio and a list of stocks, this function tries to 
+    generate an appropriate quantity for each stock, s.t. the value of the 
+    resulting portfolio is within +/- 20 percent of the old
+    :param curr_portfolio: portfolio to match
+    :param new_portfolio: list of stocks to weight w/ quantities
+    """
     tvalue_low, tvalue_high  = _fetch_target_value(curr_portfolio)
     portfolio = []
     upper = random.randint(10, 15)
@@ -112,9 +119,9 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
         if value < tvalue_low:
             portfolio[next_ticker] = (s[0], s[1]+1, s[2]) 
         elif value > tvalue_high:
-            #if s[1] == 0:
-                #p_dict.pop(next_ticker, None)
-            #    continue
+            if s[1] == 0:
+                del portfolio[next_ticker]
+                continue
             portfolio[next_ticker] = (s[0], s[1]-1, s[2])
         iterations+=1
         value = _calculate_portfolio_value(portfolio)
@@ -140,6 +147,11 @@ def get_all_stocks(all_stocks, sort_by_risk=False):
     return ret_stocks
 
 def _fetch_target_value(portfolio):
+    """
+    Given a portfolio, this function returns a range within which the value of
+    the portfolio lies. Used to calculate quantities for generated portfolios
+    :param portfolio
+    """
     tvalue_low  = 0
     tvalue_high = 0
     if portfolio is not None:
@@ -200,6 +212,7 @@ def _get_latest_portfolio_risk(portfolio):
 def _get_all_sectors(portfolio):
     """
     Function to fetch all the sectors a portfolio has
+    :param portfolio
     """
     sectors = []
     if portfolio is not None:

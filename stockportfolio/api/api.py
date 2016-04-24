@@ -239,30 +239,6 @@ def generate_portfolio(request):
                           for i in x.__dict__ if i !=  "_state" }
     generated_dict = {'message': message,
                       'portfolio': new_portfolio}
-    """
-    TODO: sort Stocks by risk
-    workflow:
-        - get recommendations wrt sector (done)
-        - get riskier recommendations (done)
-        - get less risk recommendations (done)
-        - determine how much of each stock based on 
-            - portfolio value (if no value, use 15,000)
-            - risk rank (if no rank, choose a medium risk of ???)
-    """
-    """
-    for stock in Stock.objects.all():
-        stock_risk = 0
-        try:
-            stock_risk = stock.stock_risk.all().order_by('risk_date').last().risk_value
-        except AttributeError:
-            continue
-        if stock_risk > p_risk:
-            if portfolio_tickers is not None
-                if stock.stock_ticker is not in portfolio_tickers:
-                    recs.append(stock)
-            else:
-                recs.append(stock)
-    """
     return HttpResponse(content=json.dumps(generated_dict), status=200,
                         content_type='application/json')
 
