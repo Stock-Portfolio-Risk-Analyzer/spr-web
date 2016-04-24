@@ -1,6 +1,7 @@
 import csv
 import json
 import random
+import time
 from datetime import datetime
 
 import pandas as pd
@@ -13,7 +14,7 @@ from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioR
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
 from stockportfolio.api.utils import _calculate_risk
-
+import stockportfolio.api.rec_utils as rec_utils
 
 def add_stock(request, portfolio_id):
     """
@@ -186,25 +187,64 @@ def modify_portfolio_form_post(request, portfolio_id):
                             content_type="application/json charset=utf-8")
 def generate_portfolio(request):
     """
-    Generates a portfolio based on users recommendation
-    based on a specific portfolio
+    Generates one of several types of portfolios, possibly with input from
+    either the user's default portfolio or their first portfolio if they have
+    not selected a default. If there are no user portfolios, a risk between
+    -2.5 and 2.5 is selected. 
     :param request
     """
     if request.user.is_anonymous():
         return HttpResponse(status=403)
+    upper_bound = random.randint(16, 20)
+    lower_bound = random.randint(3, 10)
     user_settings = UserSettings.objects.get_or_create(user=request.user)[0]
-    portfolio, p_risk = _get_portfolio_and_risk(user_settings)
-    portfolio_tickers = _fetch_tickers(portfolio)
-    recs = _get_sector_stocks(portfolio, random.randint(4, 10))
-    all_stocks = _all_eligible_stocks(Stock.objects.all())
+    portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(request.user, user_settings)
+    portfolio_tickers = rec_utils.fetch_tickers(portfolio)
+    #subset = rec_utils.stock_slice(Stock.objects.all())
+    #all_stocks = rec_utils.all_stocks_sorted_by_risk(subset)
+    new_portfolio = None; message = ""
+    r = random.Random(int(time.time()))
+    p_type = r.choice(['safe', 'risky', 'diverse'])
+    all_stocks = rec_utils.get_all_stocks(Stock.objects.all())
+    if(p_type == 'safe'):
+        message = 'We chose this portfolio to have a lower risk'
+        if is_user_portfolio:
+            message += ' than your current default portfolio.'
+        else:
+            ' number than ' + str(p_risk)
+        new_portfolio = rec_utils.get_recommendations(lambda x: x < p_risk, 
+                                                all_stocks,
+                                                random.randint(lower_bound, 
+                                                                upper_bound))
+    elif(p_type == 'diverse'):
+        message = 'We chose this portfolio with sector diversity in mind'
+        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks, 
+                                       random.randint(lower_bound,
+                                                      upper_bound), True)
+    else:
+        message = 'We chose this portfolio to be risker'
+        if is_user_portfolio:
+            message += ' than your current default portfolio.'
+        else:
+            ' than ' + str(p_risk)
+        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk, 
+                                                all_stocks,
+                                                random.randint(lower_bound,
+                                                               upper_bound))
+    new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(portfolio,
+                                                         new_portfolio)
+    message += ' The targeted range for the portfolio value was ' + str(tlow) + ' to ' + str(thi) + '.'
+    message += ' The actual value is ' + str(v) + '.'
+    jsonify = lambda x: { i:x.__dict__[i] 
+                          for i in x.__dict__ if i !=  "_state" }
+    generated_dict = {'message': message,
+                      'portfolio': new_portfolio}
     """
     TODO: sort Stocks by risk
     workflow:
-        - get recommendations w/o regard to sector
-        - get recommendations wrt sector
-        - get riskier recommendations
-        - get less risk recommendations
-        - unify them together
+        - get recommendations wrt sector (done)
+        - get riskier recommendations (done)
+        - get less risk recommendations (done)
         - determine how much of each stock based on 
             - portfolio value (if no value, use 15,000)
             - risk rank (if no rank, choose a medium risk of ???)
@@ -223,9 +263,7 @@ def generate_portfolio(request):
             else:
                 recs.append(stock)
     """
-    jsonify = lambda x: { i:x.__dict__[i]
-                         for i in x.__dict__ if i !=  "_state" }
-    return HttpResponse(content=json.dumps(map(jsonify, recs)), status=200,
+    return HttpResponse(content=json.dumps(generated_dict), status=200,
                         content_type='application/json')
 
 def stock_rec(request, portfolio_id):
