@@ -5,12 +5,41 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h3 class="modal-title">Top portfolios</h3>
+        <h3 class="modal-title top_portfolio_header">Top portfolios</h3>
+      </div>
+        <br>
+      <div class="modal-body">
+        <div style="text-align: center;">
+          <button class="btn btn-primary top_portfolio_button">Most Risky</button>
+          <button class="btn btn-primary top_portfolio_button">Least Risky</button>
+          <button class="btn btn-primary top_portfolio_button">Most Valuable</button>
+          <button class="btn btn-primary top_portfolio_button">Least Valuable</button>
+        </div>
 
-      </div>
-      <div class="modal-body" >
-      </div>
+        <br>
+
+        <table id="top_portfolio" class="table table-striped responsive-utilities jambo_table">
+            <thead>
+            <tr class="headings">
+                <th>#</th>
+                <th>Name</th>
+                <th>RRI</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="even pointer hide sample">
+                <td class="rank"></td>
+                <td class="name"></td>
+                <td class="rri"></td>
+                <td class="value"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+
+
+  </div>
   </div>
 </div>
 
