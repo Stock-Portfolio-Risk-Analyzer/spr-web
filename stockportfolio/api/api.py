@@ -106,6 +106,20 @@ def get_list_of_portfolios(request, user_id):
                         status=200, content_type='application/json')
 
 
+def get_public_portfolio(request, portfolio_id):
+    portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+
+    portfolio_dict = {'portfolio_id': portfolio.portfolio_id,
+                      'name': portfolio.portfolio_name,
+                      'stocks': []}
+
+    for stock in portfolio.portfolio_stocks.all():
+        portfolio_dict['stocks'].append(_calculate_stock_info(stock))
+
+    return HttpResponse(content=json.dumps(portfolio_dict),
+                        status=200, content_type='application/json')
+
+
 def get_portfolio(request, portfolio_id):
     """
 
