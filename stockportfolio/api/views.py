@@ -16,7 +16,8 @@ import feedparser
 import re
 import json
 from stockportfolio.api.utils import _calculate_risk, _calculate_price
-from django.db.models import Q
+import stockportfolio.api.rec_utils as rec_utils
+#from django.db.models import Q
 
 
 def dashboard(request):
@@ -118,3 +119,25 @@ def stock_interface(request, ticker):
         'current_price': stock.stock_price.all().order_by('date').last().value
     }
     return render_to_response('modal/stock_interface.html', context)
+
+def stock_rec(request, portfolio_id, rec_type):
+    recs = rec_utils.stock_recommender(request, portfolio_id, rec_type)
+    message = ''
+    if rec_type == 'stable':
+        title = 'And now for something completely the same'
+        message = 'Here are some stocks that will minimize changes to your risk'
+    elif rec_type == 'high_risk':
+        title = 'Go big or go home!'
+        message = 'Adding these stocks to your portfolio will increase its risk'
+    elif rec_type == 'low_risk':
+        title = 'Slow and steady wins the race.'
+        message = 'Using these stocks, lower your portfolio\'s risk'
+    else:
+        title = 'Get out of your niche.'
+        message = 'Here are some stocks with sectors not in your portfolio' 
+    context = {
+        'title': title,
+        'message': message,
+        'stocks': recs
+    }
+    return render_to_response('modal/recommendation.html', context)

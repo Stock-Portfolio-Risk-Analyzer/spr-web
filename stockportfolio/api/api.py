@@ -202,7 +202,6 @@ def generate_portfolio(request):
     portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(request.user, user_settings)
     portfolio_tickers = rec_utils.fetch_tickers(portfolio)
     all_stocks = rec_utils.stock_slice(Stock.objects.all(), 1000)
-    #all_stocks = rec_utils.get_all_stocks(Stock.objects.all())
     new_portfolio = None; message = ""
     r = random.Random(int(time.time()))
     p_type = r.choice(['safe', 'risky', 'diverse'])
@@ -246,48 +245,16 @@ def generate_portfolio(request):
     return HttpResponse(content=json.dumps(generated_dict), status=200,
                         content_type='application/json')
 
-def stock_rec(request, portfolio_id):
+def stock_rec(request, portfolio_id, rec_type):
     """
     Returns stock recommendations in several categories based on a specific
     portfolio
     :param request
     :param portfolio_id
+    :param rec_type: one of stable, low_risk, high_risk, or diverse
     """
-    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-    if portfolio.portfolio_user.pk is not request.user.pk:
-        return HttpResponse(status=403)
-    risks = portfolio.portfolio_risk.all()
-    if len(risks) == 0:
-        err = 'No recommendations available at this time.'
-        err_dict = { 'low':err,
-                     'high': err,
-                     'stable':err,
-                     'diverse':err }
-        return HttpResponse(content=json.dumps(err_dict), status=200,
-                        content_type='application/json')
-    p_risk = risks[0].risk_value
-    jsonify = lambda x: { i:x.__dict__[i]
-                         # Django inserts a "_state" attribute into every
-                         # model. We don't need it in our json, so it's
-                         # removed here
-                         for i in x.__dict__ if i !=  "_state" }
-    less_risk = map(jsonify,
-                    list(Stock.objects.exclude(stock_beta__lt=p_risk)))
-    more_risk = map(jsonify,
-                    list(Stock.objects.exclude(stock_beta__gt=p_risk)))
-    diverse   = map(jsonify,
-                    list(_diversify_by_sector(portfolio)))
-    # stock w/ in a 20% range of current portfolio riskiness
-    stable = map(jsonify, list(Stock.objects.exclude(
-                         stock_beta__gt=(1.1 * p_risk)
-                   ).exclude(
-                           stock_beta__lt=0.9 * p_risk
-                   )))
-    rec_dict = {'low'    :less_risk[:4],
-                'high'   :more_risk [:4],
-                'diverse':diverse   [:4],
-                'stable' :stable    [:4] }
-    return HttpResponse(content=json.dumps(rec_dict), status=200,
+    
+    return HttpResponse(content=json.dumps(recs), status=200,
                         content_type='application/json')
 
 def download_porfolio_data(request, portfolio_id):
@@ -295,7 +262,7 @@ def download_porfolio_data(request, portfolio_id):
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     response = HttpResponse(content_type='text/csv')
-    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else "portfolio" 
+    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else 'portfolio' 
     response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio_name + '.csv"'
     writer = csv.writer(response)
     writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])

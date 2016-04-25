@@ -1,56 +1,19 @@
-<div class="modal fade rec-modal" id="diverseModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h3 class="modal-title">Diversify Your Portfolio</h3>
-      </div>
-      <div class="modal-body" id="diverse-rec-body">
-      </div>
-    </div>
-  </div>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h2>{{ title }}</h2>
 </div>
-<div class="modal fade rec-modal" id="highModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h3 class="modal-title">Get Risky</h3>
-      </div>
-      <div class="modal-body" id="high-rec-body">
-      </div>
-    </div>
-  </div>
+<div>
+<div class="list-group">
+  <form id="modify-portfolio-form" action="" method="post">
+  {% for stock in stocks %}
+    <a href="#" class="list-group-item">
+      <h4 class="list-group-item-heading">{{ stock.name }}</h4>
+      <p class="list-group-item-text"> {{ stock.blurb }}</p>
+    </a>
+  {% endfor %}
+  <button class="btn btn-primary btn-sm">Add stocks to portfolio</button>
+  </form>
 </div>
-<div class="modal fade rec-modal" id="lowModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h3 class="modal-title">Lower Risk</h3>
-      </div>
-      <div class="modal-body" id="low-rec-body">
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade rec-modal" id="stableModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h3 class="modal-title">Newest Stable Stock</h3>
-      </div>
-      <div class="modal-body" id="stable-rec-body">
-      </div>
-    </div>
-  </div>
 </div>
