@@ -19,9 +19,21 @@ var top_portfolio = function(option){
 		    $clone.find("td.value").text(res['value'])
 		    $("table#top_portfolio").append($clone)
 		}
-    
+
         },
         error: function(){
-        } 
+        }
     });
 };
+
+$("#top-portfolios").click(function() {
+  $('#topPortfolios').modal('show');
+});
+
+$('#topPortfolios').on('show.bs.modal', function() {
+  top_portfolio(0);
+});
+
+$('#topPortfolios .btn-primary').on('click', function() {
+  top_portfolio($(this).find('input').attr('id'));
+});
