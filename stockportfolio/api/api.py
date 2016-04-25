@@ -29,12 +29,19 @@ def add_stock(request, portfolio_id):
         return HttpResponse(status=403)
     stock_ticker = request.GET.get('stock', None)
     stock_quantity = request.GET.get('quantity', None)
-    if stock_ticker is not None:
-        added = _add_stock_helper(portfolio, stock_quantity, stock_ticker)
+    overwrite = request.GET.get('overwrite', None)
+    if stock_ticker:
+        if overwrite:
+            added = _add_stock_helper(
+                portfolio, stock_quantity, stock_ticker, False)
+        else:
+            added = _add_stock_helper(portfolio, stock_quantity, stock_ticker)
         if not added:
             raise Http404
         else:
             return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=400)
 
 
 def remove_stock(request, portfolio_id):
@@ -426,7 +433,7 @@ def _diversify_by_sector(portfolio):
     return list(q)
 
 
-def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
+def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
     stock_name = get_company_name(stock_ticker)
     stock_sector = get_company_sector(stock_ticker)
     try:
@@ -434,9 +441,13 @@ def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
             stock_name=stock_name,
             stock_ticker=stock_ticker,
             stock_sector=stock_sector)[0]
-        sp = StockPortfolio(stock=stock, quantity=stock_quantity)
+        sp = portfolio.portfolio_stocks.get_or_create(
+            stock=stock, defaults={'quantity': float(stock_quantity)})[0]
+        if overwrite:
+            sp.quantity = stock_quantity
+        else:
+            sp.quantity += float(stock_quantity)
         sp.save()
-        portfolio.portfolio_stocks.add(sp)
         return True
     except None:
         return False
@@ -465,7 +476,9 @@ def _calculate_stock_info(stock_portfolio):
     """
     stock = stock_portfolio.stock
     current_price = get_current_price(stock.stock_ticker)
-    mkt_value = float(current_price*stock_portfolio.quantity)
+    if not current_price:
+        current_price = 0.0
+    mkt_value = float(current_price * stock_portfolio.quantity)
     stock_dict = {'ticker': stock.stock_ticker,
                   'name': stock.stock_name,
                   'price': current_price,
@@ -484,7 +497,9 @@ def _calculate_sector_allocations(portfolio):
     sector_allocations_raw = {}
     for sp in portfolio.portfolio_stocks.all():
         current_price = get_current_price(sp.stock.stock_ticker)
-        mkt_value = float(current_price*sp.quantity)
+        if not current_price:
+            current_price = 0.0
+        mkt_value = float(current_price * sp.quantity)
         sector = get_company_sector(sp.stock.stock_ticker)
         try:
             sector_allocations_raw[sector] += mkt_value
