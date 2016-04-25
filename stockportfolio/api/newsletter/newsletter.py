@@ -5,9 +5,12 @@ import sendgrid
 from stockportfolio.api.datautils.yahoo_finance import get_current_price
 
 
-def send_emails(self):
+def send_emails():
     subscribers = User.objects.all()
-    sg = sendgrid.SendGridClient('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', raise_errors=True)
+    key = os.environ.get('SENDGRID_API_KEY')
+    if key is None:
+        return
+    sg = sendgrid.SendGridClient(key, raise_errors=True)
     message = sendgrid.Mail()
     risk = []
     rank = []
