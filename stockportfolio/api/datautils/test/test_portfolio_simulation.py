@@ -4,6 +4,7 @@ import datetime as dt
 import stockportfolio.api.datautils.yahoo_finance as yf
 import stockportfolio.api.datautils.portfolio_simulation as ps
 
+
 class TestPortfolioSimulation(unittest.TestCase):
 
     @classmethod
@@ -116,4 +117,7 @@ class TestPortfolioSimulation(unittest.TestCase):
     def calculate_alpha_beta(self):
         pass
 
-
+    def test_plot_rolling_returns(self):
+        portfolio_returns = ps.get_portfolio_returns_series(self.portfolio, self.start_date, self.end_date)
+        benchmark_returns = ps.get_benchmark_returns(self.portfolio, self.start_date, self.end_date)
+        ps.plot_rolling_returns(portfolio_returns, benchmark_returns)
