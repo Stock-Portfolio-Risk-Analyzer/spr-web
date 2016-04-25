@@ -4,6 +4,7 @@ from datautils import yahoo_finance as yf
 from stockportfolio.api.models import (Portfolio, Risk, PortfolioRank, Stock,
     Price, PortfolioValue)
 import numpy
+import pandas
 from django.db.models import Count
 from datautils.yahoo_finance import get_current_price
 
@@ -108,7 +109,6 @@ def precompute_prices_for_all_stocks():
                 stock.save()
         except:
             continue
-
 
 def _calculate_risk(risk):
     """
