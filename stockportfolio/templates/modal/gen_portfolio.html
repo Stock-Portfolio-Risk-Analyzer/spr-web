@@ -19,9 +19,39 @@
 {% endfor %}
 </ul>
 </div>
-
-<form method="get" id="portfolio-download-form">
-<button id="download-portfolio" type="submit" class="col-xs-offset-1 col-xs-10 btn btn-secondary">
+<script>
+$("#add-gen-portfolio").click(function(){
+    var url_portfolio_list = "/api/portfolio/create/" + currentUser_id
+    var portfolio_id
+    $.ajax({
+            url: url_portfolio_list,
+            success: function (data) {
+                portfolio_id = data.id;
+                var form = {};
+                form["symbols"] = {{symbols|safe}}
+                form["quantities"] = {{quantities|safe}}
+                form["name"] = "generated portfolio"
+                form = JSON.stringify(form)
+                $.ajax({
+                       url : "/api/portfolio/"+ portfolio_id +"/modify_gen",
+                       type: "post",
+                       data : {
+                           "data": form,
+                       },
+                       dataType: "json",
+                       success: function(results){
+                       }
+                   })
+                 refreshToPortfolio(portfolio_id)
+                 $('#genPortfolio').modal('hide');
+            },
+            dataType: "json",
+            async:false
+        });
+})
+</script>
+<form method="get" id="add-gen-form">
+<button id="add-gen-portfolio" type="submit" class="col-xs-offset-1 col-xs-10 btn btn-primary">
     <span class="glyphicon glyphicon-plus"></span> Add Portfolio
 </button>
 </form>

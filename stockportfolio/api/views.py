@@ -19,7 +19,7 @@ import random
 import time
 from stockportfolio.api.utils import _calculate_risk, _calculate_price
 import stockportfolio.api.rec_utils as rec_utils
-#from django.db.models import Q
+from django.db.models import Q
 
 
 def dashboard(request):
@@ -143,6 +143,7 @@ def stock_rec(request, portfolio_id, rec_type):
         'stocks': recs
     }
     return render_to_response('modal/recommendation.html', context)
+
 def generate_portfolio(request):
     """
     Generates one of several types of portfolios, possibly with input from
@@ -195,8 +196,14 @@ def generate_portfolio(request):
     message += '${:,.2f}'.format(tlow) + ' to ' + '${:,.2f}'.format(thi) + '.'
     message += ' The actual value is ' + '${:,.2f}'.format(v) + '.'
     message += ' Portfolio generation took ' + '{:,.2f}'.format(end) + ' seconds.'
-    jsonify = lambda x: { i:x.__dict__[i] 
-                          for i in x.__dict__ if i !=  "_state" }
+    symbols = []
+    quantities = []
+    for stock in new_portfolio:
+        symbols.append(stock['ticker'].encode('ascii'))
+        quantities.append(stock['quantity'])
     context = {'message': message,
-                      'portfolio': new_portfolio}
+               'symbols': symbols,
+               'quantities': quantities,
+               'portfolio': new_portfolio}
+    context.update(csrf(request))
     return render_to_response('modal/gen_portfolio.html', context)
