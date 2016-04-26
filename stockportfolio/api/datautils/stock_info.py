@@ -167,4 +167,5 @@ def get_stock_volume_traded_for_a_month(symbol):
     return volume_list
 
 def get_average_stock_volume_traded(list):
-    return int(np.average(list))
+    val = int(np.average(list))
+    return val
