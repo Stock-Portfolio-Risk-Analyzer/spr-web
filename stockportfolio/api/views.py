@@ -32,14 +32,18 @@ def dashboard(request):
 
     stock_tickers = list(Stock.objects.all().values_list("stock_ticker"))
     stock_tickers.extend(Stock.objects.all().values_list("stock_name"))
-    stock_tickers = zip(*stock_tickers)
+    if stock_tickers:
+        stock_tickers = zip(*stock_tickers)
+        stock_tickers = json.dumps(stock_tickers[0])
+    else:
+        stock_tickers = json.dumps([])
 
     upload_portfolio_form = PortfolioUploadForm()
     context = {
         "user": request.user, "gravatar": g_url,
         "form": form,
         "upload_portfolio_form": upload_portfolio_form,
-        "stock_tickers": json.dumps(stock_tickers[0]),
+        "stock_tickers": stock_tickers,
     }
     context.update(csrf(request))
     return render_to_response("index.html", context)
