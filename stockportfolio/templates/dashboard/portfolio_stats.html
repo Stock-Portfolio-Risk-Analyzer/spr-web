@@ -48,17 +48,8 @@
             }
         });
 
-        function parseStringToArray(string){
-                string = string.substring(1,string.length-1)
-                string = string.split(", ")
-                for (i = 0; i<string.length; i++){
-                    string[i] =string[i].substring(7,string[i].length-7)
-                }
-                return string
-            }
-
-        $().ready(function() {
-            var values = parseStringToArray("{{stock_tickers}}");
+        $(function() {
+            var values = {{stock_tickers | safe}};
             $("#search_entry").autocomplete(values);
         });
     </script>

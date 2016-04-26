@@ -31,3 +31,8 @@
   height: inherit;
   width: inherit;
 }
+
+.modal-body form button {
+  margin-bottom: 9px;
+  width: inherit;
+}
