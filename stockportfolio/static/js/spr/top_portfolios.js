@@ -32,10 +32,6 @@ var top_portfolio = function(option){
             	type: 'GET',
             	success: function(data) {
             		console.log(data)
-            	/*
-                $('#stockInterface').html(data);
-                $('#stockInterfaceModal').modal('show');
-            	*/
             	}
         	});
 		});
