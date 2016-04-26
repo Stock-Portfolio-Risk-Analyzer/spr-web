@@ -20,6 +20,6 @@ urlpatterns = [
     url(r'^utils/calculate-rri/$', views.calculate_all_rris, name='utils_calculate_rri'),
     url(r'^portfolio/(?P<portfolio_id>\d+)/(?P<rec_type>\w+)/recommendation$', views.stock_rec, name="stock_rec"),
     url(r'^(?P<ticker>[\w\+. ]+)/details', views.stock_interface, name='stock_interface'),
-    url(r'^portfolio/generate_portfolio$', api.generate_portfolio, name="generate_portfolio"),
+    url(r'^portfolio/generate_portfolio$', views.generate_portfolio, name="generate_portfolio"),
     url(r'^(?P<ticker>[\w\+.! ]+)/details', views.stock_interface, name='stock_interface')
 ]

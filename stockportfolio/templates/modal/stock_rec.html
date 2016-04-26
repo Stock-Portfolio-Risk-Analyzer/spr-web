@@ -22,3 +22,26 @@
     </div>
     </div>
 </div>
+<div class="modal fade rec-modal" id="genPortfolio" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+    <div class="modal-content" style="height:650px;overflow:auto;"id="genPortfolioContent">
+    </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("generate-portfolio").onclick=function() {
+        var request = new XMLHttpRequest()
+        $('#genPortfolio').modal('show'); 
+        request.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            $('#genPortfolioContent').empty();
+            $('#genPortfolioContent').append(this.responseText);
+            }
+        }
+        request.open("GET", 
+                    window.location.protocol+"//"+window.location.host+
+                    "/api/portfolio/generate_portfolio")
+        request.send()
+    }
+</script>

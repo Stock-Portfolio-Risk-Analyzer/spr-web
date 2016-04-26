@@ -137,7 +137,18 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
                 del portfolio[next_ticker]
                 continue
         value = _calculate_portfolio_value(portfolio)
-    return portfolio, value, tvalue_low, tvalue_high
+    final_port = []
+    for r in portfolio: 
+        s = Stock.objects.get(stock_ticker=r[0])
+        final_port.append({
+                'ticker': r[0],
+                'name': s.stock_name,
+                'sector': s.stock_sector,
+                'risk': _get_latest_stock_risk(s),
+                'price': '${:,.2f}'.format(r[2]),
+                'quantity': r[1]}
+            )
+    return final_port, value, tvalue_low, tvalue_high
 
 def get_all_stocks(all_stocks, sort_by_risk=False):
     """
@@ -181,8 +192,6 @@ def stock_to_dict(stock):
 
 def stock_recommender(request, portfolio_id, rec_type):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-    if portfolio.portfolio_user.pk is not request.user.pk:
-        return HttpResponse(status=403)
     p_risk = _get_latest_portfolio_risk(portfolio)
     upper_bound = 5
     lower_bound = 2

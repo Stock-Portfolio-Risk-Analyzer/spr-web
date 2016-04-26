@@ -1,0 +1,27 @@
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Your generated portfolio</h4>
+    </div>
+<div>
+
+<ul class="list-group">
+<li class="list-group-item"> <p> {{ message }} </p> </li>
+{% for stock in portfolio %}
+  <li class="list-group-item">{{ stock.name }}
+      <span class="label label-danger label-pill pull-xs-right" style="float:right;">risk: {{ stock.risk }}</span>
+      <span class="label label-info label-pill pull-xs-right" style="float:right;"> quantity: {{ stock.quantity }}</span>
+      <span class="label label-success label-pill pull-xs-right" style="float:right;">price: {{ stock.price }}</span>
+      <span class="label label-default label-pill pull-xs-right" style="float:right;">{{ stock.ticker }}</span>
+      <p>Sector: {{ stock.sector }} </p>
+  </li>
+{% endfor %}
+</ul>
+</div>
+
+<form method="get" id="portfolio-download-form">
+<button id="download-portfolio" type="submit" class="col-xs-offset-1 col-xs-10 btn btn-secondary">
+    <span class="glyphicon glyphicon-plus"></span> Add Portfolio
+</button>
+</form>

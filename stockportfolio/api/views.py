@@ -15,6 +15,8 @@ from django.core.urlresolvers import reverse
 import feedparser
 import re
 import json
+import random
+import time
 from stockportfolio.api.utils import _calculate_risk, _calculate_price
 import stockportfolio.api.rec_utils as rec_utils
 #from django.db.models import Q
@@ -141,3 +143,60 @@ def stock_rec(request, portfolio_id, rec_type):
         'stocks': recs
     }
     return render_to_response('modal/recommendation.html', context)
+def generate_portfolio(request):
+    """
+    Generates one of several types of portfolios, possibly with input from
+    either the user's default portfolio or their first portfolio if they have
+    not selected a default. If there are no user portfolios, a risk between
+    -2.5 and 2.5 is selected. 
+    :param request
+    """
+    if request.user.is_anonymous():
+        return HttpResponse(status=403)
+    upper_bound = random.randint(16, 20)
+    lower_bound = random.randint(3, 10)
+    start = time.time()
+    user_settings = UserSettings.objects.get_or_create(user=request.user)[0]
+    portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(request.user, user_settings)
+    portfolio_tickers = rec_utils.fetch_tickers(portfolio)
+    all_stocks = rec_utils.stock_slice(Stock.objects.all(), 1000)
+    new_portfolio = None; message = ""
+    r = random.Random(int(time.time()))
+    p_type = r.choice(['safe', 'risky', 'diverse'])
+    if(p_type == 'safe'):
+        message = 'We chose this portfolio to have a lower risk'
+        if is_user_portfolio:
+            message += ' than your current default portfolio.'
+        else:
+            ' number than ' + str(p_risk)
+        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk, 
+                                                all_stocks,
+                                                random.randint(lower_bound, 
+                                                                upper_bound))
+    elif(p_type == 'diverse'):
+        message = 'We chose this portfolio with sector diversity in mind.'
+        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks, 
+                                       random.randint(lower_bound,
+                                                      upper_bound), True)
+    else:
+        message = 'We chose this portfolio to be risker'
+        if is_user_portfolio:
+            message += ' than your current default portfolio.'
+        else:
+            ' than ' + str(p_risk)
+        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk, 
+                                                all_stocks,
+                                                random.randint(lower_bound,
+                                                               upper_bound))
+    new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(portfolio,
+                                                         new_portfolio)
+    end = time.time() - start
+    message += ' The targeted range for the portfolio value was '
+    message += '${:,.2f}'.format(tlow) + ' to ' + '${:,.2f}'.format(thi) + '.'
+    message += ' The actual value is ' + '${:,.2f}'.format(v) + '.'
+    message += ' Portfolio generation took ' + '{:,.2f}'.format(end) + ' seconds.'
+    jsonify = lambda x: { i:x.__dict__[i] 
+                          for i in x.__dict__ if i !=  "_state" }
+    context = {'message': message,
+                      'portfolio': new_portfolio}
+    return render_to_response('modal/gen_portfolio.html', context)
