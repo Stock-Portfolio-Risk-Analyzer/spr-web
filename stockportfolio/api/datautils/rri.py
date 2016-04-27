@@ -3,6 +3,8 @@ from datetime import date, timedelta
 import numpy as np
 import Quandl
 import yahoo_finance
+from stockportfolio.settings.base import BASE_DIR
+import os
 
 """
 API that computes Relative Risk Index for a given Stock or Portfolio
@@ -12,7 +14,8 @@ Author - Shivam Gupta (sgupta40@illinois.edu)
 
 tickers = [] 
 
-with open('alpha_one.csv', 'rb') as csvfile:
+fpath = os.path.join(BASE_DIR, 'api', 'datautils', 'alpha_one.csv')
+with open(fpath, 'rb') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',')
     for row in spamreader:
         tickers.append(row[0].lower())
