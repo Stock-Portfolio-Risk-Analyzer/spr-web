@@ -4,7 +4,6 @@ import seaborn as sns
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from scipy import stats
 from functools import partial
 from matplotlib import gridspec
 from django.http import HttpResponse
