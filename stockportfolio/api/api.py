@@ -208,10 +208,6 @@ def modify_portfolio_form_post(request, portfolio_id):
                             status=400,
                             content_type="application/json charset=utf-8")
 
-<<<<<<< HEAD
-
-=======
->>>>>>> develop
 def generate_portfolio(request):
     """
     Generates one of several types of portfolios, possibly with input from
@@ -318,8 +314,6 @@ def stock_rec(request, portfolio_id):
     return HttpResponse(content=json.dumps(rec_dict), status=200,
                         content_type='application/json')
 
-<<<<<<< HEAD
-=======
 @csrf_exempt
 def modify_gen(request, portfolio_id):
        if request.method == 'POST':
@@ -407,8 +401,6 @@ def list_top_portfolios(request, category):
         portfolios.append(p_info)
     return HttpResponse(content=json.dumps(portfolios), status=200,
                         content_type='application/json')
-
->>>>>>> develop
 
 def download_porfolio_data(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
