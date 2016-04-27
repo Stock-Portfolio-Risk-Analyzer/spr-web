@@ -1,7 +1,4 @@
 from datetime import date, timedelta
-from functools import partial
-import scipy.stats
-import pandas as pd
 import numpy as np
 import yahoo_finance
 
@@ -12,164 +9,144 @@ Author - Shivam Gupta (sgupta40@illinois.edu)
 """
 
 
-def compute_daily_change_for_past_given_days(symbol, n_days_back=1):
+def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
     """
-    Parameter:  symbol (str):      ticker symbol of the stock (Type -> String)
-                n_days_back (int): number of days back from today for which you want the daily change
-    return: list of daily change (list(float))
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+            number_of_days_back -> number of days back from today
+                        for which you want the daily change
+                        (Type -> integer)
+    return: list of daily change (Type -> list float)
     """
-    start_date = date.today() - timedelta(days=n_days_back)
+    start_date = date.today() - timedelta(days=number_of_days_back)
     end_date = date.today()
     symbol_data = yahoo_finance.get_stock_data(symbol, start_date, end_date)
-    return list(symbol_data['Close'].pct_change()*100)[1:]
+    closing_price = list(symbol_data["Close"])
+
+    daily_change = []
+    for i in range(0, len(closing_price)-1):
+        daily_change.append(((closing_price[i+1] - closing_price[i])/closing_price[i])*100)
+
+    return daily_change
 
 
 def compute_daily_change_for_range(symbol, start_date, end_date):
     """
-    Parameter:  symbol (str):               ticker symbol of the stock (Type -> String)
-                start_date, end_date (str): range you want to compute on (Type -> String)
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+            start_date, end_date -> range you want to compute on (Type -> String)
 
-    return: list of daily change (list(float))
+    return: list of daily change (Type -> list float)
     """
     symbol_data = yahoo_finance.get_stock_data(symbol, start_date, end_date)
-    return list(symbol_data['Close'].pct_change()*100)[1:]
+    closing_price = list(symbol_data["Close"])
+
+    daily_change = []
+    for i in range(0, len(closing_price)-1):
+        daily_change.append(((closing_price[i+1] - closing_price[i])/closing_price[i])*100)
+
+    return daily_change
 
 
 def compute_covariance(a, b):
     """
-    Computes covariance.
-    Parameter: a, b (list(float))
+    Computes covariance
+    Parameter: Two lists of integers/floats
     Return: float
     """
-    return np.cov(np.array([a, b]))[0, 1]
+
+    a_mean = (sum(a)/len(a))
+    b_mean = (sum(b)/len(b))
+
+    total = 0
+
+    for i in range(0, len(a)):
+        total += ((a[i] - a_mean) * (b[i] - b_mean))
+
+    return (total/(len(a)-1))
 
 
 def compute_variance(a):
     """
     Computes Variance
-    Parameter: a (float):
-    Return: (float)
+    Parameter: List of integers/floats
+    Return: float
     """
     return np.var(a)
 
 
-def compute_stock_rri_for_today(symbol, n_days_back=1):
+def compute_stock_rri_for_today(symbol, number_of_days_back):
     """
-    Parameter:  symbol (str):      ticker symbol of the stock
-                n_days_back (int): number of days back from today for which you want rri
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+            number_of_days_back ->  number of days back from today
+                        for which you want rri
+                        (Type -> integer)
+
     return: float
     """
-    stock_daily_change  = compute_daily_change_for_past_given_days(symbol, n_days_back)
-    index_daily_change  = compute_daily_change_for_past_given_days("NYA", n_days_back)
+    stock_daily_change  = compute_daily_change_for_past_given_days(symbol, number_of_days_back)
+    index_daily_change  = compute_daily_change_for_past_given_days("NYA", number_of_days_back)
+
     covariance_val = compute_covariance(stock_daily_change, index_daily_change)
-    variance_val   = compute_variance(index_daily_change)
-    rri = covariance_val/variance_val
+    vairance_val   = compute_variance(index_daily_change)
+    rri = covariance_val/vairance_val
     return (rri + 1)
 
 
 def compute_stock_rri_for_range(symbol, start_date, end_date):
     """
-    Parameter:  symbol (str):               ticker symbol of the stock
-                start_date, end_date (str): range you want to compute rri on
-    return: (float)
+    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
+            start_date, end_date -> range you want to compute rri on (Type -> String)
+    return: float
     """
     stock_daily_change  = compute_daily_change_for_range(symbol, start_date, end_date)
     index_daily_change  = compute_daily_change_for_range("NYA", start_date, end_date)
 
     covariance_val = compute_covariance(stock_daily_change, index_daily_change)
-    variance_val = compute_variance(index_daily_change)
-    rri = covariance_val/variance_val
+    vairance_val = compute_variance(index_daily_change)
+    rri = covariance_val/vairance_val
     return (rri + 1)
 
 
-def compute_portfolio_rri_for_today(stocks, n_days_back=1):
+def compute_portfolio_rri_for_today(stocks, number_of_days_back):
     """
-    Computes RRI for a portfolio.
-    Parameter:  stocks (list(Stock)): list of stock objects
-                n_days_back (int):    number of days back from today for which you want rri
-    Return: (float)
+    Computes RRI for a portfolio
+    Parameter:  stocks -> list of stock objects
+            number_of_days_back ->  number of days back from today
+                        for which you want rri
+                        (Type -> integer)
+    Return: float
     """
     total_rri = 0.0
     total_quantity = 0
-    for stock in stocks:
-        ticker = stock.stock_ticker
-        quantity = stock.stock_quantity
-        stock_rri = compute_stock_rri_for_today(ticker, n_days_back)
+    for i in range(len(stocks)):
+        ticker = stocks[i].stock.stock_ticker
+        quantity = stocks[i].quantity
+        stock_rri = compute_stock_rri_for_today(ticker, number_of_days_back)
         total_rri = total_rri + (stock_rri * quantity)
         total_quantity = total_quantity + quantity
 
     portfolio_rri = (total_rri / total_quantity)
+
     return portfolio_rri
 
 
 def compute_portfolio_rri_for_range(stocks, start_date, end_date):
     """
     Computes RRI for a portfolio
-    Parameter:  stocks (list(Stock)):       list of stock objects
-                start_date, end_date (str): range you want to compute rri on
-    Return: (float)
+    Parameter:  stocks -> list of stock objects
+            start_date, end_date -> range you want to compute rri on (Type -> String)
+    Return: float
     """
     total_rri = 0.0
     total_quantity = 0
-    for stock in stocks:
-        ticker = stock.stock_ticker
-        quantity = stock.stock_quantity
+    for i in range(len(stocks)):
+        ticker = stocks[i].stock.stock_ticker
+        quantity = stocks[i].quantity
         stock_rri = compute_stock_rri_for_range(ticker, start_date, end_date)
         total_rri = total_rri + (stock_rri * quantity)
         total_quantity = total_quantity + quantity
-    return (total_rri / total_quantity)
 
+    portfolio_rri = (total_rri / total_quantity)
 
-def compute_portfolio_returns(stocks, start_date, end_date):
-    """
-    Get weighted returns of a portfolio from start_date to end_date
-    (assuming we bought the portfolio on start_date and held through end_date)
-    :param stocks: (dict) {symbol: quantity}
-    :param start_date: (DateTime)
-    :param end_date: (DateTime)
-    :return: (Series) of daily returns
-    """
-    date_range = pd.date_range(start_date, end_date)
-    portfolio_returns = pd.Series(data=[1]*len(date_range), index=date_range)
-    for symbol, quantity in stocks.iteritems():
-        symbol_returns = yahoo_finance.get_pct_returns(symbol, start_date, end_date)
-        portfolio_returns = portfolio_returns*quantity*symbol_returns
-    return portfolio_returns
+    return portfolio_rri
 
-
-def calculate_alpha_beta(returns, benchmark_returns=None):
-    """
-    Calculates alpha and beta.
-    :param returns:
-    :param benchmark_returns: (
-    :return: (float) alpha, (float) beta
-    """
-    ret_index = returns.index
-    beta, alpha = scipy.stats.linregress(benchmark_returns.loc[ret_index].values, returns.values)[:2]
-    return alpha * 30, beta
-
-def compute_portfolio_rolling_beta(stocks, start_date, end_date, rolling_window=30):
-    """
-    Calculate the rolling beta of the strategy from start_date to end_date
-    :param stocks: (dict) {symbol: quantity}
-    :param returns: (daily simulated returns of the strategy)
-    :param start_date: (DateTime)
-    :param end_date: (DateTime)
-    :param rolling_window: (int) rolling window for which to compute the beta,
-                                 default is 1 month
-    :return: (series) of rolling beta
-    """
-    portfolio_returns = compute_portfolio_returns(stocks, start_date, end_date)
-    factor_returns = yahoo_finance.get_pct_returns('SPY', start_date, end_date)  # the benchmark
-    if factor_returns.ndim > 1:
-        # apply column-wise
-        return factor_returns.apply(partial(compute_portfolio_rolling_beta, portfolio_returns),
-                                    rolling_window=rolling_window)
-    else:
-        rolling_beta = pd.Series(index=portfolio_returns.index)
-        for beg, end in zip(portfolio_returns.index[0:-rolling_window],
-                            portfolio_returns.index[rolling_window:]):
-            rolling_beta.loc[end] = calculate_alpha_beta(portfolio_returns.loc[beg:end],
-                                      factor_returns.loc[beg:end])[1]
-        return rolling_beta
-
+print compute_daily_change_for_past_given_days("GOOG", 10)

@@ -40,7 +40,7 @@ def get_company_rri_for_range(symbol, start_date, end_date):
     """
     return compute_stock_rri_for_range(symbol, start_date, end_date)
 
-def get_company_rri_for_days_back(symbol,days_back):
+def get_company_rri_for_days_back(symbol, days_back):
     """
     Parameter:  symbol -> ticker symbol of the stock (Type -> String)
     return: List [ [date1, rri], [date2, rri], .... [date7, rri] ]
@@ -49,8 +49,8 @@ def get_company_rri_for_days_back(symbol,days_back):
     for i in range(days_back+5,5,-1):
         start_date = date.today() - timedelta(days = i)
         end_date   = date.today() - timedelta(days = i -5)
-        rri_list.append(str(start_date))
-        rri_list.append(round(compute_stock_rri_for_range(symbol, start_date, end_date),3))
+        value = round(compute_stock_rri_for_range(symbol, start_date, end_date),3)
+        rri_list.append((start_date, value))
 
     return rri_list
 
@@ -95,8 +95,7 @@ def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
     value_timestamps = symbol_data.index
     values = symbol_data["Close"]
     for i in range(len(values)):
-        graphing_tuples.append(value_timestamps[i])
-        graphing_tuples.append(round(values[i],3))
+        graphing_tuples.append((value_timestamps[i], round(values[i],3)))
     return graphing_tuples
 
 def get_company_rri_for_a_week(symbol):

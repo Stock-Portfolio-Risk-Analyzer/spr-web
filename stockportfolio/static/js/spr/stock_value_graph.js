@@ -1,70 +1,83 @@
 var overalValue;
+var firstTime= true
+var price_history;
+var risk_history;
+var lbl;
 function loadAllGraphs() {
-
     var currentTime = new Date()
     var dayBefore = new Date()
     dayBefore.setDate(dayBefore.getDate() - 1)
+    function getValues(price_history, daysBack){
+        price_values = [daysBack]
+        var j = 0
+        for (i = price_history.length-1; i>=price_history.length-daysBack ; i--){
 
+            price_values[j] = new Array((new Date(price_history[i]["price_date"])).getTime(), price_history[i]["price_value"])
+            j++
+
+        }
+        return price_values
+    }
+
+
+    function getRisks(risk_history, daysBack){
+        risks = [daysBack]
+        var j = 0
+        for (i = risk_history.length-1; i>=risk_history.length-daysBack ; i--){
+            risks[j] = new Array((new Date(risk_history[i]["risk_date"])).getTime(), risk_history[i]["risk_value"])
+            j++
+        }
+        return risks
+    }
     function parseStringToArray(string){
         string = string.substring(1,string.length-1)
-        string = string.split(", ")
-        for (i = 0; i<string.length; i +=2){
-            string[i] = new Date(string[i].substring(15,string[i].length-6))
-        }
-        return string
+        string = string.split("}, {")
+        string[0] +="}"
+        var lastString =string[string.length-1] 
+        string[string.length-1]=lastString.substring(0,lastString.length-1)
+        for (i = 1; i<string.length;i++)
+            string[i] = '{' + string[i] + '}'
+        JSONArray = [string.length]
+        for (i = 0; i < string.length ; i++)
+            JSONArray[i] = jQuery.parseJSON(string[i])
+        return JSONArray
     }
-    function parseStringToArrayRRI(string){
-        string = string.substring(1,string.length-1)
-        string = string.split(", ")
-        for (i = 0; i<string.length; i +=2){
-            string[i] = new Date(string[i].substring(5,string[i].length-5))
-        }
-        console.log(string)
-        return string
-    }
+
     plotValues = function (id, timePeriod) {
-        console.log(timePeriod)
+        if (firstTime) {
+            price_history = parseStringToArray(price_history_string)
+            risk_history = parseStringToArray(risk_history_string)
+            firstTime = false
+        }
         switch (timePeriod) {
             case "week" :
-                var data = weekly_values;
+                var data = getValues(price_history,7)
+                lbl = "Stock value in $";
                 break;
             case "month" :
-                var data = monthly_values;
+                var data = getValues(price_history,30)
+                lbl = "Stock value in $";
                 break;
             case "year" :
-                var data = annual_values;
-                break;
-            case "rri_year" :
-                var data = annual_values_rri;
+                var data = getValues(price_history,price_history.length)
+                lbl = "Stock value in $";
                 break;
             case "rri_month" :
-                var data = monthly_values_rri;
+                var data = getRisks(risk_history,risk_history.length);
+                lbl = "Stock risk variation";
                 break;
             case "rri_week" :
-                var data = weekly_values_rri;
+                var data = getRisks(risk_history,7);
+                lbl = "Stock risk variation";
                 break;
         }
-        if (timePeriod.includes("rri_")){
-            data = parseStringToArrayRRI(data)
-            console.log(data)
-
-        } else {
-            data = parseStringToArray(data)
-        }
-        options["xaxis"]["min"] = (data[0].getTime())
+        options["xaxis"]["min"] = (data[0][data.length-1])
         options["xaxis"]["max"] = (new Date()).getTime()
-        tupledData = []
-        var j = 0;
-        for (i = 0; i< data.length; i+=2){
-            tupledData[j] = new Array(data[i].getTime(),parseFloat(data[i+1]))
-            j++;
-        }
-        console.log(tupledData)
         id = '#' + id
         $(id).empty();
         $.plot($(id), [{
-            label: "Stock value in $",
-            data: tupledData,
+            label: lbl,
+            data: data,
             lines: {
                 fillColor: "rgba(250, 202, 89, 0.12)"
             },
