@@ -48,6 +48,11 @@ class Stock(models.Model):
     def __str__(self):
         return '{} {}'.format(self.stock_id, self.stock_ticker)
 
+    def __iter__(self):
+        return iter([self.stock_ticker,
+                self.stock_name,
+                self.stock_sector])
+
 
 class StockPortfolio(models.Model):
     """

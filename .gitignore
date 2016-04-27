@@ -69,3 +69,7 @@ target/
 
 # pyenv
 .python-version
+
+run_server.sh
+
+stockportfolio/static/js/spr/diversity_charts.js
