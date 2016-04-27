@@ -1,10 +1,5 @@
-import csv
 import os
-import ystockquote
 import pandas as pd
-import pandas_datareader.data as web
-from collections import OrderedDict
-from datetime import datetime as dt
 from rri import *
 from datetime import date, timedelta
 import yahoo_finance
