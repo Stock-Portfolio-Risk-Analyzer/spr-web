@@ -15,6 +15,7 @@ from datautils.yahoo_finance import get_current_price, get_company_name, get_com
 from django.shortcuts import get_object_or_404
 from stockportfolio.api.utils import _calculate_risk
 import stockportfolio.api.rec_utils as rec_utils
+from django.views.decorators.csrf import csrf_exempt
 
 def add_stock(request, portfolio_id):
     """
@@ -146,7 +147,6 @@ def get_portfolio(request, portfolio_id):
         return HttpResponse(content=json.dumps(portfolio_dict),
                             status=200, content_type='application/json')
 
-
 def modify_portfolio_form_post(request, portfolio_id):
     if request.method == 'POST':
         data = request.POST.get("data", None)
@@ -185,117 +185,45 @@ def modify_portfolio_form_post(request, portfolio_id):
         return HttpResponse(content=err_message,
                             status=400,
                             content_type="application/json charset=utf-8")
-def generate_portfolio(request):
-    """
-    Generates one of several types of portfolios, possibly with input from
-    either the user's default portfolio or their first portfolio if they have
-    not selected a default. If there are no user portfolios, a risk between
-    -2.5 and 2.5 is selected. 
-    :param request
-    """
-    if request.user.is_anonymous():
-        return HttpResponse(status=403)
-    upper_bound = random.randint(16, 20)
-    lower_bound = random.randint(3, 10)
-    start = time.time()
-    user_settings = UserSettings.objects.get_or_create(user=request.user)[0]
-    portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(request.user, user_settings)
-    portfolio_tickers = rec_utils.fetch_tickers(portfolio)
-    all_stocks = rec_utils.stock_slice(Stock.objects.all(), 1000)
-    #all_stocks = rec_utils.get_all_stocks(Stock.objects.all())
-    new_portfolio = None; message = ""
-    r = random.Random(int(time.time()))
-    p_type = r.choice(['safe', 'risky', 'diverse'])
-    if(p_type == 'safe'):
-        message = 'We chose this portfolio to have a lower risk'
-        if is_user_portfolio:
-            message += ' than your current default portfolio.'
-        else:
-            ' number than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk, 
-                                                all_stocks,
-                                                random.randint(lower_bound, 
-                                                                upper_bound))
-    elif(p_type == 'diverse'):
-        message = 'We chose this portfolio with sector diversity in mind.'
-        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks, 
-                                       random.randint(lower_bound,
-                                                      upper_bound), True)
-    else:
-        message = 'We chose this portfolio to be risker'
-        if is_user_portfolio:
-            message += ' than your current default portfolio.'
-        else:
-            ' than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk, 
-                                                all_stocks,
-                                                random.randint(lower_bound,
-                                                               upper_bound))
-    new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(portfolio,
-                                                         new_portfolio)
-    
-    end = time.time() - start
-    message += ' The targeted range for the portfolio value was '
-    message += '${:,.2f}'.format(tlow) + ' to ' + '${:,.2f}'.format(thi) + '.'
-    message += ' The actual value is ' + '${:,.2f}'.format(v) + '.'
-    message += ' Portfolio generation took ' + '{:,.2f}'.format(end) + ' seconds.'
-    jsonify = lambda x: { i:x.__dict__[i] 
-                          for i in x.__dict__ if i !=  "_state" }
-    generated_dict = {'message': message,
-                      'portfolio': new_portfolio}
-    return HttpResponse(content=json.dumps(generated_dict), status=200,
-                        content_type='application/json')
 
-def stock_rec(request, portfolio_id):
-    """
-    Returns stock recommendations in several categories based on a specific
-    portfolio
-    :param request
-    :param portfolio_id
-    """
-    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-    if portfolio.portfolio_user.pk is not request.user.pk:
-        return HttpResponse(status=403)
-    risks = portfolio.portfolio_risk.all()
-    if len(risks) == 0:
-        err = 'No recommendations available at this time.'
-        err_dict = { 'low':err,
-                     'high': err,
-                     'stable':err,
-                     'diverse':err }
-        return HttpResponse(content=json.dumps(err_dict), status=200,
-                        content_type='application/json')
-    p_risk = risks[0].risk_value
-    jsonify = lambda x: { i:x.__dict__[i]
-                         # Django inserts a "_state" attribute into every
-                         # model. We don't need it in our json, so it's
-                         # removed here
-                         for i in x.__dict__ if i !=  "_state" }
-    less_risk = map(jsonify,
-                    list(Stock.objects.exclude(stock_beta__lt=p_risk)))
-    more_risk = map(jsonify,
-                    list(Stock.objects.exclude(stock_beta__gt=p_risk)))
-    diverse   = map(jsonify,
-                    list(_diversify_by_sector(portfolio)))
-    # stock w/ in a 20% range of current portfolio riskiness
-    stable = map(jsonify, list(Stock.objects.exclude(
-                         stock_beta__gt=(1.1 * p_risk)
-                   ).exclude(
-                           stock_beta__lt=0.9 * p_risk
-                   )))
-    rec_dict = {'low'    :less_risk[:4],
-                'high'   :more_risk [:4],
-                'diverse':diverse   [:4],
-                'stable' :stable    [:4] }
-    return HttpResponse(content=json.dumps(rec_dict), status=200,
-                        content_type='application/json')
+@csrf_exempt
+def modify_gen(request, portfolio_id):
+       if request.method == 'POST':
+            data = request.POST.get("data", None)
+            data = json.loads(data)
+            user_portfolio = get_object_or_404(Portfolio,
+                                               portfolio_id=portfolio_id)
+            for i in range(len(data["symbols"])):
+                stock = data["symbols"][i]
+                quantity = data["quantities"][i]
+                user_id = request.user.id
+                if user_portfolio.portfolio_user.pk is not request.user.pk:
+                    return HttpResponse(status=403)
+                user_has_stock = user_portfolio.portfolio_stocks.filter(
+                    stock__stock_ticker=stock).exists()
+                if user_has_stock:
+                    if quantity <= 0:
+                        user_portfolio.portfolio_stocks.all().get(
+                            stock__stock_ticker=stock).delete()
+                    else:
+                        user_portfolio.portfolio_stocks.filter(
+                            stock__stock_ticker=stock).update(
+                                        quantity=quantity)
+                elif quantity > 0:
+                    _add_stock_helper(user_portfolio, quantity, stock)
+            if data["name"]:
+                user_portfolio.portfolio_name = data["name"]
+                user_portfolio.save()
+            return HttpResponse(status=200)
+       else:
+            return HttpResponse(status=403)
 
 def download_porfolio_data(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     response = HttpResponse(content_type='text/csv')
-    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else "portfolio" 
+    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else 'portfolio' 
     response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio_name + '.csv"'
     writer = csv.writer(response)
     writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])
