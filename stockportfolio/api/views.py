@@ -20,6 +20,8 @@ import re
 import json
 from stockportfolio.api.utils import _calculate_risk, _calculate_price
 from django.db.models import Q
+from django.shortcuts import render
+from stockportfolio.api.api import _calculate_stock_info
 
 
 def dashboard(request):
@@ -123,10 +125,7 @@ def stock_interface(request, ticker):
     return render_to_response('modal/stock_interface.html', context)
 
 
-from django.shortcuts import render
-
 def simulate_portfolio(request, user_id):
-
     user = get_object_or_404(User, pk=user_id)
     if user is None:
         raise Http404
@@ -136,12 +135,15 @@ def simulate_portfolio(request, user_id):
         p_basic_info = {"id": p.pk, "name": p.portfolio_name}
         p_list.append(p_basic_info)
 
+    portfolio_id = p_list[0]['id']
+    name = p_list[0]['name']
 
-    portfolio = get_portfolio(request, 1)
-    portfolio_stocks = json.loads(portfolio.__dict__['_container'][0])['stocks']
+    portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+    portfolio_stocks = []
+    for stock in portfolio.portfolio_stocks.all():
+        portfolio_stocks.append(_calculate_stock_info(stock))
+
     portfolio_dict = {}
-    for stock in portfolio_stocks:
-        portfolio_dict[stock['ticker']] = stock['quantity']
-    # print portfolio_dict
-    return ps.plot_rolling_returns(1, portfolio_dict)
-    # return render(request, "dashboard/simple_chart.html")#, {"the_script": script, "the_div": div})
+    for stock_dict in portfolio_stocks:
+        portfolio_dict[stock_dict['ticker']] = stock_dict['quantity']
+    return ps.create_returns_tear_sheet(name, portfolio_dict)

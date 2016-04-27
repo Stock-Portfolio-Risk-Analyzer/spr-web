@@ -110,13 +110,29 @@ class TestPortfolioSimulation(unittest.TestCase):
                 # no data for this day (i.e. not a trading day)
                 pass
 
+    def test_calculate_alpha_beta(self):
+        alpha_beta_start_date = dt.datetime(year=2012, month=1, day=1)
+        alpha_beta_end_date = dt.datetime(year=2016, month=1, day=1)
+        returns = ps.get_portfolio_returns_series(self.portfolio,
+                                                  start_date=alpha_beta_start_date,
+                                                  end_date=alpha_beta_end_date,
+                                                  price_field=self.price_field)
 
-    def test_plot_rolling_returns(self):
         benchmark_returns = ps.get_benchmark_returns(benchmark=self.benchmark,
-                                                     start_date=self.start_date,
-                                                     end_date=self.end_date,
-                                                     price_field=self.price_field)
+                                             start_date=alpha_beta_start_date,
+                                             end_date=alpha_beta_end_date,
+                                             price_field=self.price_field)
+        alpha, beta = ps.alpha_beta(returns, benchmark_returns)
+        expected_alpha = 0.00112028234866
+        expected_beta = 1.06814094647
+        self.assertAlmostEqual(alpha, expected_alpha)
+        self.assertAlmostEqual(beta, expected_beta)
 
-        response = ps.plot_rolling_returns(1, self.portfolio, benchmark_returns)
+    def test_create_returns_tear_sheet(self):
+        benchmark_returns = ps.get_benchmark_returns(benchmark=self.benchmark,
+                                             start_date=self.start_date,
+                                             end_date=self.end_date,
+                                             price_field=self.price_field)
+        response = ps.create_returns_tear_sheet(1, self.portfolio, benchmark_returns)
         content_type = response.__dict__['_headers']['content-type'][1]
         self.assertEqual(content_type, 'image/png')

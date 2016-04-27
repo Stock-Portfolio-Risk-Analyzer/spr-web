@@ -55,6 +55,7 @@ def remove_stock(request, portfolio_id):
             return HttpResponse(status=200)
     return HttpResponse(status=400)
 
+
 def create_portfolio(request, user_id):
     """
     Creates a new portfolio model.
@@ -113,7 +114,6 @@ def get_list_of_portfolios(request, user_id):
 
 def get_portfolio(request, portfolio_id):
     """
-
     :param request:
     :param portfolio_id:
     :return:
@@ -185,6 +185,8 @@ def modify_portfolio_form_post(request, portfolio_id):
         return HttpResponse(content=err_message,
                             status=400,
                             content_type="application/json charset=utf-8")
+
+
 def generate_portfolio(request):
     """
     Generates one of several types of portfolios, possibly with input from
@@ -246,6 +248,7 @@ def generate_portfolio(request):
     return HttpResponse(content=json.dumps(generated_dict), status=200,
                         content_type='application/json')
 
+
 def stock_rec(request, portfolio_id):
     """
     Returns stock recommendations in several categories based on a specific
@@ -290,6 +293,7 @@ def stock_rec(request, portfolio_id):
     return HttpResponse(content=json.dumps(rec_dict), status=200,
                         content_type='application/json')
 
+
 def download_porfolio_data(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -311,6 +315,7 @@ def download_porfolio_data(request, portfolio_id):
                          last_risk]);
     return response
 
+
 def upload_portfolio_data(request):
     if request.method == 'POST':
         form = PortfolioUploadForm(request.POST, request.FILES)
@@ -321,6 +326,7 @@ def upload_portfolio_data(request):
             return HttpResponse(content=json.dumps({"portfolio_id": portfolio_id}), status=200,
                                 content_type='application/json')
         return HttpResponse(status=500)
+
 
 def _parse_portfolio_file(file, user):
     df = csv.DictReader(file)
@@ -335,6 +341,7 @@ def _parse_portfolio_file(file, user):
             return None
     return portfolio.pk
 
+
 def _diversify_by_sector(portfolio):
     """
     :param portfolio
@@ -346,6 +353,7 @@ def _diversify_by_sector(portfolio):
     for sector in sectors:
         q.exclude(stock_sector=sector)
     return list(q)
+
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
     stock_name = get_company_name(stock_ticker)

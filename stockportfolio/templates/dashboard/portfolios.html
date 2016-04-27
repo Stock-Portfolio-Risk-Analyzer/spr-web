@@ -2,8 +2,13 @@
 </ul>
 <button id="add-portfolio" type="button" class="col-xs-offset-1 col-xs-10 btn btn-success">
     <span class="glyphicon glyphicon-plus"></span> Add Portfolio
-  </button>
-  <button id="upload-portfolio" type="button" class="col-xs-offset-1 col-xs-10 btn btn-default">
+</button>
+
+<a href="/api/user/{{ user.pk }}/simulateportfolio"><button id="simulate-portfolio" type="button" class="col-xs-offset-1 col-xs-10 btn btn-info">
+    <span class="glyphicon glyphicon-plus"></span> Simulate Portfolio
+</button></a>
+
+<button id="upload-portfolio" type="button" class="col-xs-offset-1 col-xs-10 btn btn-default">
     <span class="glyphicon glyphicon-upload"></span> Import Portfolio (csv)
 </button>
 <form method="get" id="portfolio-download-form">
@@ -11,5 +16,10 @@
     <span class="glyphicon glyphicon-download"></span> Export Portfolio (csv)
 </button>
 </form>
+
+
+
+
+
 
 

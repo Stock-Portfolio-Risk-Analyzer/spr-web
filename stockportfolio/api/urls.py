@@ -8,10 +8,7 @@ urlpatterns = [
     url(r'^user/(?P<portfolio_id>\d+)$', views.user_profile, name="user_profile"),
     url(r'^user/(?P<user_id>\d+)/getportfolio$', api.get_portfolio_by_user, name="get_portfolio_by_user"),
     url(r'^user/(?P<user_id>\d+)/getportfoliolist$', api.get_list_of_portfolios, name="get_portfolio_list_by_user"),
-
-    url(r'^portfolio/(?P<portfolio_id>\d+)/simulate_portfolio', views.simulate_portfolio, name="simulate_portfolio"),
-    url(r'^user/(?P<user_id>\d+)/simulate_portfolio', views.simulate_portfolio, name="simulate_portfolio"),
-
+    url(r'^user/(?P<user_id>\d+)/simulateportfolio', views.simulate_portfolio, name="simulate_portfolio"),
     url(r'^portfolio/(?P<portfolio_id>\d+)/addstock$', api.add_stock, name="add_stock"),
     url(r'^portfolio/(?P<portfolio_id>\d+)/removestock$', api.remove_stock, name="remove_stock"),
     url(r'^portfolio/create/(?P<user_id>\w+)$', api.create_portfolio, name="create_portfolio"),
@@ -25,6 +22,6 @@ urlpatterns = [
     url(r'^portfolio/(?P<portfolio_id>\d+)/stock_rec$', api.stock_rec, name="stock_rec"),
     url(r'^(?P<ticker>[\w\+. ]+)/details', views.stock_interface, name='stock_interface'),
     url(r'^portfolio/generate_portfolio$', api.generate_portfolio, name="generate_portfolio"),
-    url(r'^(?P<ticker>[\w\+.! ]+)/details', views.stock_interface, name='stock_interface')
+    url(r'^(?P<ticker>[\w\+.! ]+)/details', views.stock_interface, name='stock_interface'),
     url(r'^(?P<ticker>[A-Z]+)/details', views.stock_interface, name='stock_interface'),
 ]
