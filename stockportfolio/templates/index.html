@@ -17,10 +17,9 @@
 <body class="nav-md">
 {% include "modal/modify_account.html" %}
 {% include "modal/modify_portfolio.html" %}
-
 {% include "modal/search_stock.html" %}
-
 {% include "modal/recommendation.html" %}
+{% include "modal/upload_portfolio.html" %}
 
 <script>
     {% if user %}
@@ -77,7 +76,6 @@
     <div class="clearfix"></div>
     <div id="notif-group" class="tabbed_notifications"></div>
 </div>
-
 <div id="stockInterface">
 </div>
 
@@ -104,7 +102,7 @@
 <script type="text/javascript" src="{% static "js/spr/spr.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/jquery.autocomplete.min.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/jquery.autocomplete.pack.js" %}"></script>
-
+<script type="text/javascript" src="{% static "js/spr/upload_portfolio.js" %}"></script>
 
 </body>
 </html>

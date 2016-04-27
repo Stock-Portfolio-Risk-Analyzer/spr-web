@@ -1,5 +1,12 @@
 window.onload = function sprInit() {
     attachEvents() 
+    setDownloadLink()
+}
+
+function setDownloadLink() {
+    var l = document.getElementById("portfolio-download-form")
+    var url = "/api/portfolio/"+user_portfolio.portfolio_id+"/download"
+    l.setAttribute("action", url)
 }
 
 function attachEvents() {
