@@ -15,11 +15,14 @@
           <div class="modal-body">
 
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-3">
                 <h2 style = "font-size:26px"><b>Ticker:</b> {{stock_ticker}}</h2>
                 <h2 style = "font-size:26px"><b>Sector:</b> {{stock_sector}}</h2>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-3">
+                <h2 style = "font-size:26px"><b>Sentiment:</b><div id = "sentiment"></div></h2>
+              </div>
+              <div class="col-md-5">
                 <h2 style = "font-size:26px"><b>Current Value:</b> {{current_price}} $</h2>
                 <form id="addStockQuantityModalForm" class="form-inline">
                   <div class="form-group">
@@ -107,7 +110,7 @@
                                       var myElement = document.querySelector("#menu");
                                       myElement.style.listStyleType = "none";
                                       $("#menu").bootstrapNews({
-                                          newsPerPage: 17,
+                                          newsPerPage: 15,
                                           autoplay: false,
 
                                           onToDo: function () {
@@ -150,5 +153,19 @@
             console.log('failure')
           }
       });
+  });
+  $(function(){
+      var sentiment_value = "{{sentiment_value}}"
+      var enumerator = {'-1': 'red ', '1':'green'}
+      if (parseInt(enumerator[sentiment_value]) > 0)
+        document.getElementById("sentiment").innerHTML = "Bullish"
+      else if (parseInt(enumerator[sentiment_value])== 0) 
+        document.getElementById("sentiment").innerHTML = "Neutral"
+      else
+        document.getElementById("sentiment").innerHTML = "Bearish"
+
+      color = enumerator[sentiment_value]
+
+      document.getElementById("sentiment").style.color = color
   });
 </script>
