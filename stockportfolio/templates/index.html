@@ -11,12 +11,14 @@
     <link href="{% static "fonts/css/font-awesome.min.css" %}" rel="stylesheet">
     <link href="{% static "css/animate.min.css" %}" rel="stylesheet">
     <link href="{% static "css/custom.css" %}" rel="stylesheet">
+    <link href="{% static "css/site.css" %}" rel="stylesheet">
     <script src="{% static "js/jquery.min.js" %} "></script>
     <script src="{% static "js/chartjs/chart.min.js" %} "></script>
 </head>
 <body class="nav-md">
 {% include "modal/modify_account.html" %}
 {% include "modal/modify_portfolio.html" %}
+{% include "modal/top_portfolios.html" %}
 {% include "modal/search_stock.html" %}
 {% include "modal/upload_portfolio.html" %}
 
@@ -97,6 +99,7 @@
 <script type="text/javascript" src="{% static "js/spr/diversity_charts.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/modify_portfolio.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/portfolio_selection.js" %}"></script>
+<script type="text/javascript" src="{% static "js/spr/top_portfolios.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/stock_value_graph.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/spr.js" %}"></script>
 <script type="text/javascript" src="{% static "js/spr/jquery.autocomplete.min.js" %}"></script>

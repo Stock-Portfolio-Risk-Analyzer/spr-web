@@ -1,5 +1,4 @@
 var overalValue;
-var firstTime= true
 var price_history;
 var risk_history;
 var lbl;
@@ -29,62 +28,50 @@ function loadAllGraphs() {
         }
         return risks
     }
-    function parseStringToArray(string){
-        string = string.substring(1,string.length-1)
-        string = string.split("}, {")
-        string[0] +="}"
-        var lastString =string[string.length-1] 
-        string[string.length-1]=lastString.substring(0,lastString.length-1)
-        for (i = 1; i<string.length;i++)
-            string[i] = '{' + string[i] + '}'
-        JSONArray = [string.length]
-        for (i = 0; i < string.length ; i++)
-            JSONArray[i] = jQuery.parseJSON(string[i])
-        return JSONArray
-    }
 
     plotValues = function (id, timePeriod) {
-        if (firstTime) {
-            price_history = parseStringToArray(price_history_string)
-            risk_history = parseStringToArray(risk_history_string)
-            firstTime = false
-        }
-        switch (timePeriod) {
-            case "week" :
-                var data = getValues(price_history,7)
-                lbl = "Stock value in $";
-                break;
-            case "month" :
-                var data = getValues(price_history,30)
-                lbl = "Stock value in $";
-                break;
-            case "year" :
-                var data = getValues(price_history,price_history.length)
-                lbl = "Stock value in $";
-                break;
-            case "rri_month" :
-                var data = getRisks(risk_history,risk_history.length);
-                lbl = "Stock risk variation";
-                break;
-            case "rri_week" :
-                var data = getRisks(risk_history,7);
-                lbl = "Stock risk variation";
-                break;
-        }
-        options["xaxis"]["min"] = (data[0][data.length-1])
-        options["xaxis"]["max"] = (new Date()).getTime()
-        id = '#' + id
-        $(id).empty();
-        $.plot($(id), [{
-            label: lbl,
-            data: data,
-            lines: {
-                fillColor: "rgba(250, 202, 89, 0.12)"
-            },
-            points: {
-                fillColor: "#fff"
+        try{
+
+            switch (timePeriod) {
+                case "week" :
+                    var data = getValues(price_history,7)
+                    lbl = "Stock value in $";
+                    break;
+                case "month" :
+                    var data = getValues(price_history,30)
+                    lbl = "Stock value in $";
+                    break;
+                case "year" :
+                    var data = getValues(price_history,price_history.length)
+                    lbl = "Stock value in $";
+                    break;
+                case "rri_month" :
+                    var data = getRisks(risk_history,risk_history.length);
+                    lbl = "Stock risk variation";
+                    break;
+                case "rri_week" :
+                    var data = getRisks(risk_history,7);
+                    lbl = "Stock risk variation";
+                    break;
             }
-        }], options);
+            options["xaxis"]["min"] = (data[0][data.length-1])
+            options["xaxis"]["max"] = (new Date()).getTime()
+            id = '#' + id
+            $(id).empty();
+            $.plot($(id), [{
+                label: lbl,
+                data: data,
+                lines: {
+                    fillColor: "rgba(250, 202, 89, 0.12)"
+                },
+                points: {
+                    fillColor: "#fff"
+                }
+            }], options);
+        }
+        catch(err) {
+            return
+        }
 
 
     }
@@ -128,4 +115,3 @@ function loadAllGraphs() {
 
 // Need to get these functions back out as global variables
 loadAllGraphs();
-

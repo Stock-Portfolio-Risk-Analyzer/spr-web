@@ -98,3 +98,16 @@ class PortfolioRank(models.Model):
     date = models.DateTimeField(auto_now=True, db_index=True)
     portfolio = models.ForeignKey(Portfolio)
     value = models.IntegerField()
+
+
+class PortfolioValue(models.Model):
+    """
+
+    """
+
+    class Meta:
+        unique_together = (("date", "portfolio"), )
+
+    date = models.DateTimeField(auto_now=True, db_index=True)
+    portfolio = models.ForeignKey(Portfolio)
+    value = models.FloatField()
