@@ -114,7 +114,6 @@ function loadDiversityGraphs() {
 //Make Portfolio Table dynamic
     //remove all elements on reload, except hidden sample row.
     var $clone = $("table#portfolio").find('tr.hide.sample').remove().clone();
-    console.log($clone)
     $("table#portfolio tbody tr").remove()
     $("table#portfolio").append($clone)
 

@@ -24,5 +24,15 @@
 {
     padding:4px 4px;
     margin:0px;
-    border-bottom:1px dotted #555; 
+    border-bottom:1px dotted #555;
+}
+
+.modal-header .close {
+  height: inherit;
+  width: inherit;
+}
+
+.modal-body form button {
+  margin-bottom: 9px;
+  width: inherit;
 }

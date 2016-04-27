@@ -19,8 +19,9 @@ urlpatterns = [
     url(r'^portfolio/(?P<portfolio_id>\d+)/download$', api.download_porfolio_data, name="download_portfolio_data"),
     url(r'^portfolio/upload', api.upload_portfolio_data, name="upload_portfolio_data"),
     url(r'^utils/calculate-rri/$', views.calculate_all_rris, name='utils_calculate_rri'),
+    url(r'^(?P<ticker>[\w\+.,! ]+)/details', views.stock_interface, name='stock_interface'),
+    url(r'^top-ten/(?P<category>\d+)$', api.list_top_portfolios, name='top_portfolios'),
+    url(r'^top-ten/portfolio/(?P<portfolio_id>\d+)$', api.get_public_portfolio, name='get_public_portfolio'),
     url(r'^portfolio/(?P<portfolio_id>\d+)/(?P<rec_type>\w+)/recommendation$', views.stock_rec, name="stock_rec"),
-    url(r'^(?P<ticker>[\w\+. ]+)/details', views.stock_interface, name='stock_interface'),
-    url(r'^portfolio/generate_portfolio$', views.generate_portfolio, name="generate_portfolio"),
-    url(r'^(?P<ticker>[\w\+.! ]+)/details', views.stock_interface, name='stock_interface')
+    url(r'^portfolio/generate_portfolio$', views.generate_portfolio, name="generate_portfolio")
 ]
