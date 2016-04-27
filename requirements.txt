@@ -28,4 +28,3 @@ feedparser==5.2.1
 matplotlib==1.5.1
 selenium==2.53.1
 sendgrid==2.0.0
-seaborn==0.7.0
