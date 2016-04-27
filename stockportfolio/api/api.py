@@ -274,7 +274,7 @@ def _diversify_by_sector(portfolio):
         for sector in sectors:
             q.exclude(stock_sector=sector)
     return list(q)
-    
+
 
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
