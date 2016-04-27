@@ -9,49 +9,78 @@
       </div>
         <br>
       <div class="modal-body">
-        <div class="text-center">
-          <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-primary active">
-              <input type="radio" name="options" id="0" autocomplete="off" checked>Most Risky</input>
-            </label>
-            <label class="btn btn-primary">
-              <input type="radio" name="options" id="1" autocomplete="off">Least Risky</input>
-            </label>
-            <label class="btn btn-primary">
-              <input type="radio" name="options" id="2" autocomplete="off">Most Valuable</input>
-            </label>
-            <label class="btn btn-primary">
-              <input type="radio" name="options" id="3" autocomplete="off">Least Valuable</input>
-            </label>
+        <div id="top-portfolio-list-view">
+          <div class="text-center">
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-primary active">
+                <input type="radio" name="options" id="0" autocomplete="off" checked/>Most Risky
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" name="options" id="1" autocomplete="off"/>Least Risky
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" name="options" id="2" autocomplete="off"/>Most Valuable
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" name="options" id="3" autocomplete="off"/>Least Valuable
+              </label>
+            </div>
           </div>
-        </div>
 
-        <br>
+          <br>
 
-        <table id="top_portfolio" class="table table-striped responsive-utilities jambo_table">
+          <table id="top_portfolio" class="table table-striped responsive-utilities jambo_table">
             <thead>
-            <tr class="headings">
-                <th>#</th>
-                <th>ID</th>
-                <th>Name</th>
-                <th>RRI</th>
-                <th>Value</th>
-            </tr>
+              <tr class="headings">
+                  <th>#</th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>RRI</th>
+                  <th>Value</th>
+              </tr>
             </thead>
             <tbody>
-            <tr class="even pointer hide sample">
-                <td class="rank"></td>
-                <td class="id"></td>
-                <td class="name"></td>
-                <td class="rri"></td>
-                <td class="value"></td>
-            </tr>
+              <tr class="even pointer hide sample">
+                  <td class="rank"></td>
+                  <td class="id"></td>
+                  <td class="name"></td>
+                  <td class="rri"></td>
+                  <td class="value"></td>
+              </tr>
             </tbody>
-        </table>
-    </div>
-
-
-  </div>
+          </table>
+        </div>
+        <div id="top-portfolio-detail-view" class="hidden">
+          <div class="text-center">
+            <button class="btn btn-primary top-portfolio-back-btn">Go Back</button>
+          </div>
+          <table id="top-portfolio-details-table" class="table table-striped responsive-utilities jambo_table">
+            <thead>
+              <tr class="headings">
+                  <th>Company</th>
+                  <th>Symbol</th>
+                  <th>Sector</th>
+                  <th>Quantity</th>
+                  <th>Last Price</th>
+                  <th>Market Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="even pointer hide sample">
+                  <td class="company"></td>
+                  <td class="symbol"></td>
+                  <td class="sector"></td>
+                  <td class="quantity"></td>
+                  <td class="last_price"></td>
+                  <td class="market_value"></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="text-center">
+            <button class="btn btn-primary top-portfolio-back-btn">Go Back</button>
+          </div>
+        </div>
+      </div>
+   </div>
   </div>
 </div>
-
