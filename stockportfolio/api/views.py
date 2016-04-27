@@ -4,16 +4,20 @@ from datautils import yahoo_finance as yf
 from datautils import stock_info
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.contrib.sites.shortcuts import get_current_site
 from stockportfolio.api.models import Portfolio, Risk, UserSettings, Stock
 from stockportfolio.api.utils import update_rri_for_all_portfolios, update_rank_for_all_portfolios
 from registration.models import RegistrationManager
+import datautils.portfolio_simulation as ps
+from stockportfolio.api.api import get_portfolio
 import string
 import hashlib
 from stockportfolio.api.forms import UpdateProfile
 from django.core.urlresolvers import reverse
 import feedparser
 import re
+import json
 
 
 
@@ -72,7 +76,8 @@ def modify_account(request):
     form = UpdateProfile(instance=request.user)
     return render(request, 'modal/modify_account.html', {"form": form})
 
-def stock_interface(request,ticker):
+
+def stock_interface(request, ticker):
     ticker = ticker.upper()
     feed = feedparser.parse("http://articlefeeds.nasdaq.com/nasdaq/symbols?symbol="+ticker)
     sanitized_feed = []
@@ -95,3 +100,27 @@ def stock_interface(request,ticker):
         'rri_values_month_back' : stock_info.get_company_rri_for_days_back(ticker,30)
     }
     return render_to_response('modal/stock_interface.html', context)
+
+
+from django.shortcuts import render
+
+def simulate_portfolio(request, user_id):
+
+    user = get_object_or_404(User, pk=user_id)
+    if user is None:
+        raise Http404
+    portfolios = user.portfolio_set.all()
+    p_list = []
+    for p in portfolios:
+        p_basic_info = {"id": p.pk, "name": p.portfolio_name}
+        p_list.append(p_basic_info)
+
+
+    portfolio = get_portfolio(request, 1)
+    portfolio_stocks = json.loads(portfolio.__dict__['_container'][0])['stocks']
+    portfolio_dict = {}
+    for stock in portfolio_stocks:
+        portfolio_dict[stock['ticker']] = stock['quantity']
+    # print portfolio_dict
+    return ps.plot_rolling_returns(1, portfolio_dict)
+    # return render(request, "dashboard/simple_chart.html")#, {"the_script": script, "the_div": div})

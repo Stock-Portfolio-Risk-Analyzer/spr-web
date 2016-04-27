@@ -110,10 +110,13 @@ class TestPortfolioSimulation(unittest.TestCase):
                 # no data for this day (i.e. not a trading day)
                 pass
 
-    def test_simulate_returns(self):
-        returns = ps.get_portfolio_returns_series(self.portfolio)
 
-    def calculate_alpha_beta(self):
-        pass
+    def test_plot_rolling_returns(self):
+        benchmark_returns = ps.get_benchmark_returns(benchmark=self.benchmark,
+                                                     start_date=self.start_date,
+                                                     end_date=self.end_date,
+                                                     price_field=self.price_field)
 
-
+        response = ps.plot_rolling_returns(1, self.portfolio, benchmark_returns)
+        content_type = response.__dict__['_headers']['content-type'][1]
+        self.assertEqual(content_type, 'image/png')
