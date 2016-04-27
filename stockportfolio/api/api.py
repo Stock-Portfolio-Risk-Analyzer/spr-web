@@ -15,6 +15,7 @@ from stockportfolio.api.utils import _calculate_risk
 import operator
 from stockportfolio.api.forms import PortfolioUploadForm
 import stockportfolio.api.rec_utils as rec_utils
+from django.views.decorators.csrf import csrf_exempt
 
 
 def add_stock(request, portfolio_id):
@@ -169,7 +170,6 @@ def get_portfolio(request, portfolio_id):
         return HttpResponse(content=json.dumps(portfolio_dict),
                             status=200, content_type='application/json')
 
-
 def modify_portfolio_form_post(request, portfolio_id):
     if request.method == 'POST':
         data = request.POST.get("data", None)
@@ -208,7 +208,6 @@ def modify_portfolio_form_post(request, portfolio_id):
         return HttpResponse(content=err_message,
                             status=400,
                             content_type="application/json charset=utf-8")
-
 
 def generate_portfolio(request):
     """
@@ -316,6 +315,37 @@ def stock_rec(request, portfolio_id):
     return HttpResponse(content=json.dumps(rec_dict), status=200,
                         content_type='application/json')
 
+@csrf_exempt
+def modify_gen(request, portfolio_id):
+       if request.method == 'POST':
+            data = request.POST.get("data", None)
+            data = json.loads(data)
+            user_portfolio = get_object_or_404(Portfolio,
+                                               portfolio_id=portfolio_id)
+            for i in range(len(data["symbols"])):
+                stock = data["symbols"][i]
+                quantity = data["quantities"][i]
+                user_id = request.user.id
+                if user_portfolio.portfolio_user.pk is not request.user.pk:
+                    return HttpResponse(status=403)
+                user_has_stock = user_portfolio.portfolio_stocks.filter(
+                    stock__stock_ticker=stock).exists()
+                if user_has_stock:
+                    if quantity <= 0:
+                        user_portfolio.portfolio_stocks.all().get(
+                            stock__stock_ticker=stock).delete()
+                    else:
+                        user_portfolio.portfolio_stocks.filter(
+                            stock__stock_ticker=stock).update(
+                                        quantity=quantity)
+                elif quantity > 0:
+                    _add_stock_helper(user_portfolio, quantity, stock)
+            if data["name"]:
+                user_portfolio.portfolio_name = data["name"]
+                user_portfolio.save()
+            return HttpResponse(status=200)
+       else:
+            return HttpResponse(status=403)
 
 def list_top_portfolios(request, category):
     """
@@ -379,7 +409,7 @@ def download_porfolio_data(request, portfolio_id):
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     response = HttpResponse(content_type='text/csv')
-    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else "portfolio"
+    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else 'portfolio' 
     response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio_name + '.csv"'
     writer = csv.writer(response)
     writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])

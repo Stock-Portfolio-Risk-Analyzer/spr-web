@@ -103,6 +103,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.driver.find_element_by_xpath("//*[contains(text(), 'Sign in')]").click() 
 
     def dashboard(self):
+        self.wait(self.new_page, 20)
         self.driver.get(self.live_server_url + '/dashboard/')       
         self.wait(self.new_page, 60)
         body = self.driver.find_element_by_tag_name('body')

@@ -137,7 +137,18 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
                 del portfolio[next_ticker]
                 continue
         value = _calculate_portfolio_value(portfolio)
-    return portfolio, value, tvalue_low, tvalue_high
+    final_port = []
+    for r in portfolio: 
+        s = Stock.objects.get(stock_ticker=r[0])
+        final_port.append({
+                'ticker': r[0],
+                'name': s.stock_name,
+                'sector': s.stock_sector,
+                'risk': _get_latest_stock_risk(s),
+                'price': '${:,.2f}'.format(r[2]),
+                'quantity': r[1]}
+            )
+    return final_port, value, tvalue_low, tvalue_high
 
 def get_all_stocks(all_stocks, sort_by_risk=False):
     """
@@ -157,6 +168,52 @@ def get_all_stocks(all_stocks, sort_by_risk=False):
     for s in stock_tuples:
        ret_stocks.append(all_stocks.get(stock_ticker=s[0]))
     return ret_stocks
+
+def stock_to_dict(stock):
+    risk = _get_latest_stock_risk(stock)
+    price = _get_latest_stock_price(stock)
+    date = None
+    if risk is not None:
+        date = stock.stock_risk.all().order_by('risk_date').last().risk_date
+        date = "{:%d %B %Y}".format(date)
+    blurb = stock.stock_ticker + ' is currently valued at '
+    blurb += '${:,.2f}'.format(price) + '. '
+    if date is None:
+        blurb += ' We currently don\'t have any risk information for ' + stock.stock_ticker + '.'
+    else:
+        blurb += 'As of ' + date + ', ' + stock.stock_ticker + ' had a risk of '
+        blurb += '{:,.2f}'.format(risk)
+    return { 'ticker': stock.stock_ticker,
+             'name': stock.stock_name,
+             'sector': stock.stock_sector,
+             'price': price,
+             'risk': risk,
+             'blurb': blurb}
+
+def stock_recommender(request, portfolio_id, rec_type):
+    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
+    p_risk = _get_latest_portfolio_risk(portfolio)
+    upper_bound = 5
+    lower_bound = 2
+    all_stocks = stock_slice(Stock.objects.all(), 1000)
+    recs = []  
+    if rec_type == 'diverse':
+        recs = get_sector_stocks(portfolio, all_stocks, 
+                                 random.randint(lower_bound,
+                                                upper_bound), True)
+    else:
+        rec_fn = None
+        if rec_type == 'low_risk':
+            rec_fn = lambda x: x <= p_risk
+        elif rec_type == 'high_risk':
+            rec_fn = lambda x: x > p_risk
+        elif rec_type == 'stable':
+            rec_fn = lambda x: x < p_risk*1.2 and x > p_risk*0.8
+        recs = get_recommendations(rec_fn, all_stocks,
+                                   random.randint(lower_bound,
+                                                  upper_bound))
+    recs = map(stock_to_dict, recs)
+    return recs
 
 def _fetch_target_value(portfolio):
     """
