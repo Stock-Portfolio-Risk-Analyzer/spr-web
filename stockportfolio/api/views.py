@@ -5,10 +5,13 @@ from datautils import stock_info
 from datautils import sentiment
 from django.template.context_processors import csrf
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.contrib.sites.shortcuts import get_current_site
 from stockportfolio.api.models import Portfolio, Risk, UserSettings, Stock
 from stockportfolio.api.utils import update_rri_for_all_portfolios, update_rank_for_all_portfolios
 from registration.models import RegistrationManager
+import datautils.portfolio_simulation as ps
+from stockportfolio.api.api import get_portfolio
 import string
 import hashlib
 from stockportfolio.api.forms import UpdateProfile, PortfolioUploadForm
@@ -21,6 +24,8 @@ import time
 from stockportfolio.api.utils import _calculate_risk, _calculate_price
 import stockportfolio.api.rec_utils as rec_utils
 from django.db.models import Q
+from django.shortcuts import render
+from stockportfolio.api.api import _calculate_stock_info
 
 
 def dashboard(request):
@@ -129,6 +134,30 @@ def stock_interface(request, ticker):
         'sentiment_value': sentiment.get_stock_sentiment(ticker)
     }
     return render_to_response('modal/stock_interface.html', context)
+
+
+def simulate_portfolio(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    if user is None:
+        raise Http404
+    portfolios = user.portfolio_set.all()
+    p_list = []
+    for p in portfolios:
+        p_basic_info = {"id": p.pk, "name": p.portfolio_name}
+        p_list.append(p_basic_info)
+
+    portfolio_id = p_list[0]['id']
+    name = p_list[0]['name']
+
+    portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+    portfolio_stocks = []
+    for stock in portfolio.portfolio_stocks.all():
+        portfolio_stocks.append(_calculate_stock_info(stock))
+
+    portfolio_dict = {}
+    for stock_dict in portfolio_stocks:
+        portfolio_dict[stock_dict['ticker']] = stock_dict['quantity']
+    return ps.create_returns_tear_sheet(name, portfolio_dict)
 
 def stock_rec(request, portfolio_id, rec_type):
     recs = rec_utils.stock_recommender(request, portfolio_id, rec_type)
