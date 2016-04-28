@@ -40,7 +40,7 @@ def dashboard(request):
         stock_tickers = zip(*stock_tickers)
         stock_tickers = json.dumps(stock_tickers[0])
     else:
-        stock_tickers = json.dumps([])
+        stock_tickers = json.dumps(['No stocks', 'No stocks found'])
 
     upload_portfolio_form = PortfolioUploadForm()
     context = {
@@ -144,7 +144,7 @@ def stock_rec(request, portfolio_id, rec_type):
         message = 'Using these stocks, lower your portfolio\'s risk'
     else:
         title = 'Get out of your niche.'
-        message = 'Here are some stocks with sectors not in your portfolio' 
+        message = 'Here are some stocks with sectors not in your portfolio'
     context = {
         'title': title,
         'message': message,
@@ -157,7 +157,7 @@ def generate_portfolio(request):
     Generates one of several types of portfolios, possibly with input from
     either the user's default portfolio or their first portfolio if they have
     not selected a default. If there are no user portfolios, a risk between
-    -2.5 and 2.5 is selected. 
+    -2.5 and 2.5 is selected.
     :param request
     """
     if request.user.is_anonymous():
@@ -178,13 +178,13 @@ def generate_portfolio(request):
             message += ' than your current default portfolio.'
         else:
             ' number than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk, 
+        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk,
                                                 all_stocks,
-                                                random.randint(lower_bound, 
+                                                random.randint(lower_bound,
                                                                 upper_bound))
     elif(p_type == 'diverse'):
         message = 'We chose this portfolio with sector diversity in mind.'
-        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks, 
+        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks,
                                        random.randint(lower_bound,
                                                       upper_bound), True)
     else:
@@ -193,7 +193,7 @@ def generate_portfolio(request):
             message += ' than your current default portfolio.'
         else:
             ' than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk, 
+        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk,
                                                 all_stocks,
                                                 random.randint(lower_bound,
                                                                upper_bound))
