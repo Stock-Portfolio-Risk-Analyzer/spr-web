@@ -22,7 +22,7 @@ def get_stock_data(symbol, start_date=None, end_date=None):
         end_date = dt(year=today.year, month=today.month, day=today.day)
 
     if start_date is not None and end_date is not None:
-        assert start_date <= end_date, "Start date is later than end date."
+        assert start_date < end_date, "Start date is later than end date."
 
     # log.info("Loading symbol: {}".format(symbol))
     symbol_data = web.DataReader(symbol, 'yahoo', start_date, end_date)
@@ -110,15 +110,3 @@ def get_company_sector(symbol):
     code = company_info['Name'].keys()[0]
     company_sector = company_info.to_dict()['Sector'][code]
     return company_sector
-
-
-def get_market_cap(symbol):
-    mkt_cap_str = ystockquote.get_market_cap(symbol)
-    multiplier = mkt_cap_str[-1:]
-    multipliers = {
-        'M': 1000000,
-        'B': 1000000000
-    }
-    base_value = float(mkt_cap_str[:-1])
-    mkt_cap = multipliers[multiplier]*base_value
-    return mkt_cap

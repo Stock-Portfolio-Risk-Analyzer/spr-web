@@ -137,6 +137,7 @@ def get_public_portfolio(request, portfolio_id):
 
 def get_portfolio(request, portfolio_id):
     """
+
     :param request:
     :param portfolio_id:
     :return:
@@ -402,6 +403,7 @@ def list_top_portfolios(request, category):
     return HttpResponse(content=json.dumps(portfolios), status=200,
                         content_type='application/json')
 
+
 def download_porfolio_data(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -423,7 +425,6 @@ def download_porfolio_data(request, portfolio_id):
                          last_risk]);
     return response
 
-
 def upload_portfolio_data(request):
     if request.method == 'POST':
         form = PortfolioUploadForm(request.POST, request.FILES)
@@ -434,7 +435,6 @@ def upload_portfolio_data(request):
             return HttpResponse(content=json.dumps({"portfolio_id": portfolio_id}), status=200,
                                 content_type='application/json')
         return HttpResponse(status=500)
-
 
 def _parse_portfolio_file(file, user):
     df = csv.DictReader(file)
@@ -461,6 +461,7 @@ def _diversify_by_sector(portfolio):
     for sector in sectors:
         q.exclude(stock_sector=sector)
     return list(q)
+
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
     stock_name = get_company_name(stock_ticker)
