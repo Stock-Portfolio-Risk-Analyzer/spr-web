@@ -1,6 +1,8 @@
 sudo: false
 language: python
-cache: pip
+cache:
+  directories:
+      - $HOME/virtualenv/python2.7.9
 python:
   - "2.7"
 services:
@@ -8,12 +10,14 @@ services:
 notifications:
       slack: stockportfolio:cnyIsQVuBjUgajhm9YN9OaI4
 before_script:
-  - "export DATABASE_URL=postgres://postgres@localhost:5432/spra" 
-  - psql -c 'create database spra;' -U postgres  
+  # Check imports
+  - isort --check-only --diff --quiet
+  - "export DATABASE_URL=postgres://postgres@localhost:5432/spra"
+  - psql -c 'create database spra;' -U postgres
   - "python manage.py collectstatic --no-input"
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 
+  - sleep 3
 branches:
   only:
     - master
