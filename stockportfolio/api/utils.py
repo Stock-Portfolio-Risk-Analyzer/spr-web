@@ -70,10 +70,13 @@ def update_rri_for_all_stocks():
 
 def update_price_for_all_stocks():
     for stock in Stock.objects.all():
-        price = Price(value=yf.get_current_price(stock.stock_ticker))
-        price.save()
-        stock.stock_price.add(price)
-        stock.save()
+        try:
+            price = Price(value=yf.get_current_price(stock.stock_ticker))
+            price.save()
+            stock.stock_price.add(price)
+            stock.save()
+        except:
+            continue
 
 
 def precompute_rri_for_all_stocks():
