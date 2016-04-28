@@ -128,11 +128,11 @@ class DashboardTest(SeleniumTestCase):
         WebDriverWait(
             self.cls.driver, 60).until(
                 lambda driver: driver.find_element_by_id('top-portfolios'))
-        self.cls.driver.find_element_by_id('top-portfolios').click()
+        self.cls.driver.execute_script('$("top-portfolios").click();')
         WebDriverWait(
             self.cls.driver, 60).until(
                 lambda driver: driver.find_element_by_id('topPortfolios'))
         modal = self.cls.driver.find_element_by_id('topPortfolios')
         self.cls.driver.find_element_by_class_name('top_portfolio_header')
         self.cls.driver.find_element_by_xpath('//*[@id="topPortfolios"]/div[2]/div/div[1]/button')
-        self.cls.driver.execute_script('$("#topPortfolios").modal("hide")')
+        self.cls.driver.execute_script('$("#topPortfolios").modal("hide");')
