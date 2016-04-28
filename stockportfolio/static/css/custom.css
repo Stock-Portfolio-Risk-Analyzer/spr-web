@@ -6361,6 +6361,12 @@ input[type="password"]
 .logout{
     font-size: 30px;
 }
+.top_portfolio_header {
+    text-align: center;
+}
 
+.top_portfolio_button {
+    width: 20%;
+}
 
 canvas {width: 100%;}
