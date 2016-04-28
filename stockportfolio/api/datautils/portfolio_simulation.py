@@ -1,6 +1,6 @@
 import pandas as pd
 import datetime as dt
-import seaborn as sns
+# import seaborn as sns
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -371,59 +371,59 @@ def gen_drawdown_table(returns, n_drawdown_periods=10):
     return df_drawdowns
 
 
-def plot_drawdown_periods(returns, ax, n_drawdown_periods=10):
-    """
-    Plots cumulative returns and highlights top drawdown periods.
-    :param returns: (pd.Series)
-    :param n_drawdown_periods: (int) number of drawdown periods
-    :param ax: (matplotlib.Axes) axes to plot on
-    :return: (matplotlib.Axes) axes to plot on
-    """
-    y_axis_formatter = FuncFormatter(one_dec_places)
-    ax.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
-    df_cum_rets = get_cum_returns(returns, starting_value=1.0)
-    df_drawdowns = gen_drawdown_table(returns, n_drawdown_periods=n_drawdown_periods)
+# def plot_drawdown_periods(returns, ax, n_drawdown_periods=10):
+#     """
+#     Plots cumulative returns and highlights top drawdown periods.
+#     :param returns: (pd.Series)
+#     :param n_drawdown_periods: (int) number of drawdown periods
+#     :param ax: (matplotlib.Axes) axes to plot on
+#     :return: (matplotlib.Axes) axes to plot on
+#     """
+#     y_axis_formatter = FuncFormatter(one_dec_places)
+#     ax.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
+#     df_cum_rets = get_cum_returns(returns, starting_value=1.0)
+#     df_drawdowns = gen_drawdown_table(returns, n_drawdown_periods=n_drawdown_periods)
+#
+#     df_cum_rets.plot(ax=ax)
+#     lim = ax.get_ylim()
+#     colors = sns.cubehelix_palette(len(df_drawdowns))[::-1]
+#     for i, (peak, recovery) in df_drawdowns[['peak date', 'recovery date']].iterrows():
+#         if pd.isnull(recovery):
+#             recovery = returns.index[-1]
+#         ax.fill_between((peak, recovery), lim[0], lim[1],
+#                         alpha=.4,
+#                         color=colors[i])
+#
+#     ax.set_title('Top %i Drawdown Periods' % n_drawdown_periods)
+#     ax.set_ylabel('Cumulative returns')
+#     ax.legend(['Portfolio'], loc='upper left')
+#     ax.set_xlabel('')
+#     return ax
 
-    df_cum_rets.plot(ax=ax)
-    lim = ax.get_ylim()
-    colors = sns.cubehelix_palette(len(df_drawdowns))[::-1]
-    for i, (peak, recovery) in df_drawdowns[['peak date', 'recovery date']].iterrows():
-        if pd.isnull(recovery):
-            recovery = returns.index[-1]
-        ax.fill_between((peak, recovery), lim[0], lim[1],
-                        alpha=.4,
-                        color=colors[i])
 
-    ax.set_title('Top %i Drawdown Periods' % n_drawdown_periods)
-    ax.set_ylabel('Cumulative returns')
-    ax.legend(['Portfolio'], loc='upper left')
-    ax.set_xlabel('')
-    return ax
-
-
-def plot_monthly_returns_heatmap(returns, ax):
-    """
-    Plots a heatmap of returns by month.
-    :param returns: (pd.Series)
-    :param ax: (matplotlib.Axes)
-    :return: (matplotlib.Axes)
-    """
-
-    monthly_ret_table = aggregate_returns(returns, 'monthly')
-    monthly_ret_table = monthly_ret_table.unstack().round(3)
-
-    sns.heatmap(monthly_ret_table.fillna(0) * 100.0,
-                annot=True,
-                annot_kws={"size": 9},
-                alpha=1.0,
-                center=0.0,
-                cbar=False,
-                cmap=matplotlib.cm.RdYlGn,
-                ax=ax)
-    ax.set_ylabel('Year')
-    ax.set_xlabel('Month')
-    ax.set_title("Monthly Returns (%)")
-    return ax
+# def plot_monthly_returns_heatmap(returns, ax):
+#     """
+#     Plots a heatmap of returns by month.
+#     :param returns: (pd.Series)
+#     :param ax: (matplotlib.Axes)
+#     :return: (matplotlib.Axes)
+#     """
+#
+#     monthly_ret_table = aggregate_returns(returns, 'monthly')
+#     monthly_ret_table = monthly_ret_table.unstack().round(3)
+#
+#     sns.heatmap(monthly_ret_table.fillna(0) * 100.0,
+#                 annot=True,
+#                 annot_kws={"size": 9},
+#                 alpha=1.0,
+#                 center=0.0,
+#                 cbar=False,
+#                 cmap=matplotlib.cm.RdYlGn,
+#                 ax=ax)
+#     ax.set_ylabel('Year')
+#     ax.set_xlabel('Month')
+#     ax.set_title("Monthly Returns (%)")
+#     return ax
 
 
 def plot_annual_returns(returns, ax):
@@ -513,8 +513,8 @@ def create_returns_tear_sheet(portfolio_id, portfolio, benchmark_rets=None):
     plot_rolling_returns(portfolio_id, portfolio, ax=ax_rolling_returns_vol_match, volatility_match=True)
     ax_rolling_returns_vol_match.set_title('Cumulative returns volatility matched to benchmark.')
     plot_rolling_beta(returns, benchmark_rets, ax=ax_rolling_beta)
-    plot_drawdown_periods(returns, ax=ax_drawdown, n_drawdown_periods=5)
-    plot_monthly_returns_heatmap(returns, ax=ax_monthly_heatmap)
+    # plot_drawdown_periods(returns, ax=ax_drawdown, n_drawdown_periods=5)
+    # plot_monthly_returns_heatmap(returns, ax=ax_monthly_heatmap)
     plot_annual_returns(returns, ax=ax_annual_returns)
     plot_monthly_returns_dist(returns, ax=ax_monthly_dist)
 

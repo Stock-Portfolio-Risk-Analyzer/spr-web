@@ -1,10 +1,12 @@
 from datautils import rri as rri
 from datautils import stock_info as stock_info
 from datautils import yahoo_finance as yf
-from stockportfolio.api.models import Portfolio, Risk, PortfolioRank, Stock, Price
+from stockportfolio.api.models import (Portfolio, Risk, PortfolioRank, Stock,
+    Price, PortfolioValue)
 import numpy
 import pandas
 from django.db.models import Count
+from datautils.yahoo_finance import get_current_price
 
 def update_rri_for_all_portfolios():
     for portfolio in Portfolio.objects.all():
@@ -34,8 +36,17 @@ def update_rank_for_all_portfolios():
     ranks = zip(zip(*risks)[0], rank_values)
     for portfolio_id, rank in ranks:
         portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-        rank = PortfolioRank(value=rank+1, portfolio=portfolio)
+        rank = PortfolioRank(value=rank + 1, portfolio=portfolio)
         rank.save()
+
+
+def update_value_for_all_portfolios():
+    for portfolio in Portfolio.objects.all():
+        value = 0.0
+        for sp in portfolio.portfolio_stocks.all():
+            value += sp.quantity * get_current_price(sp.stock.stock_ticker)
+        pv = PortfolioValue(value=value, portfolio=portfolio)
+        pv.save()
 
 
 def update_rri_for_all_stocks():

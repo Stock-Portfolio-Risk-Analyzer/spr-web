@@ -7,14 +7,16 @@ from datetime import datetime
 import pandas as pd
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
-from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank, StockPortfolio
-
-from stockportfolio.api.forms import PortfolioUploadForm
-from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank
+from stockportfolio.api.models import (Portfolio, Stock, UserSettings,
+    PortfolioRank, StockPortfolio, PortfolioValue)
 from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
 from stockportfolio.api.utils import _calculate_risk
+import operator
+from stockportfolio.api.forms import PortfolioUploadForm
 import stockportfolio.api.rec_utils as rec_utils
+from django.views.decorators.csrf import csrf_exempt
+
 
 def add_stock(request, portfolio_id):
     """
@@ -28,12 +30,19 @@ def add_stock(request, portfolio_id):
         return HttpResponse(status=403)
     stock_ticker = request.GET.get('stock', None)
     stock_quantity = request.GET.get('quantity', None)
-    if stock_ticker is not None:
-        added = _add_stock_helper(portfolio, stock_quantity, stock_ticker)
+    overwrite = request.GET.get('overwrite', None)
+    if stock_ticker:
+        if overwrite:
+            added = _add_stock_helper(
+                portfolio, stock_quantity, stock_ticker, False)
+        else:
+            added = _add_stock_helper(portfolio, stock_quantity, stock_ticker)
         if not added:
             raise Http404
         else:
             return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=400)
 
 
 def remove_stock(request, portfolio_id):
@@ -68,7 +77,7 @@ def create_portfolio(request, user_id):
     if user is not None:
         portfolio = Portfolio.objects.create(portfolio_user=user)
         portfolio.save()
-        return HttpResponse(json.dumps({"id" : portfolio.pk}), status=200)
+        return HttpResponse(json.dumps({"id": portfolio.pk}), status=200)
     else:
         raise Http404
 
@@ -112,6 +121,20 @@ def get_list_of_portfolios(request, user_id):
                         status=200, content_type='application/json')
 
 
+def get_public_portfolio(request, portfolio_id):
+    portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+
+    portfolio_dict = {'portfolio_id': portfolio.portfolio_id,
+                      'name': portfolio.portfolio_name,
+                      'stocks': []}
+
+    for stock in portfolio.portfolio_stocks.all():
+        portfolio_dict['stocks'].append(_calculate_stock_info(stock))
+
+    return HttpResponse(content=json.dumps(portfolio_dict),
+                        status=200, content_type='application/json')
+
+
 def get_portfolio(request, portfolio_id):
     """
     :param request:
@@ -145,7 +168,6 @@ def get_portfolio(request, portfolio_id):
 
         return HttpResponse(content=json.dumps(portfolio_dict),
                             status=200, content_type='application/json')
-
 
 def modify_portfolio_form_post(request, portfolio_id):
     if request.method == 'POST':
@@ -186,13 +208,12 @@ def modify_portfolio_form_post(request, portfolio_id):
                             status=400,
                             content_type="application/json charset=utf-8")
 
-
 def generate_portfolio(request):
     """
     Generates one of several types of portfolios, possibly with input from
     either the user's default portfolio or their first portfolio if they have
     not selected a default. If there are no user portfolios, a risk between
-    -2.5 and 2.5 is selected. 
+    -2.5 and 2.5 is selected.
     :param request
     """
     if request.user.is_anonymous():
@@ -214,13 +235,13 @@ def generate_portfolio(request):
             message += ' than your current default portfolio.'
         else:
             ' number than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk, 
+        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk,
                                                 all_stocks,
-                                                random.randint(lower_bound, 
+                                                random.randint(lower_bound,
                                                                 upper_bound))
     elif(p_type == 'diverse'):
         message = 'We chose this portfolio with sector diversity in mind.'
-        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks, 
+        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks,
                                        random.randint(lower_bound,
                                                       upper_bound), True)
     else:
@@ -229,19 +250,19 @@ def generate_portfolio(request):
             message += ' than your current default portfolio.'
         else:
             ' than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk, 
+        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk,
                                                 all_stocks,
                                                 random.randint(lower_bound,
                                                                upper_bound))
     new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(portfolio,
                                                          new_portfolio)
-    
+
     end = time.time() - start
     message += ' The targeted range for the portfolio value was '
     message += '${:,.2f}'.format(tlow) + ' to ' + '${:,.2f}'.format(thi) + '.'
     message += ' The actual value is ' + '${:,.2f}'.format(v) + '.'
     message += ' Portfolio generation took ' + '{:,.2f}'.format(end) + ' seconds.'
-    jsonify = lambda x: { i:x.__dict__[i] 
+    jsonify = lambda x: { i:x.__dict__[i]
                           for i in x.__dict__ if i !=  "_state" }
     generated_dict = {'message': message,
                       'portfolio': new_portfolio}
@@ -293,13 +314,100 @@ def stock_rec(request, portfolio_id):
     return HttpResponse(content=json.dumps(rec_dict), status=200,
                         content_type='application/json')
 
+@csrf_exempt
+def modify_gen(request, portfolio_id):
+       if request.method == 'POST':
+            data = request.POST.get("data", None)
+            data = json.loads(data)
+            user_portfolio = get_object_or_404(Portfolio,
+                                               portfolio_id=portfolio_id)
+            for i in range(len(data["symbols"])):
+                stock = data["symbols"][i]
+                quantity = data["quantities"][i]
+                user_id = request.user.id
+                if user_portfolio.portfolio_user.pk is not request.user.pk:
+                    return HttpResponse(status=403)
+                user_has_stock = user_portfolio.portfolio_stocks.filter(
+                    stock__stock_ticker=stock).exists()
+                if user_has_stock:
+                    if quantity <= 0:
+                        user_portfolio.portfolio_stocks.all().get(
+                            stock__stock_ticker=stock).delete()
+                    else:
+                        user_portfolio.portfolio_stocks.filter(
+                            stock__stock_ticker=stock).update(
+                                        quantity=quantity)
+                elif quantity > 0:
+                    _add_stock_helper(user_portfolio, quantity, stock)
+            if data["name"]:
+                user_portfolio.portfolio_name = data["name"]
+                user_portfolio.save()
+            return HttpResponse(status=200)
+       else:
+            return HttpResponse(status=403)
+
+def list_top_portfolios(request, category):
+    """
+    :param category
+        0 - most risky
+        1 - least risky
+        2 - most valuable
+        3 - least valuable
+    """
+    category = int(category)
+    if category < 0 or category > 3:
+        return HttpResponse(status=400)
+    portfolios = []
+    if category == 0 or category == 1:
+        rank = PortfolioRank.objects.order_by('-date').first()
+        if not rank:
+            return HttpResponse(status=400)
+        date = rank.date.date()
+        ranks = PortfolioRank.objects.filter(
+            date__year=date.year, date__month=date.month, date__day=date.day)
+        if category == 0:
+            filtered = ranks.order_by('value').distinct('value')[:10]
+        elif category == 1:
+            filtered = ranks.order_by('-value').distinct('value')[:10]
+    elif category == 2 or category == 3:
+        value = PortfolioValue.objects.order_by('-date').first()
+        if not value:
+            return HttpResponse(status=400)
+        date = value.date.date()
+        values = PortfolioValue.objects.filter(
+            date__year=date.year, date__month=date.month, date__day=date.day)
+        if category == 2:
+            filtered = (values.distinct('portfolio__portfolio_id')
+                        .order_by('portfolio__portfolio_id'))
+            filtered = sorted(
+                filtered, key=operator.attrgetter('value'), reverse=True)[:10]
+        elif category == 3:
+            filtered = (values.distinct('portfolio__portfolio_id')
+                        .order_by('portfolio__portfolio_id'))
+            filtered = sorted(
+                filtered, key=operator.attrgetter('value'))[:10]
+    for idx, fr in enumerate(filtered):
+        p = fr.portfolio
+        rri = p.portfolio_risk.order_by('-risk_date').first()
+        rri = 0 if not rri else rri.risk_value
+        value = p.portfoliovalue_set.order_by('-date').first()
+        value = 0 if not value else value.value
+        p_info = {
+            'id': p.portfolio_id,
+            'rank': idx + 1,
+            'name': p.portfolio_name,
+            'rri': rri,
+            'value': value}
+        portfolios.append(p_info)
+    return HttpResponse(content=json.dumps(portfolios), status=200,
+                        content_type='application/json')
 
 def download_porfolio_data(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     response = HttpResponse(content_type='text/csv')
-    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else "portfolio" 
+    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else 'portfolio' 
     response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio_name + '.csv"'
     writer = csv.writer(response)
     writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])
@@ -310,7 +418,7 @@ def download_porfolio_data(request, portfolio_id):
             last_risk = 0
         else:
             last_risk = last_risk.risk_value
-        writer.writerow([stock.stock_ticker, stock.stock_name, 
+        writer.writerow([stock.stock_ticker, stock.stock_name,
                          stock.stock_sector, sp.quantity,
                          last_risk]);
     return response
@@ -354,8 +462,7 @@ def _diversify_by_sector(portfolio):
         q.exclude(stock_sector=sector)
     return list(q)
 
-
-def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
+def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
     stock_name = get_company_name(stock_ticker)
     stock_sector = get_company_sector(stock_ticker)
     try:
@@ -363,9 +470,13 @@ def _add_stock_helper(portfolio, stock_quantity, stock_ticker):
             stock_name=stock_name,
             stock_ticker=stock_ticker,
             stock_sector=stock_sector)[0]
-        sp = StockPortfolio(stock=stock, quantity=stock_quantity)
+        sp = portfolio.portfolio_stocks.get_or_create(
+            stock=stock, defaults={'quantity': float(stock_quantity)})[0]
+        if overwrite:
+            sp.quantity = stock_quantity
+        else:
+            sp.quantity += float(stock_quantity)
         sp.save()
-        portfolio.portfolio_stocks.add(sp)
         return True
     except None:
         return False
@@ -394,7 +505,9 @@ def _calculate_stock_info(stock_portfolio):
     """
     stock = stock_portfolio.stock
     current_price = get_current_price(stock.stock_ticker)
-    mkt_value = float(current_price*stock_portfolio.quantity)
+    if not current_price:
+        current_price = 0.0
+    mkt_value = float(current_price * stock_portfolio.quantity)
     stock_dict = {'ticker': stock.stock_ticker,
                   'name': stock.stock_name,
                   'price': current_price,
@@ -413,7 +526,9 @@ def _calculate_sector_allocations(portfolio):
     sector_allocations_raw = {}
     for sp in portfolio.portfolio_stocks.all():
         current_price = get_current_price(sp.stock.stock_ticker)
-        mkt_value = float(current_price*sp.quantity)
+        if not current_price:
+            current_price = 0.0
+        mkt_value = float(current_price * sp.quantity)
         sector = get_company_sector(sp.stock.stock_ticker)
         try:
             sector_allocations_raw[sector] += mkt_value
@@ -427,5 +542,3 @@ def _calculate_sector_allocations(portfolio):
         sector_allocations_pct[sector] = float(_mkt_value/total_mkt_value)
 
     return sector_allocations_pct
-
-

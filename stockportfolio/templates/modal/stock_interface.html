@@ -21,6 +21,17 @@
               </div>
               <div class="col-md-6">
                 <h2 style = "font-size:26px"><b>Current Value:</b> {{current_price}} $</h2>
+                <form id="addStockQuantityModalForm" class="form-inline">
+                  <div class="form-group">
+                    <label class="sr-only" for="addQuantity">Quantity</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="addQuantity" name="quantity" placeholder="Quantity">
+                      <input type="hidden" id="addTicker" name="stock" value="{{ stock_ticker }}">
+                      <input type="hidden" id="overwrite" name="overwrite" value="false">
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-success">Add to Portfolio</button>
+                </form>
               </div>
             </div>
 
@@ -90,8 +101,8 @@
 
                         <div class="panel-footer"></div>
                               <script type="text/javascript">
-                                var risk_history_string = '{{ risk_history | safe }}',
-                                price_history_string = '{{ price_history | safe }}';
+                                risk_history = {{ risk_history | safe }};
+                                price_history = {{ price_history | safe }};
                                 $(function () {
                                       var myElement = document.querySelector("#menu");
                                       myElement.style.listStyleType = "none";
@@ -115,3 +126,29 @@
       </div>
     </div>
 
+<script type="text/javascript">
+  $(function() {
+      $('#addStockQuantityModalForm').submit(function(e) {
+          e.preventDefault();
+          if ($.isNumeric($('#addQuantity').val())) {
+            var args = $('#addStockQuantityModalForm').serialize();
+            var url = '/api/portfolio/' + user_portfolio.portfolio_id + '/addstock?' + args;
+            $.ajax({
+              url: url,
+              type: 'GET',
+              success: function(data) {
+                $('#stockInterfaceModal').modal('hide');
+                refreshToPortfolio(user_portfolio.portfolio_id);
+
+              },
+              error: function(data) {
+                console.log('failure');
+              },
+            });
+          }
+          else {
+            console.log('failure')
+          }
+      });
+  });
+</script>
