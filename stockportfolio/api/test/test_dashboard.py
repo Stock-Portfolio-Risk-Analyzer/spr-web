@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.models import User
 from django.test import LiveServerTestCase
 from registration.models import RegistrationProfile
@@ -5,6 +7,7 @@ from registration.models import RegistrationProfile
 from selenium import webdriver
 from selenium.common.exceptions import (NoSuchElementException,
                                         WebDriverException)
+from selenium.webdriver.remote.remote_connection import LOGGER
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -27,6 +30,7 @@ class SeleniumTestCase(LiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super(SeleniumTestCase, cls).setUpClass()
+        LOGGER.setLevel(logging.WARNING)
         cls.driver = webdriver.Firefox()
         cls.driver.maximize_window()
         cls.register_and_activate()
@@ -89,6 +93,7 @@ class DashboardTest(SeleniumTestCase):
         self.top_ten_loads()
 
     def display_risk_rank(self):
+        self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
             self.cls.driver, 20).until(
@@ -102,6 +107,7 @@ class DashboardTest(SeleniumTestCase):
         self.assertEqual(rank.text, 'N/A')
 
     def search_stock_no_stocks_exist(self):
+        self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
             self.cls.driver, 20).until(
@@ -117,6 +123,7 @@ class DashboardTest(SeleniumTestCase):
         self.cls.driver.find_element_by_class_name('ac_results')
 
     def top_ten_loads(self):
+        self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
             self.cls.driver, 60).until(
