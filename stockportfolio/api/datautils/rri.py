@@ -12,7 +12,7 @@ Author - Shivam Gupta (sgupta40@illinois.edu)
          Rohan Kapoor (rkapoor6@illinois.edu)
 """
 
-tickers = [] 
+tickers = []
 
 fpath = os.path.join(BASE_DIR, 'api', 'datautils', 'alpha_one.csv')
 with open(fpath, 'rb') as csvfile:
@@ -34,7 +34,7 @@ def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
                 verify.append(1)
             else:
                 verify.append(0)
-    
+
     for i in range(len(verify)):
         if verify[i] == 0:
             return yahoo_data
@@ -53,11 +53,11 @@ def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
     end_date = date.today()
     symbol_data = yahoo_finance.get_stock_data(symbol, start_date, end_date)
     closing_price = list(symbol_data["Close"])
-    
+
     # Data Integrity
     if symbol.lower() in tickers:
         closing_price = verify_data_with_quandl(symbol, start_date, end_date, closing_price)
-    
+
     daily_change = []
     for i in range(0, len(closing_price)-1):
         daily_change.append(((closing_price[i+1] - closing_price[i])/closing_price[i])*100)
@@ -188,5 +188,3 @@ def compute_portfolio_rri_for_range(stocks, start_date, end_date):
     portfolio_rri = (total_rri / total_quantity)
 
     return portfolio_rri
-
-print compute_daily_change_for_past_given_days("gddy", 10)

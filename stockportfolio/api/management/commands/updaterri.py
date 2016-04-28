@@ -6,12 +6,12 @@ class Command(BaseCommand):
     help = 'calculates the current RRI for all portfolios'
 
     def handle(self, *args, **options):
-        utils.precompute_prices_for_all_stocks()
-        self.stdout.write(
-            self.style.SUCCESS('Successfully precomputed prices for all stocks'))
-        utils.precompute_rri_for_all_stocks()
-        self.stdout.write(
-            self.style.SUCCESS('Successfully precomputed RRI for all stocks'))
+        # utils.precompute_prices_for_all_stocks()
+        # self.stdout.write(
+        #     self.style.SUCCESS('Successfully precomputed prices for all stocks'))
+        # utils.precompute_rri_for_all_stocks()
+        # self.stdout.write(
+        #     self.style.SUCCESS('Successfully precomputed RRI for all stocks'))
         utils.update_value_for_all_portfolios()
         self.stdout.write(
             self.style.SUCCESS('Successfully updated values for all portfolios'))
