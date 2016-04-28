@@ -119,8 +119,8 @@ class DashboardTest(SeleniumTestCase):
     def top_ten_loads(self):
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
-            self.cls.driver, 20).until(
-                lambda driver: driver.find_element_by_id('search_entry'))
+            self.cls.driver, 60).until(
+                lambda driver: driver.find_element_by_id('top-portfolios'))
         self.cls.driver.find_element_by_id('top-portfolios').click()
         WebDriverWait(
             self.cls.driver, 60).until(
