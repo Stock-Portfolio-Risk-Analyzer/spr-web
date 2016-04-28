@@ -110,7 +110,9 @@ class ApiTestCase(TestCase):
             '"date_created": "2016-03-17 02:35:55.273000", "stocks": [], '
             '"name": null, "rank": null}')
         portfolio.pop('date_created', None)
-        expected_content.update({'portfolio_userid': self.user.id})
+        expected_content.update(
+            {'portfolio_userid': self.user.id,
+            'portfolio_id': self.portfolio.portfolio_id})
         expected_content.pop('date_created', None)
         self.assertEqual(expected_content, portfolio)
 
