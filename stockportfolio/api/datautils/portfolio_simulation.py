@@ -4,7 +4,6 @@ import seaborn as sns
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from scipy import stats
 from functools import partial
 from matplotlib import gridspec
 from django.http import HttpResponse
@@ -149,6 +148,7 @@ def basic_linear_regression(x, y):
     a = (sum_of_products - (sum_x * sum_y) / length) / (sum_x_squared - ((sum_x ** 2) / length))
     b = (sum_y - a * sum_x) / length
     return a, b
+
 
 def alpha_beta(returns, benchmark_returns):
     """
@@ -305,29 +305,21 @@ def get_max_drawdown_underwater(underwater):
     return peak, valley, recovery
 
 
-def get_top_drawdowns(returns, top=10):
+def get_top_drawdowns(returns, n_drawdowns=10):
     """
     Finds top drawdowns, sorted by drawdown amount.
-    Parameters
-    ----------
-    returns : pd.Series
-        Daily returns of the strategy, noncumulative.
-         - See full explanation in tears.create_full_tear_sheet.
-    top : int, optional
-        The amount of top drawdowns to find (default 10).
-    Returns
-    -------
-    drawdowns : list
-        List of drawdown peaks, valleys, and recoveries. See get_max_drawdown.
-    """
 
+    :param returns: (pd.Series)
+    :param n_drawdowns: (int)
+    :return: (list) of pearks/valleys/recoveries
+    """
     returns = returns.copy()
     df_cum = get_cum_returns(returns, 1.0)
     running_max = np.maximum.accumulate(df_cum)
     underwater = running_max - df_cum
 
     drawdowns = []
-    for t in range(top):
+    for t in range(n_drawdowns):
         peak, valley, recovery = get_max_drawdown_underwater(underwater)
         # Slice out draw-down period
         if not pd.isnull(recovery):
@@ -351,7 +343,7 @@ def gen_drawdown_table(returns, n_drawdown_periods=10):
     :return:
     """
     cum_returns = get_cum_returns(returns, 1.0)
-    drawdown_periods = get_top_drawdowns(returns, top=n_drawdown_periods)
+    drawdown_periods = get_top_drawdowns(returns, n_drawdowns=n_drawdown_periods)
     df_drawdowns = pd.DataFrame(index=list(range(n_drawdown_periods)),columns=['net drawdown in %',
                                                                                'peak date',
                                                                                'valley date',
@@ -530,6 +522,6 @@ def create_returns_tear_sheet(portfolio_id, portfolio, benchmark_rets=None):
         plt.setp(ax.get_xticklabels(), visible=True)
 
     canvas = FigureCanvas(fig)
-    response = HttpResponse(content_type='image/png')
+    response = HttpResponse(content_type='image/jp')
     canvas.print_png(response)
     return response
