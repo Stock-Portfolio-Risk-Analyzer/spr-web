@@ -23,6 +23,31 @@ class TestPortfolioSimulation(unittest.TestCase):
         cls.test_symbol = 'IBM'
         cls.test_qty = 100
 
+        cls.benchmark = 'SPY'
+
+    def test_get_benchmark_returns(self):
+        benchmark_returns = ps.get_benchmark_returns(benchmark=self.benchmark,
+                                                     start_date=self.start_date,
+                                                     end_date=self.end_date,
+                                                     price_field=self.price_field)
+        for day in self.dates:
+            try:
+                prev_day = day-dt.timedelta(days=1)
+                prices = yf.get_stock_data(self.benchmark,
+                                           start_date=prev_day,
+                                           end_date=day)[self.price_field]
+
+                prev_price = prices[prev_day]
+                curr_price = prices[day]
+                change = curr_price-prev_price
+                pct_change = change/prev_price
+
+                self.assertEqual(pct_change, benchmark_returns[day])
+
+            except Exception as e:
+                # no data for this day (i.e. not a trading day)
+                pass
+
     def test_get_portfolio_returns_series(self):
         portfolio_returns_series = ps.get_portfolio_returns_series(self.portfolio,
                                                                    start_date=self.start_date,
@@ -65,7 +90,6 @@ class TestPortfolioSimulation(unittest.TestCase):
                     price = price[self.price_field][day]
                     position_value = price*quantity
                     total_portfolio_value += position_value
-                print portfolio_value_series[day], total_portfolio_value
                 self.assertEqual(portfolio_value_series[day], total_portfolio_value)
             except Exception as e:
                 # no data for this day (i.e. not a trading day)
@@ -86,10 +110,29 @@ class TestPortfolioSimulation(unittest.TestCase):
                 # no data for this day (i.e. not a trading day)
                 pass
 
+    def test_calculate_alpha_beta(self):
+        alpha_beta_start_date = dt.datetime(year=2012, month=1, day=1)
+        alpha_beta_end_date = dt.datetime(year=2016, month=1, day=1)
+        returns = ps.get_portfolio_returns_series(self.portfolio,
+                                                  start_date=alpha_beta_start_date,
+                                                  end_date=alpha_beta_end_date,
+                                                  price_field=self.price_field)
 
+        benchmark_returns = ps.get_benchmark_returns(benchmark=self.benchmark,
+                                             start_date=alpha_beta_start_date,
+                                             end_date=alpha_beta_end_date,
+                                             price_field=self.price_field)
+        alpha, beta = ps.alpha_beta(returns, benchmark_returns)
+        expected_alpha = 0.00112028234866
+        expected_beta = 1.06814094647
+        self.assertAlmostEqual(alpha, expected_alpha)
+        self.assertAlmostEqual(beta, expected_beta)
 
-    def test_simulate_returns(self):
-        returns = ps.get_portfolio_returns_series(self.portfolio)
-
-    def calculate_alpha_beta(self):
-        pass
+    def test_create_returns_tear_sheet(self):
+        benchmark_returns = ps.get_benchmark_returns(benchmark=self.benchmark,
+                                             start_date=self.start_date,
+                                             end_date=self.end_date,
+                                             price_field=self.price_field)
+        response = ps.create_returns_tear_sheet(1, self.portfolio, benchmark_returns)
+        content_type = response.__dict__['_headers']['content-type'][1]
+        self.assertEqual(content_type, 'image/png')
