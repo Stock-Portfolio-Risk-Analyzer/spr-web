@@ -1,5 +1,6 @@
 import csv
 import json
+import operator
 import random
 import time
 from datetime import datetime
@@ -7,15 +8,17 @@ from datetime import datetime
 import pandas as pd
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
-from stockportfolio.api.models import (Portfolio, Stock, UserSettings,
-    PortfolioRank, StockPortfolio, PortfolioValue)
-from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
-from stockportfolio.api.utils import _calculate_risk
-import operator
-from stockportfolio.api.forms import PortfolioUploadForm
-import stockportfolio.api.rec_utils as rec_utils
 from django.views.decorators.csrf import csrf_exempt
+
+import stockportfolio.api.rec_utils as rec_utils
+from datautils.yahoo_finance import (get_company_name, get_company_sector,
+                                     get_current_price)
+from stockportfolio.api.forms import PortfolioUploadForm
+from stockportfolio.api.models import (Portfolio, PortfolioRank,
+                                       PortfolioValue, Stock, StockPortfolio,
+                                       UserSettings)
+from stockportfolio.api.utils import _calculate_risk
 
 
 def add_stock(request, portfolio_id):

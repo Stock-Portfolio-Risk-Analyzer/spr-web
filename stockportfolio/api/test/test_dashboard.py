@@ -1,12 +1,12 @@
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
-from django.test import LiveServerTestCase
 from django.contrib.auth.models import User
+from django.test import LiveServerTestCase
 from registration.models import RegistrationProfile
+
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import (NoSuchElementException,
+                                        WebDriverException)
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class SeleniumTestCase(LiveServerTestCase):

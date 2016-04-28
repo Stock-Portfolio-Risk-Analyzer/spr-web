@@ -1,9 +1,12 @@
 import os
-import pandas as pd
-from rri import *
 from datetime import date, timedelta
-import yahoo_finance
+
 import numpy as np
+import pandas as pd
+
+import yahoo_finance
+from rri import *
+
 
 def get_company_industry(symbol):
     """

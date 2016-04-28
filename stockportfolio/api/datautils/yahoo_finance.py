@@ -1,9 +1,10 @@
 import os
-import ystockquote
-import pandas as pd
-import pandas_datareader.data as web
 from collections import OrderedDict
 from datetime import datetime as dt
+
+import pandas as pd
+import pandas_datareader.data as web
+import ystockquote
 
 
 def get_stock_data(symbol, start_date=None, end_date=None):

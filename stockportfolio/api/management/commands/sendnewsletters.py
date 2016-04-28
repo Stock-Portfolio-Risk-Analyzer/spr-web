@@ -10,4 +10,3 @@ class Command(BaseCommand):
         newsletter.send_emails()
         self.stdout.write(
             self.style.SUCCESS('Successfully sent out all emails!'))
-

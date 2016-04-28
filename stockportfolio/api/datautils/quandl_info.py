@@ -1,6 +1,7 @@
-import Quandl as qd
 from collections import OrderedDict
 from datetime import datetime as dt
+
+import Quandl as qd
 
 quandl_key = "SyH7V4ywJGho77EC6W7C"
 

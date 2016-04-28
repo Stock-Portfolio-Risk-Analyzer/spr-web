@@ -27,4 +27,3 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(migrate_stock_to_stock_portfolio_object, ),
     ]
-

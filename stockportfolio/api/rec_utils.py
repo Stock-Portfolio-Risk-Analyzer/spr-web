@@ -1,6 +1,8 @@
 import random
 
-from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank, StockPortfolio
+from stockportfolio.api.models import (Portfolio, PortfolioRank, Stock,
+                                       StockPortfolio, UserSettings)
+
 
 def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     """

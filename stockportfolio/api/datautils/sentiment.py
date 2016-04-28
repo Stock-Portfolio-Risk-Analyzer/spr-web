@@ -1,9 +1,12 @@
 import csv
+import os
 from datetime import date, timedelta
+
 import numpy as np
 import Quandl
+
 from stockportfolio.settings.base import BASE_DIR
-import os
+
 """
 API that computes sentiment for a given Stock or Portfolio
 Author - Shivam Gupta (sgupta40@illinois.edu)
