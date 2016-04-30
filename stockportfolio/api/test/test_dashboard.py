@@ -1,9 +1,13 @@
 import logging
 import time
+import base64
+import os
+import requests
 
 from django.contrib.auth.models import User
 from django.test import LiveServerTestCase
 from registration.models import RegistrationProfile
+from stockportfolio.settings.base import BASE_DIR
 
 from selenium import webdriver
 from selenium.common.exceptions import (NoSuchElementException,
@@ -129,7 +133,16 @@ class DashboardTest(SeleniumTestCase):
         WebDriverWait(
             self.cls.driver, 60).until(
                 lambda driver: driver.find_element_by_id('top-portfolios'))
-        time.sleep(5)
+        fname = os.path.join(
+                            BASE_DIR, 'api', 'test', str(time.time()) + '-modal.png')
+        self.cls.driver.save_screenshot(fname)
+        with open(fname, "rb") as img:
+            b64 = base64.b64encode(img.read())
+            r = requests.post('http://pastebin.com/api/api_post.php',
+                              data={'api_dev_key':'dbec4c27355ff677cac648e26cc07901', 
+                                    'api_option':'paste', 
+                                    'api_paste_code':b64})
+            print 'pastebin url ' + r.content
         self.cls.driver.find_element_by_id('top-portfolios').click()
         WebDriverWait(
             self.cls.driver, 60).until(
