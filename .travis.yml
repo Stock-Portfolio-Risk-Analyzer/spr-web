@@ -11,12 +11,13 @@ notifications:
       slack: stockportfolio:cnyIsQVuBjUgajhm9YN9OaI4
 before_script:
   # Check imports
-  #- isort --check-only --diff --quiet
+  - isort --check-only --diff --quiet
   - "export DATABASE_URL=postgres://postgres@localhost:5432/spra"
   - psql -c 'create database spra;' -U postgres
   - "python manage.py collectstatic --no-input"
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+  #- "export DISPLAY=:99.0"
+  #- "sh -e /etc/init.d/xvfb start"
+  - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/cucumber_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
   - sleep 3
 branches:
   only:
