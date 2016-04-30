@@ -1,4 +1,5 @@
 import unittest
+
 from stockportfolio.api.datautils.yahoo_finance import *
 
 
@@ -55,7 +56,3 @@ class TestYahooFinance(unittest.TestCase):
     def test_get_company_sector(self):
         company_sector = get_company_sector(self.symbol)
         self.assertEqual(company_sector, 'Technology')
-
-    def test_get_mkt_cap(self):
-        mkt_cap = get_market_cap(self.symbol)
-        self.assertGreater(mkt_cap, 1000000000)

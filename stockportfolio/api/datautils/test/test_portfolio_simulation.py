@@ -9,7 +9,7 @@ class TestPortfolioSimulation(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
 
-        cls.start_date = dt.datetime(year=2008, month=1, day=1)
+        cls.start_date = dt.datetime(year=2015, month=4, day=20)
         cls.end_date = dt.datetime(year=2016, month=4, day=20)
         cls.dates = pd.date_range(cls.start_date, cls.end_date)
 

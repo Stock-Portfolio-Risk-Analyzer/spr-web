@@ -1,30 +1,29 @@
-from django.shortcuts import render, render_to_response, redirect, get_object_or_404
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-from datautils import yahoo_finance as yf
-from datautils import stock_info
-from django.template.context_processors import csrf
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-from django.contrib.sites.shortcuts import get_current_site
-from stockportfolio.api.models import Portfolio, Risk, UserSettings, Stock
-from stockportfolio.api.utils import update_rri_for_all_portfolios, update_rank_for_all_portfolios
-from registration.models import RegistrationManager
-import datautils.portfolio_simulation as ps
-from stockportfolio.api.api import get_portfolio
-import string
 import hashlib
-from stockportfolio.api.forms import UpdateProfile, PortfolioUploadForm
-from django.core.urlresolvers import reverse
-import feedparser
-import re
 import json
 import random
+import re
+import string
 import time
-from stockportfolio.api.utils import _calculate_risk, _calculate_price
-import stockportfolio.api.rec_utils as rec_utils
+
+import feedparser
+from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.shortcuts import render
-from stockportfolio.api.api import _calculate_stock_info
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import (get_object_or_404, redirect, render,
+                              render_to_response)
+from django.template.context_processors import csrf
+from registration.models import RegistrationManager
+
+import stockportfolio.api.rec_utils as rec_utils
+from datautils import yahoo_finance as yf
+from datautils import sentiment, stock_info
+from stockportfolio.api.forms import PortfolioUploadForm, UpdateProfile
+from stockportfolio.api.models import Portfolio, Risk, Stock, UserSettings
+from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
+                                      update_rank_for_all_portfolios,
+                                      update_rri_for_all_portfolios)
 
 
 def dashboard(request):
@@ -44,7 +43,7 @@ def dashboard(request):
         stock_tickers = zip(*stock_tickers)
         stock_tickers = json.dumps(stock_tickers[0])
     else:
-        stock_tickers = json.dumps([])
+        stock_tickers = json.dumps(['No stocks', 'No stocks found'])
 
     upload_portfolio_form = PortfolioUploadForm()
     context = {
@@ -129,33 +128,10 @@ def stock_interface(request, ticker):
         'stock_feeds': sanitized_feed,
         'risk_history': json.dumps(risk_history),
         'price_history': json.dumps(price_history),
-        'current_price': stock.stock_price.all().order_by('date').last().value
+        'current_price': stock.stock_price.all().order_by('date').last().value,
+        'sentiment_value': sentiment.get_stock_sentiment(ticker)
     }
     return render_to_response('modal/stock_interface.html', context)
-
-
-def simulate_portfolio(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
-    if user is None:
-        raise Http404
-    portfolios = user.portfolio_set.all()
-    p_list = []
-    for p in portfolios:
-        p_basic_info = {"id": p.pk, "name": p.portfolio_name}
-        p_list.append(p_basic_info)
-
-    portfolio_id = p_list[0]['id']
-    name = p_list[0]['name']
-
-    portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
-    portfolio_stocks = []
-    for stock in portfolio.portfolio_stocks.all():
-        portfolio_stocks.append(_calculate_stock_info(stock))
-
-    portfolio_dict = {}
-    for stock_dict in portfolio_stocks:
-        portfolio_dict[stock_dict['ticker']] = stock_dict['quantity']
-    return ps.create_returns_tear_sheet(name, portfolio_dict)
 
 def stock_rec(request, portfolio_id, rec_type):
     recs = rec_utils.stock_recommender(request, portfolio_id, rec_type)
@@ -171,7 +147,7 @@ def stock_rec(request, portfolio_id, rec_type):
         message = 'Using these stocks, lower your portfolio\'s risk'
     else:
         title = 'Get out of your niche.'
-        message = 'Here are some stocks with sectors not in your portfolio' 
+        message = 'Here are some stocks with sectors not in your portfolio'
     context = {
         'title': title,
         'message': message,
@@ -184,7 +160,7 @@ def generate_portfolio(request):
     Generates one of several types of portfolios, possibly with input from
     either the user's default portfolio or their first portfolio if they have
     not selected a default. If there are no user portfolios, a risk between
-    -2.5 and 2.5 is selected. 
+    -2.5 and 2.5 is selected.
     :param request
     """
     if request.user.is_anonymous():
@@ -205,13 +181,13 @@ def generate_portfolio(request):
             message += ' than your current default portfolio.'
         else:
             ' number than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk, 
+        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk,
                                                 all_stocks,
-                                                random.randint(lower_bound, 
+                                                random.randint(lower_bound,
                                                                 upper_bound))
     elif(p_type == 'diverse'):
         message = 'We chose this portfolio with sector diversity in mind.'
-        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks, 
+        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks,
                                        random.randint(lower_bound,
                                                       upper_bound), True)
     else:
@@ -220,7 +196,7 @@ def generate_portfolio(request):
             message += ' than your current default portfolio.'
         else:
             ' than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk, 
+        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk,
                                                 all_stocks,
                                                 random.randint(lower_bound,
                                                                upper_bound))

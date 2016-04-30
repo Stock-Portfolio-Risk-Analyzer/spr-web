@@ -1,10 +1,12 @@
 import django.forms as forms
-from .models import Portfolio, Stock, UserSettings
-from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from registration.forms import RegistrationForm
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from registration.forms import RegistrationForm
+
+from .models import Portfolio, Stock, UserSettings
+
 
 # Used the following as reference
 # http://stackoverflow.com/questions/6142025/dynamically-add-field-to-a-form

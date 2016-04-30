@@ -1,4 +1,5 @@
 import unittest
+
 from stockportfolio.api.datautils.quandl_info import *
 
 

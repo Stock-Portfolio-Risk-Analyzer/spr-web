@@ -1,6 +1,8 @@
 import random
 
-from stockportfolio.api.models import Portfolio, Stock, UserSettings, PortfolioRank, StockPortfolio
+from stockportfolio.api.models import (Portfolio, PortfolioRank, Stock,
+                                       StockPortfolio, UserSettings)
+
 
 def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     """
@@ -36,7 +38,7 @@ def get_recommendations(compare, stocks, num_stocks):
     """
     Fetches stock recommendations based on the result of a parameter function
     :param compare: function that returns a bool when given stock risk
-    :param stocks: 
+    :param stocks:
     :param num_stocks: number of stocks to fetch
     """
     iterations = 0;
@@ -100,8 +102,8 @@ def stock_slice(all_stocks, limit):
 
 def determine_stock_quantities(curr_portfolio, new_portfolio):
     """
-    Given an old portfolio and a list of stocks, this function tries to 
-    generate an appropriate quantity for each stock, s.t. the value of the 
+    Given an old portfolio and a list of stocks, this function tries to
+    generate an appropriate quantity for each stock, s.t. the value of the
     resulting portfolio is within +/- 20 percent of the old
     :param curr_portfolio: portfolio to match
     :param new_portfolio: list of stocks to weight w/ quantities
@@ -130,7 +132,7 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
         next_ticker = -1
         s = portfolio[next_ticker]
         if value < tvalue_low:
-            portfolio[next_ticker] = (s[0], s[1]+1, s[2]) 
+            portfolio[next_ticker] = (s[0], s[1]+1, s[2])
         elif value > tvalue_high:
             portfolio[next_ticker] = (s[0], s[1]-1, s[2])
             if s[1] == 0:
@@ -138,7 +140,7 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
                 continue
         value = _calculate_portfolio_value(portfolio)
     final_port = []
-    for r in portfolio: 
+    for r in portfolio:
         s = Stock.objects.get(stock_ticker=r[0])
         final_port.append({
                 'ticker': r[0],
@@ -193,12 +195,14 @@ def stock_to_dict(stock):
 def stock_recommender(request, portfolio_id, rec_type):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     p_risk = _get_latest_portfolio_risk(portfolio)
+    if not p_risk:
+        p_risk = 2
     upper_bound = 5
     lower_bound = 2
     all_stocks = stock_slice(Stock.objects.all(), 1000)
-    recs = []  
+    recs = []
     if rec_type == 'diverse':
-        recs = get_sector_stocks(portfolio, all_stocks, 
+        recs = get_sector_stocks(portfolio, all_stocks,
                                  random.randint(lower_bound,
                                                 upper_bound), True)
     else:
@@ -256,7 +260,7 @@ def _get_latest_stock_price(stock):
 
 def _get_latest_stock_risk(stock):
     """
-    Helper function to acquire the latest stock risk, if it exists. 
+    Helper function to acquire the latest stock risk, if it exists.
     :param portfolio
     """
     stock_risk = None
@@ -268,7 +272,7 @@ def _get_latest_stock_risk(stock):
 
 def _get_latest_portfolio_risk(portfolio):
     """
-    Helper function to fetch the latest portfolio risk, if it exists. 
+    Helper function to fetch the latest portfolio risk, if it exists.
     :param portfolio
     """
     p_risk = None

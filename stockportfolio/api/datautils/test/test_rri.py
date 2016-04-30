@@ -1,8 +1,11 @@
+import math
 import unittest
 from datetime import datetime as dt
-from stockportfolio.api.datautils.rri import *
+
 from mock import Mock
-import math
+
+from stockportfolio.api.datautils.rri import *
+
 
 """
 Test methods in rri.py

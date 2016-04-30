@@ -1,7 +1,11 @@
 import csv
+import os
 from datetime import date, timedelta
+
 import numpy as np
 import Quandl
+
+from stockportfolio.settings.base import BASE_DIR
 
 """
 API that computes sentiment for a given Stock or Portfolio
@@ -17,7 +21,9 @@ quandl_key = "hJFsm6TLFgZmhD8NtsS9"
 tickers = []
 ticker_sentiment = {}
 
-with open('alpha_one.csv', 'rb') as csvfile:
+fpath = os.path.join(BASE_DIR, 'api', 'datautils', 'alpha_one.csv')
+
+with open(fpath, 'rb') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',')
     for row in spamreader:
         tickers.append(row[0].lower())
@@ -33,9 +39,9 @@ def get_stock_sentiment_api(symbol):
 
 def get_stock_sentiment(symbol):
 	if symbol.lower() in tickers:
-		return float(ticker_sentiment[symbol.upper()])
+		return 1 if float(ticker_sentiment[symbol.upper()]) > 0  else -1 
 	else:
-		return float(np.random.randint(-2, 2))
+		return 1 if float(np.random.randint(-2, 2)) > 0 else -1
 
 def get_sentiment_of_a_portfolio(stocks):
 	sentiment = []

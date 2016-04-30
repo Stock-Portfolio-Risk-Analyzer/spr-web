@@ -1,23 +1,28 @@
-from datautils import rri as rri
-from datautils import stock_info as stock_info
-from datautils import yahoo_finance as yf
-from stockportfolio.api.models import (Portfolio, Risk, PortfolioRank, Stock,
-    Price, PortfolioValue)
 import numpy
 import pandas
 from django.db.models import Count
+
+from datautils import rri as rri
+from datautils import stock_info as stock_info
+from datautils import yahoo_finance as yf
 from datautils.yahoo_finance import get_current_price
+from stockportfolio.api.models import (Portfolio, PortfolioRank,
+                                       PortfolioValue, Price, Risk, Stock)
+
 
 def update_rri_for_all_portfolios():
     for portfolio in Portfolio.objects.all():
-        stocks = portfolio.portfolio_stocks.all()
-        if not stocks:
+        try:
+            stocks = portfolio.portfolio_stocks.all()
+            if not stocks:
+                continue
+            risk = Risk(
+                risk_value=rri.compute_portfolio_rri_for_today(stocks, 10))
+            risk.save()
+            portfolio.portfolio_risk.add(risk)
+            portfolio.save()
+        except:
             continue
-        risk = Risk(
-            risk_value=rri.compute_portfolio_rri_for_today(stocks, 10))
-        risk.save()
-        portfolio.portfolio_risk.add(risk)
-        portfolio.save()
 
 
 def update_rank_for_all_portfolios():
@@ -44,27 +49,36 @@ def update_value_for_all_portfolios():
     for portfolio in Portfolio.objects.all():
         value = 0.0
         for sp in portfolio.portfolio_stocks.all():
-            value += sp.quantity * get_current_price(sp.stock.stock_ticker)
+            price = get_current_price(sp.stock.stock_ticker)
+            if not price:
+                price = 0
+            value += sp.quantity * price
         pv = PortfolioValue(value=value, portfolio=portfolio)
         pv.save()
 
 
 def update_rri_for_all_stocks():
     for stock in Stock.objects.all():
-        risk = Risk(
-            risk_value=stock_info.get_company_rri_for_today(
-                stock.stock_ticker, 10))
-        risk.save()
-        stock.stock_risk.add(risk)
-        stock.save()
+        try:
+            risk = Risk(
+                risk_value=stock_info.get_company_rri_for_today(
+                    stock.stock_ticker, 10))
+            risk.save()
+            stock.stock_risk.add(risk)
+            stock.save()
+        except:
+            continue
 
 
 def update_price_for_all_stocks():
     for stock in Stock.objects.all():
-        price = Price(value=yf.get_current_price(stock.stock_ticker))
-        price.save()
-        stock.stock_price.add(price)
-        stock.save()
+        try:
+            price = Price(value=yf.get_current_price(stock.stock_ticker))
+            price.save()
+            stock.stock_price.add(price)
+            stock.save()
+        except:
+            continue
 
 
 def precompute_rri_for_all_stocks():

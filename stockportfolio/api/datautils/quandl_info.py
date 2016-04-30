@@ -1,8 +1,9 @@
-import Quandl as qd
 from collections import OrderedDict
 from datetime import datetime as dt
 
-quandl_key = "SyH7V4ywJGho77EC6W7C"
+import Quandl as qd
+
+quandl_key = '-6X6UvP1aeit_zybGREM'
 
 
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):

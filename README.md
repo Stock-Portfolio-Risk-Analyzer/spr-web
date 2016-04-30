@@ -16,3 +16,6 @@ Analyzes and displays the riskiness of your stock portfolio. A project for CS428
 8. Run `python manage.py migrate` to bring in the existing database models
 9. Run `python manage.py runserver 0.0.0.0:5000`
 10. Connect to `localhost:5000` from your webbrowser to view the existing site
+
+## Sort your Imports
+`isort -rc --atomic .`

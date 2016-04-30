@@ -1,5 +1,6 @@
 import csv
 import json
+import operator
 import random
 import time
 from datetime import datetime
@@ -7,15 +8,17 @@ from datetime import datetime
 import pandas as pd
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
-from stockportfolio.api.models import (Portfolio, Stock, UserSettings,
-    PortfolioRank, StockPortfolio, PortfolioValue)
-from datautils.yahoo_finance import get_current_price, get_company_name, get_company_sector
 from django.shortcuts import get_object_or_404
-from stockportfolio.api.utils import _calculate_risk
-import operator
-from stockportfolio.api.forms import PortfolioUploadForm
-import stockportfolio.api.rec_utils as rec_utils
 from django.views.decorators.csrf import csrf_exempt
+
+import stockportfolio.api.rec_utils as rec_utils
+from datautils.yahoo_finance import (get_company_name, get_company_sector,
+                                     get_current_price)
+from stockportfolio.api.forms import PortfolioUploadForm
+from stockportfolio.api.models import (Portfolio, PortfolioRank,
+                                       PortfolioValue, Stock, StockPortfolio,
+                                       UserSettings)
+from stockportfolio.api.utils import _calculate_risk
 
 
 def add_stock(request, portfolio_id):
@@ -137,6 +140,7 @@ def get_public_portfolio(request, portfolio_id):
 
 def get_portfolio(request, portfolio_id):
     """
+
     :param request:
     :param portfolio_id:
     :return:
@@ -269,51 +273,6 @@ def generate_portfolio(request):
     return HttpResponse(content=json.dumps(generated_dict), status=200,
                         content_type='application/json')
 
-
-def stock_rec(request, portfolio_id):
-    """
-    Returns stock recommendations in several categories based on a specific
-    portfolio
-    :param request
-    :param portfolio_id
-    """
-    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-    if portfolio.portfolio_user.pk is not request.user.pk:
-        return HttpResponse(status=403)
-    risks = portfolio.portfolio_risk.all()
-    if len(risks) == 0:
-        err = 'No recommendations available at this time.'
-        err_dict = { 'low':err,
-                     'high': err,
-                     'stable':err,
-                     'diverse':err }
-        return HttpResponse(content=json.dumps(err_dict), status=200,
-                        content_type='application/json')
-    p_risk = risks[0].risk_value
-    jsonify = lambda x: { i:x.__dict__[i]
-                         # Django inserts a "_state" attribute into every
-                         # model. We don't need it in our json, so it's
-                         # removed here
-                         for i in x.__dict__ if i !=  "_state" }
-    less_risk = map(jsonify,
-                    list(Stock.objects.exclude(stock_beta__lt=p_risk)))
-    more_risk = map(jsonify,
-                    list(Stock.objects.exclude(stock_beta__gt=p_risk)))
-    diverse   = map(jsonify,
-                    list(_diversify_by_sector(portfolio)))
-    # stock w/ in a 20% range of current portfolio riskiness
-    stable = map(jsonify, list(Stock.objects.exclude(
-                         stock_beta__gt=(1.1 * p_risk)
-                   ).exclude(
-                           stock_beta__lt=0.9 * p_risk
-                   )))
-    rec_dict = {'low'    :less_risk[:4],
-                'high'   :more_risk [:4],
-                'diverse':diverse   [:4],
-                'stable' :stable    [:4] }
-    return HttpResponse(content=json.dumps(rec_dict), status=200,
-                        content_type='application/json')
-
 @csrf_exempt
 def modify_gen(request, portfolio_id):
        if request.method == 'POST':
@@ -402,6 +361,7 @@ def list_top_portfolios(request, category):
     return HttpResponse(content=json.dumps(portfolios), status=200,
                         content_type='application/json')
 
+
 def download_porfolio_data(request, portfolio_id):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -423,7 +383,6 @@ def download_porfolio_data(request, portfolio_id):
                          last_risk]);
     return response
 
-
 def upload_portfolio_data(request):
     if request.method == 'POST':
         form = PortfolioUploadForm(request.POST, request.FILES)
@@ -434,7 +393,6 @@ def upload_portfolio_data(request):
             return HttpResponse(content=json.dumps({"portfolio_id": portfolio_id}), status=200,
                                 content_type='application/json')
         return HttpResponse(status=500)
-
 
 def _parse_portfolio_file(file, user):
     df = csv.DictReader(file)

@@ -1,8 +1,8 @@
-import stockportfolio.api.views as views
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
+import stockportfolio.api.views as views
 
 urlpatterns = [
     url(r'^$', views.landing, name='landing'),
