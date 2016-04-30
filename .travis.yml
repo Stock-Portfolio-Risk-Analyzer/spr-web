@@ -11,7 +11,7 @@ notifications:
       slack: stockportfolio:cnyIsQVuBjUgajhm9YN9OaI4
 before_script:
   # Check imports
-  - isort --check-only --diff --quiet
+  #- isort --check-only --diff --quiet
   - "export DATABASE_URL=postgres://postgres@localhost:5432/spra"
   - psql -c 'create database spra;' -U postgres
   - "python manage.py collectstatic --no-input"
