@@ -1,7 +1,6 @@
 import random
 
-from stockportfolio.api.models import (Portfolio, PortfolioRank, Stock,
-                                       StockPortfolio, UserSettings)
+from stockportfolio.api.models import Portfolio, Stock
 
 
 def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
@@ -19,20 +18,21 @@ def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     while len(stocks) < num_stocks:
         if iterations > 100:
             return stocks
-        new_stock = all_stocks[random.randint(0, len(all_stocks)-1)]
+        new_stock = all_stocks[random.randint(0, len(all_stocks) - 1)]
         if new_stock is None:
-            iterations+=1
+            iterations += 1
             continue
         if diversify and new_stock.stock_sector in sectors:
-           continue
+            continue
         else:
-           if new_stock.stock_ticker in tickers:
-             continue
-           else:
+            if new_stock.stock_ticker in tickers:
+                continue
+            else:
                 stocks.append(new_stock)
                 tickers.append(new_stock.stock_ticker)
-        iterations+=1
+        iterations += 1
     return stocks
+
 
 def get_recommendations(compare, stocks, num_stocks):
     """
@@ -41,22 +41,24 @@ def get_recommendations(compare, stocks, num_stocks):
     :param stocks:
     :param num_stocks: number of stocks to fetch
     """
-    iterations = 0;
+    iterations = 0
     recs = []
     while len(recs) < num_stocks:
         if iterations > 100:
             return recs
-        new_stock = stocks[random.randint(0, len(stocks)-1)]
+        new_stock = stocks[random.randint(0, len(stocks) - 1)]
         risk = _get_latest_stock_risk(new_stock)
         if compare(risk):
             recs.append(new_stock)
-        iterations+=1
+        iterations += 1
     return recs
+
 
 def get_portfolio_and_risk(user, user_settings):
     """
     Acquires the user portfolio if it exists, as well as risk
-    If the user has no portfolios, a portfolio risk between -2.5 and 2.5 is chosen
+    If the user has no portfolios, a portfolio risk between
+    -2.5 and 2.5 is chosen
     :param user
     :param user_settings
     """
@@ -73,6 +75,7 @@ def get_portfolio_and_risk(user, user_settings):
         is_user_portfolio = True
     return portfolio, p_risk, is_user_portfolio
 
+
 def fetch_tickers(portfolio):
     """
     Helper function to get all stock tickers in a current portfolio
@@ -80,8 +83,10 @@ def fetch_tickers(portfolio):
     """
     tickers = None
     if portfolio is not None:
-        tickers = [sp.stock.stock_ticker for sp in portfolio.portfolio_stocks.all()]
+        tickers = [
+            sp.stock.stock_ticker for sp in portfolio.portfolio_stocks.all()]
     return tickers
+
 
 def stock_slice(all_stocks, limit):
     """
@@ -91,7 +96,7 @@ def stock_slice(all_stocks, limit):
     """
     stocks = []
     tickers = []
-    count = all_stocks.count()-1
+    count = all_stocks.count() - 1
     while len(stocks) < limit:
         idx = random.randint(0, count)
         stock = all_stocks[idx]
@@ -99,6 +104,7 @@ def stock_slice(all_stocks, limit):
             tickers.append(stock.stock_ticker)
             stocks.append(stock)
     return stocks
+
 
 def determine_stock_quantities(curr_portfolio, new_portfolio):
     """
@@ -110,15 +116,15 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
     """
     if len(new_portfolio) == 0:
         return new_portfolio, 0, 0, 0
-    tvalue_low, tvalue_high  = _fetch_target_value(curr_portfolio)
+    tvalue_low, tvalue_high = _fetch_target_value(curr_portfolio)
     portfolio = []
     for stock in new_portfolio:
         p = _get_latest_stock_price(stock)
         if p == 0:
             continue
-        if p > 0.2*tvalue_low and len(portfolio) > 5:
+        if p > 0.2 * tvalue_low and len(portfolio) > 5:
             continue
-        upper = int(((tvalue_high-tvalue_low)/2)/p)
+        upper = int(((tvalue_high - tvalue_low) / 2) / p)
         if upper == 0:
             upper = 2
         q = random.randint(1, upper)
@@ -132,9 +138,9 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
         next_ticker = -1
         s = portfolio[next_ticker]
         if value < tvalue_low:
-            portfolio[next_ticker] = (s[0], s[1]+1, s[2])
+            portfolio[next_ticker] = (s[0], s[1] + 1, s[2])
         elif value > tvalue_high:
-            portfolio[next_ticker] = (s[0], s[1]-1, s[2])
+            portfolio[next_ticker] = (s[0], s[1] - 1, s[2])
             if s[1] == 0:
                 del portfolio[next_ticker]
                 continue
@@ -143,14 +149,15 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
     for r in portfolio:
         s = Stock.objects.get(stock_ticker=r[0])
         final_port.append({
-                'ticker': r[0],
-                'name': s.stock_name,
-                'sector': s.stock_sector,
-                'risk': _get_latest_stock_risk(s),
-                'price': '${:,.2f}'.format(r[2]),
-                'quantity': r[1]}
-            )
+            'ticker': r[0],
+            'name': s.stock_name,
+            'sector': s.stock_sector,
+            'risk': _get_latest_stock_risk(s),
+            'price': '${:,.2f}'.format(r[2]),
+            'quantity': r[1]}
+        )
     return final_port, value, tvalue_low, tvalue_high
+
 
 def get_all_stocks(all_stocks, sort_by_risk=False):
     """
@@ -159,17 +166,18 @@ def get_all_stocks(all_stocks, sort_by_risk=False):
     """
     stock_tuples = []
     for stock in all_stocks:
-       risk = _get_latest_stock_risk(stock)
-       if risk is None:
+        risk = _get_latest_stock_risk(stock)
+        if risk is None:
             continue
-       else:
-        stock_tuples.append((stock.stock_ticker, risk))
+        else:
+            stock_tuples.append((stock.stock_ticker, risk))
     if(sort_by_risk):
-       stock_tuples = sorted(stock_tuples, key=lambda s: s[1])
+        stock_tuples = sorted(stock_tuples, key=lambda s: s[1])
     ret_stocks = []
     for s in stock_tuples:
-       ret_stocks.append(all_stocks.get(stock_ticker=s[0]))
+        ret_stocks.append(all_stocks.get(stock_ticker=s[0]))
     return ret_stocks
+
 
 def stock_to_dict(stock):
     risk = _get_latest_stock_risk(stock)
@@ -181,16 +189,18 @@ def stock_to_dict(stock):
     blurb = stock.stock_ticker + ' is currently valued at '
     blurb += '${:,.2f}'.format(price) + '. '
     if date is None:
-        blurb += ' We currently don\'t have any risk information for ' + stock.stock_ticker + '.'
+        blurb += (' We currently don\'t have any risk information for {}.'
+                  .format(stock.stock_ticker))
     else:
-        blurb += 'As of ' + date + ', ' + stock.stock_ticker + ' had a risk of '
-        blurb += '{:,.2f}'.format(risk)
-    return { 'ticker': stock.stock_ticker,
-             'name': stock.stock_name,
-             'sector': stock.stock_sector,
-             'price': price,
-             'risk': risk,
-             'blurb': blurb}
+        blurb += 'As of {}, {} had a risk of {:,.2f}'.format(
+            date, stock.stick_ticker, risk)
+    return {'ticker': stock.stock_ticker,
+            'name': stock.stock_name,
+            'sector': stock.stock_sector,
+            'price': price,
+            'risk': risk,
+            'blurb': blurb}
+
 
 def stock_recommender(request, portfolio_id, rec_type):
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
@@ -208,16 +218,29 @@ def stock_recommender(request, portfolio_id, rec_type):
     else:
         rec_fn = None
         if rec_type == 'low_risk':
-            rec_fn = lambda x: x <= p_risk
+            rec_fn = _recommender_low_risk
         elif rec_type == 'high_risk':
-            rec_fn = lambda x: x > p_risk
+            rec_fn = _recommender_high_risk
         elif rec_type == 'stable':
-            rec_fn = lambda x: x < p_risk*1.2 and x > p_risk*0.8
+            rec_fn = _recommender_stable
         recs = get_recommendations(rec_fn, all_stocks,
                                    random.randint(lower_bound,
                                                   upper_bound))
     recs = map(stock_to_dict, recs)
     return recs
+
+
+def _recommender_low_risk(x, p_risk):
+    return x <= p_risk
+
+
+def _recommender_high_risk(x, p_risk):
+    return x > p_risk
+
+
+def _recommender_stable(x, p_risk):
+    return x < p_risk * 1.2 and x > p_risk * 0.8
+
 
 def _fetch_target_value(portfolio):
     """
@@ -225,20 +248,21 @@ def _fetch_target_value(portfolio):
     the portfolio lies. Used to calculate quantities for generated portfolios
     :param portfolio
     """
-    tvalue_low  = 0
+    tvalue_low = 0
     tvalue_high = 0
     if portfolio is not None:
         value = 0
         for sp in portfolio.portfolio_stocks.all():
             stock = sp.stock
             price = _get_latest_stock_price(stock)
-            value  += price*sp.quantity
-        tvalue_low  = value-0.2*value
-        tvalue_high = 0.2*value+value
+            value += price * sp.quantity
+        tvalue_low = value - 0.2 * value
+        tvalue_high = 0.2 * value + value
     else:
-        tvalue_low  = random.uniform(10000.0, 20000.0)
+        tvalue_low = random.uniform(10000.0, 20000.0)
         tvalue_high = random.uniform(20000.0, 50000.0)
     return tvalue_low, tvalue_high
+
 
 def _calculate_portfolio_value(portfolio):
     """
@@ -247,8 +271,9 @@ def _calculate_portfolio_value(portfolio):
     """
     value = 0
     for price_info in portfolio:
-        value += price_info[1]*price_info[2]
+        value += price_info[1] * price_info[2]
     return value
+
 
 def _get_latest_stock_price(stock):
     stock_price = 0
@@ -258,17 +283,21 @@ def _get_latest_stock_price(stock):
         pass
     return stock_price
 
+
 def _get_latest_stock_risk(stock):
     """
     Helper function to acquire the latest stock risk, if it exists.
-    :param portfolio
+    :param stock
     """
     stock_risk = None
     try:
-       stock_risk = stock.stock_risk.all().order_by('risk_date').last().risk_value
+        stock_risk = (stock.stock_risk.all()
+                      .order_by('risk_date')
+                      .last().risk_value)
     except AttributeError:
-       pass
+        pass
     return stock_risk
+
 
 def _get_latest_portfolio_risk(portfolio):
     """
@@ -277,10 +306,13 @@ def _get_latest_portfolio_risk(portfolio):
     """
     p_risk = None
     try:
-       p_risk = portfolio.portfolio_risk.all().order_by('risk_date').last().risk_value
+        p_risk = (portfolio.portfolio_risk.all()
+                  .order_by('risk_date')
+                  .last().risk_value)
     except AttributeError:
-       pass
+        pass
     return p_risk
+
 
 def _get_all_sectors(portfolio):
     """
@@ -289,7 +321,7 @@ def _get_all_sectors(portfolio):
     """
     sectors = []
     if portfolio is not None:
-       for sp in portfolio.portfolio_stocks.all():
+        for sp in portfolio.portfolio_stocks.all():
             sector = sp.stock.stock_sector
             if sector in sectors:
                 continue
