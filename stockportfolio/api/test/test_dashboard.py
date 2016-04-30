@@ -100,7 +100,7 @@ class SeleniumTestCase(LiveServerTestCase):
                 r = requests.post('https://api.imgur.com/3/image',
                                   data={'image':b64},
                                   headers={'Authorization':'Client-ID 5adddc48c3f790d'})
-                print 'image link ' + r.content['link']
+                print 'image link ' + r.content
 
 class DashboardTest(SeleniumTestCase):
 
