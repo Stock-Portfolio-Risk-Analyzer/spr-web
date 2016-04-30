@@ -1,4 +1,5 @@
 import logging
+import time
 
 from django.contrib.auth.models import User
 from django.test import LiveServerTestCase
@@ -128,6 +129,7 @@ class DashboardTest(SeleniumTestCase):
         WebDriverWait(
             self.cls.driver, 60).until(
                 lambda driver: driver.find_element_by_id('top-portfolios'))
+        time.sleep(5)
         self.cls.driver.find_element_by_id('top-portfolios').click()
         WebDriverWait(
             self.cls.driver, 60).until(
