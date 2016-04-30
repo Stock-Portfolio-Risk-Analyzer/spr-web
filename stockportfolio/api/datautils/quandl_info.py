@@ -3,7 +3,7 @@ from datetime import datetime as dt
 
 import Quandl as qd
 
-quandl_key = "SyH7V4ywJGho77EC6W7C"
+quandl_key = '-6X6UvP1aeit_zybGREM'
 
 
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
