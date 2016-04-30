@@ -1,7 +1,9 @@
 import os
 import time
-from django.contrib.auth.models import User
+
 import sendgrid
+from django.contrib.auth.models import User
+
 from stockportfolio.api.datautils.yahoo_finance import get_current_price
 
 
@@ -46,10 +48,3 @@ def send_emails():
     message.add_filter('templates', 'enable', '1')
     message.add_filter('templates', 'template_id', '4d48cfbe-750f-4b30-b0d1-5b907e3e730b')
     status, msg = sg.send(message)
-
-
-
-
-
-
-

@@ -1,12 +1,20 @@
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
-from django.test import LiveServerTestCase
+import base64
+import logging
+import os
+import time
+
+import requests
 from django.contrib.auth.models import User
+from django.test import LiveServerTestCase
 from registration.models import RegistrationProfile
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import (NoSuchElementException,
+                                        WebDriverException)
+from selenium.webdriver.remote.remote_connection import LOGGER
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support.ui import WebDriverWait
+
+from stockportfolio.settings.base import BASE_DIR
 
 
 class SeleniumTestCase(LiveServerTestCase):
@@ -27,6 +35,7 @@ class SeleniumTestCase(LiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super(SeleniumTestCase, cls).setUpClass()
+        LOGGER.setLevel(logging.WARNING)
         cls.driver = webdriver.Firefox()
         cls.driver.maximize_window()
         cls.register_and_activate()
@@ -76,6 +85,22 @@ class SeleniumTestCase(LiveServerTestCase):
     def wait(self, fn, time=20):
         WebDriverWait(SeleniumTestCase.driver, time).until(fn)
 
+    def screenshot(self, prefix="", upload=True):
+        """
+        :param prefix: optional prefix for the resulting file
+        :param upload: upload the image to Imgur (default)
+        """
+        fname = os.path.join(
+                            BASE_DIR, 'api', 'test', 
+                            prefix + '_' + str(time.time()) + '.png')
+        self.cls.driver.save_screenshot(fname)
+        with open(fname, "rb") as img:
+            b64 = base64.b64encode(img.read())
+            if upload:
+                r = requests.post('https://api.imgur.com/3/image',
+                                  data={'image':b64},
+                                  headers={'Authorization':'Client-ID 5adddc48c3f790d'})
+                print 'image link ' + r.content
 
 class DashboardTest(SeleniumTestCase):
 
@@ -89,6 +114,7 @@ class DashboardTest(SeleniumTestCase):
         self.top_ten_loads()
 
     def display_risk_rank(self):
+        self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
             self.cls.driver, 20).until(
@@ -102,6 +128,7 @@ class DashboardTest(SeleniumTestCase):
         self.assertEqual(rank.text, 'N/A')
 
     def search_stock_no_stocks_exist(self):
+        self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
             self.cls.driver, 20).until(
@@ -117,10 +144,11 @@ class DashboardTest(SeleniumTestCase):
         self.cls.driver.find_element_by_class_name('ac_results')
 
     def top_ten_loads(self):
+        self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
-            self.cls.driver, 20).until(
-                lambda driver: driver.find_element_by_id('search_entry'))
+            self.cls.driver, 60).until(
+                lambda driver: driver.find_element_by_id('top-portfolios'))
         self.cls.driver.find_element_by_id('top-portfolios').click()
         WebDriverWait(
             self.cls.driver, 60).until(

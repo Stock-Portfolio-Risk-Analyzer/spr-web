@@ -1,26 +1,29 @@
-from django.shortcuts import render, render_to_response, redirect, get_object_or_404
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-from datautils import yahoo_finance as yf
-from datautils import stock_info
-from datautils import sentiment
-from django.template.context_processors import csrf
-from django.contrib.auth.models import User
-from django.contrib.sites.shortcuts import get_current_site
-from stockportfolio.api.models import Portfolio, Risk, UserSettings, Stock
-from stockportfolio.api.utils import update_rri_for_all_portfolios, update_rank_for_all_portfolios
-from registration.models import RegistrationManager
-import string
 import hashlib
-from stockportfolio.api.forms import UpdateProfile, PortfolioUploadForm
-from django.core.urlresolvers import reverse
-import feedparser
-import re
 import json
 import random
+import re
+import string
 import time
-from stockportfolio.api.utils import _calculate_risk, _calculate_price
-import stockportfolio.api.rec_utils as rec_utils
+
+import feedparser
+from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import (get_object_or_404, redirect, render,
+                              render_to_response)
+from django.template.context_processors import csrf
+from registration.models import RegistrationManager
+
+import stockportfolio.api.rec_utils as rec_utils
+from datautils import yahoo_finance as yf
+from datautils import sentiment, stock_info
+from stockportfolio.api.forms import PortfolioUploadForm, UpdateProfile
+from stockportfolio.api.models import Portfolio, Risk, Stock, UserSettings
+from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
+                                      update_rank_for_all_portfolios,
+                                      update_rri_for_all_portfolios)
 
 
 def dashboard(request):

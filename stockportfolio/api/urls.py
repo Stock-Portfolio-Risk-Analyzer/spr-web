@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
-from . import views
-from . import api
+from . import api, views
+
 urlpatterns = [
     url(r'^(?P<symbol>[A-Z]+)/$', views.ticker, name='ticker'),
     url(r'^name/(?P<symbol>[A-Z]+)/$', views.company_name, name='company_name'),

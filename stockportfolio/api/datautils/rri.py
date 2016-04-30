@@ -1,10 +1,12 @@
 import csv
+import os
 from datetime import date, timedelta
+
 import numpy as np
 import Quandl
+
 import yahoo_finance
 from stockportfolio.settings.base import BASE_DIR
-import os
 
 """
 API that computes Relative Risk Index for a given Stock or Portfolio
