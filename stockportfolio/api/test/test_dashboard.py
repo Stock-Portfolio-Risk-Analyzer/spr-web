@@ -149,7 +149,6 @@ class DashboardTest(SeleniumTestCase):
         WebDriverWait(
             self.cls.driver, 60).until(
                 lambda driver: driver.find_element_by_id('top-portfolios'))
-        self.screenshot(prefix='top_ten_loads')
         self.cls.driver.find_element_by_id('top-portfolios').click()
         WebDriverWait(
             self.cls.driver, 60).until(
