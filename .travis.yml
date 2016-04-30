@@ -17,7 +17,7 @@ before_script:
   - "python manage.py collectstatic --no-input"
   #- "export DISPLAY=:99.0"
   #- "sh -e /etc/init.d/xvfb start"
-  - Xvfb :1 -screen 0 1920x1080x32
+  - Xvfb :1 -screen 0 1920x1080x24
   - sleep 3
 branches:
   only:
