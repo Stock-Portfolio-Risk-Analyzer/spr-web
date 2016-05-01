@@ -16,10 +16,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PortfolioValue',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True, primary_key=True,
+                    serialize=False, verbose_name='ID')),
                 ('date', models.DateTimeField(auto_now=True, db_index=True)),
                 ('value', models.IntegerField()),
-                ('portfolio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.Portfolio')),
+                ('portfolio', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='api.Portfolio')),
             ],
         ),
         migrations.AlterUniqueTogether(

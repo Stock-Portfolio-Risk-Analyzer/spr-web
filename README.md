@@ -20,6 +20,9 @@ Analyzes and displays the riskiness of your stock portfolio. A project for CS428
 ## Sort your Imports
 `isort -rc --atomic .`
 
+## Check for PEP-8 compatability
+`flake8 stockportfolio`
+
 ## Setup for Portfolio Simulation
 
 Optionally, you can configure the site to simulate portfolios for you.
@@ -28,7 +31,6 @@ Optionally, you can configure the site to simulate portfolios for you.
     Note that there are several system requirements that must be met.
 2. Set up the environment: `export MATPLOTLIB_AVAILABLE=YES`
 
-If you encounter a segfault when using the portfolio simulation feature, you may need to set matplotlib's backend directly. 
+If you encounter a segfault when using the portfolio simulation feature, you may need to set matplotlib's backend directly.
 
 Find `matplotlibrc` and overwrite the current backend setting with `backend : agg`
-

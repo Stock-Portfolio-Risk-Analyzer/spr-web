@@ -1,8 +1,8 @@
-import numpy as np
-import pandas as pd
-import seaborn as sns
 import datetime as dt
 from functools import partial
+
+import numpy as np
+import pandas as pd
 from django.conf import settings
 from django.http import HttpResponse
 
@@ -12,8 +12,9 @@ if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
     import matplotlib  # isort:skip
     import matplotlib.pyplot as plt  # isort:skip
     from matplotlib import gridspec  # isort:skip
-    from matplaotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas  # isort:skip
+    from matplotlib.backends.backend_agg import FigureCanvasAgg  # isort:skip
     from matplotlib.ticker import FuncFormatter  # isort:skip
+    import seaborn as sns # isort:skip
     matplotlib.use('agg')
 
 
@@ -525,7 +526,7 @@ def create_returns_tear_sheet(portfolio_id, portfolio, benchmark_rets=None):
     for ax in fig.axes:
         plt.setp(ax.get_xticklabels(), visible=True)
 
-    canvas = FigureCanvas(fig)
+    canvas = FigureCanvasAgg(fig)
     response = HttpResponse(content_type='image/jp')
     canvas.print_png(response)
     return response

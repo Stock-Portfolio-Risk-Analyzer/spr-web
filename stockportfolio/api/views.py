@@ -8,22 +8,20 @@ import time
 import feedparser
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import (get_object_or_404, redirect, render,
                               render_to_response)
 from django.template.context_processors import csrf
-from registration.models import RegistrationManager
 
 import datautils.portfolio_simulation as ps
 import stockportfolio.api.rec_utils as rec_utils
-from datautils import yahoo_finance as yf
-from datautils import sentiment, stock_info
 from stockportfolio.api.api import _calculate_stock_info
+from stockportfolio.api.datautils import yahoo_finance as yf
+from stockportfolio.api.datautils import sentiment, stock_info
 from stockportfolio.api.forms import PortfolioUploadForm, UpdateProfile
-from stockportfolio.api.models import Portfolio, Risk, Stock, UserSettings
+from stockportfolio.api.models import Portfolio, Stock, UserSettings
 from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
                                       update_rank_for_all_portfolios,
                                       update_rri_for_all_portfolios)
@@ -105,9 +103,11 @@ def modify_account(request):
 
 def stock_interface(request, ticker):
     ticker = ticker.upper()
-    stock = get_object_or_404(Stock, Q(stock_ticker=ticker) | Q(stock_name__iexact=ticker))
+    stock = get_object_or_404(
+        Stock, Q(stock_ticker=ticker) | Q(stock_name__iexact=ticker))
     ticker = stock.stock_ticker
-    feed = feedparser.parse("http://articlefeeds.nasdaq.com/nasdaq/symbols?symbol="+ticker)
+    feed = feedparser.parse(
+        "http://articlefeeds.nasdaq.com/nasdaq/symbols?symbol=" + ticker)
     sanitized_feed = []
     for entry in feed.entries:
         description = re.sub("<.*?>", "", entry.description)
@@ -136,15 +136,18 @@ def stock_interface(request, ticker):
     }
     return render_to_response('modal/stock_interface.html', context)
 
+
 def stock_rec(request, portfolio_id, rec_type):
     recs = rec_utils.stock_recommender(request, portfolio_id, rec_type)
     message = ''
     if rec_type == 'stable':
         title = 'And now for something completely the same'
-        message = 'Here are some stocks that will minimize changes to your risk'
+        message = 'Here are some stocks that will \
+            minimize changes to your risk'
     elif rec_type == 'high_risk':
         title = 'Go big or go home!'
-        message = 'Adding these stocks to your portfolio will increase its risk'
+        message = 'Adding these stocks to your portfolio \
+            will increase its risk'
     elif rec_type == 'low_risk':
         title = 'Slow and steady wins the race.'
         message = 'Using these stocks, lower your portfolio\'s risk'
@@ -157,6 +160,7 @@ def stock_rec(request, portfolio_id, rec_type):
         'stocks': recs
     }
     return render_to_response('modal/recommendation.html', context)
+
 
 def generate_portfolio(request):
     """
@@ -172,10 +176,12 @@ def generate_portfolio(request):
     lower_bound = random.randint(3, 10)
     start = time.time()
     user_settings = UserSettings.objects.get_or_create(user=request.user)[0]
-    portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(request.user, user_settings)
-    portfolio_tickers = rec_utils.fetch_tickers(portfolio)
+    portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(
+        request.user, user_settings)
+    rec_utils.fetch_tickers(portfolio)
     all_stocks = rec_utils.stock_slice(Stock.objects.all(), 1000)
-    new_portfolio = None; message = ""
+    new_portfolio = None
+    message = ""
     r = random.Random(int(time.time()))
     p_type = r.choice(['safe', 'risky', 'diverse'])
     if(p_type == 'safe'):
@@ -184,32 +190,30 @@ def generate_portfolio(request):
             message += ' than your current default portfolio.'
         else:
             ' number than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk,
-                                                all_stocks,
-                                                random.randint(lower_bound,
-                                                                upper_bound))
+        new_portfolio = rec_utils.get_recommendations(
+            lambda x: x <= p_risk,
+            all_stocks, random.randint(lower_bound, upper_bound))
     elif(p_type == 'diverse'):
         message = 'We chose this portfolio with sector diversity in mind.'
-        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks,
-                                       random.randint(lower_bound,
-                                                      upper_bound), True)
+        new_portfolio = rec_utils.get_sector_stocks(
+            portfolio, all_stocks,
+            random.randint(lower_bound, upper_bound), True)
     else:
         message = 'We chose this portfolio to be risker'
         if is_user_portfolio:
             message += ' than your current default portfolio.'
         else:
             ' than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk,
-                                                all_stocks,
-                                                random.randint(lower_bound,
-                                                               upper_bound))
-    new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(portfolio,
-                                                         new_portfolio)
+        new_portfolio = rec_utils.get_recommendations(
+            lambda x: x > p_risk, all_stocks,
+            random.randint(lower_bound, upper_bound))
+    new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(
+        portfolio, new_portfolio)
     end = time.time() - start
     message += ' The targeted range for the portfolio value was '
     message += '${:,.2f}'.format(tlow) + ' to ' + '${:,.2f}'.format(thi) + '.'
     message += ' The actual value is ' + '${:,.2f}'.format(v) + '.'
-    message += ' Portfolio generation took ' + '{:,.2f}'.format(end) + ' seconds.'
+    message += ' Portfolio generation took {:,.2f} seconds.'.format(end)
     symbols = []
     quantities = []
     for stock in new_portfolio:
@@ -221,6 +225,7 @@ def generate_portfolio(request):
                'portfolio': new_portfolio}
     context.update(csrf(request))
     return render_to_response('modal/gen_portfolio.html', context)
+
 
 def simulate_portfolio(request, user_id):
     if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:

@@ -3,9 +3,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from registration.forms import RegistrationForm
 
-from .models import Portfolio, Stock, UserSettings
+from stockportfolio.api.models import Portfolio, UserSettings
 
 
 # Used the following as reference
@@ -45,23 +44,26 @@ class UpdateProfile(forms.ModelForm):
         return self.cleaned_data.get('username')
 
     def clean_email(self):
-        username = self.cleaned_data.get('username')
         email = self.cleaned_data.get('email')
 
         if email and User.objects.filter(email=email).count() > 1:
-            raise forms.ValidationError('This email address is already in use. Please supply a different email address.')
+            raise forms.ValidationError(
+                'This email address is already in use. \
+                 Please supply a different email address.')
         return email
 
     def save(self, commit=True):
         user = User.objects.get(username=self.cleaned_data["username"])
         user.email = self.cleaned_data['email']
         user_settings = UserSettings.objects.get(user=user)
-        user_settings.default_portfolio = self.cleaned_data['default_portfolio']
+        dp = self.cleaned_data['default_portfolio']
+        user_settings.default_portfolio = dp
         user_settings.save()
 
         if commit:
             user.save()
         return user
+
 
 class PortfolioUploadForm(forms.Form):
     file = forms.FileField()

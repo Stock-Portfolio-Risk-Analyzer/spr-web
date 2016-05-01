@@ -5,7 +5,6 @@ import random
 import time
 from datetime import datetime
 
-import pandas as pd
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
@@ -168,10 +167,12 @@ def get_portfolio(request, portfolio_id):
         for risk in portfolio.portfolio_risk.all().order_by('risk_date'):
             portfolio_dict["risk_history"].append(_calculate_risk(risk))
 
-        portfolio_dict['sector_allocations'] = _calculate_sector_allocations(portfolio)
+        portfolio_dict['sector_allocations'] = _calculate_sector_allocations(
+            portfolio)
 
         return HttpResponse(content=json.dumps(portfolio_dict),
                             status=200, content_type='application/json')
+
 
 def modify_portfolio_form_post(request, portfolio_id):
     if request.method == 'POST':
@@ -185,7 +186,6 @@ def modify_portfolio_form_post(request, portfolio_id):
             for i in range(len(data["symbols"])):
                 stock = data["symbols"][str(i)]
                 quantity = int(data["quantities"][str(i)])
-                user_id = request.user.id
                 if user_portfolio.portfolio_user.pk is not request.user.pk:
                     return HttpResponse(status=403)
                 user_has_stock = user_portfolio.portfolio_stocks.filter(
@@ -197,20 +197,21 @@ def modify_portfolio_form_post(request, portfolio_id):
                     else:
                         user_portfolio.portfolio_stocks.filter(
                             stock__stock_ticker=stock).update(
-                                        quantity=quantity)
+                                quantity=quantity)
                 elif quantity > 0:
                     _add_stock_helper(user_portfolio, quantity, stock)
             if data["name"]:
                 user_portfolio.portfolio_name = data["name"]
                 user_portfolio.save()
-            return HttpResponse(json.dumps({"success" : "true"}))
+            return HttpResponse(json.dumps({"success": "true"}))
         err_message = ["The following stock symbols are invalid:"]
         err_message.extend(invalid_stocks)
         err_message = " ".join(err_message)
-        err_message = json.dumps({"success" : "false","message" : err_message})
+        err_message = json.dumps({"success": "false", "message": err_message})
         return HttpResponse(content=err_message,
                             status=400,
                             content_type="application/json charset=utf-8")
+
 
 def generate_portfolio(request):
     """
@@ -226,11 +227,12 @@ def generate_portfolio(request):
     lower_bound = random.randint(3, 10)
     start = time.time()
     user_settings = UserSettings.objects.get_or_create(user=request.user)[0]
-    portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(request.user, user_settings)
-    portfolio_tickers = rec_utils.fetch_tickers(portfolio)
+    portfolio, p_risk, is_user_portfolio = rec_utils.get_portfolio_and_risk(
+        request.user, user_settings)
+    rec_utils.fetch_tickers(portfolio)
     all_stocks = rec_utils.stock_slice(Stock.objects.all(), 1000)
-    #all_stocks = rec_utils.get_all_stocks(Stock.objects.all())
-    new_portfolio = None; message = ""
+    new_portfolio = None
+    message = ""
     r = random.Random(int(time.time()))
     p_type = r.choice(['safe', 'risky', 'diverse'])
     if(p_type == 'safe'):
@@ -239,71 +241,69 @@ def generate_portfolio(request):
             message += ' than your current default portfolio.'
         else:
             ' number than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x <= p_risk,
-                                                all_stocks,
-                                                random.randint(lower_bound,
-                                                                upper_bound))
+        new_portfolio = rec_utils.get_recommendations(
+            lambda x: x <= p_risk, all_stocks, random.randint(
+                lower_bound, upper_bound))
     elif(p_type == 'diverse'):
         message = 'We chose this portfolio with sector diversity in mind.'
-        new_portfolio = rec_utils.get_sector_stocks(portfolio, all_stocks,
-                                       random.randint(lower_bound,
-                                                      upper_bound), True)
+        new_portfolio = rec_utils.get_sector_stocks(
+            portfolio, all_stocks, random.randint(lower_bound, upper_bound),
+            True)
     else:
         message = 'We chose this portfolio to be risker'
         if is_user_portfolio:
             message += ' than your current default portfolio.'
         else:
             ' than ' + str(p_risk)
-        new_portfolio = rec_utils.get_recommendations(lambda x: x > p_risk,
-                                                all_stocks,
-                                                random.randint(lower_bound,
-                                                               upper_bound))
-    new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(portfolio,
-                                                         new_portfolio)
+        new_portfolio = rec_utils.get_recommendations(
+            lambda x: x > p_risk, all_stocks, random.randint(
+                lower_bound, upper_bound))
+    new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(
+        portfolio, new_portfolio)
 
     end = time.time() - start
     message += ' The targeted range for the portfolio value was '
     message += '${:,.2f}'.format(tlow) + ' to ' + '${:,.2f}'.format(thi) + '.'
     message += ' The actual value is ' + '${:,.2f}'.format(v) + '.'
-    message += ' Portfolio generation took ' + '{:,.2f}'.format(end) + ' seconds.'
-    jsonify = lambda x: { i:x.__dict__[i]
-                          for i in x.__dict__ if i !=  "_state" }
+    message += ' Portfolio generation took {:,.2f} seconds.'.format(end)
     generated_dict = {'message': message,
                       'portfolio': new_portfolio}
+
     return HttpResponse(content=json.dumps(generated_dict), status=200,
                         content_type='application/json')
 
+
 @csrf_exempt
 def modify_gen(request, portfolio_id):
-       if request.method == 'POST':
-            data = request.POST.get("data", None)
-            data = json.loads(data)
-            user_portfolio = get_object_or_404(Portfolio,
-                                               portfolio_id=portfolio_id)
-            for i in range(len(data["symbols"])):
-                stock = data["symbols"][i]
-                quantity = data["quantities"][i]
-                user_id = request.user.id
-                if user_portfolio.portfolio_user.pk is not request.user.pk:
-                    return HttpResponse(status=403)
-                user_has_stock = user_portfolio.portfolio_stocks.filter(
-                    stock__stock_ticker=stock).exists()
-                if user_has_stock:
-                    if quantity <= 0:
-                        user_portfolio.portfolio_stocks.all().get(
-                            stock__stock_ticker=stock).delete()
-                    else:
-                        user_portfolio.portfolio_stocks.filter(
-                            stock__stock_ticker=stock).update(
-                                        quantity=quantity)
-                elif quantity > 0:
-                    _add_stock_helper(user_portfolio, quantity, stock)
-            if data["name"]:
-                user_portfolio.portfolio_name = data["name"]
-                user_portfolio.save()
-            return HttpResponse(status=200)
-       else:
-            return HttpResponse(status=403)
+    if request.method == 'POST':
+        data = request.POST.get("data", None)
+        data = json.loads(data)
+        user_portfolio = get_object_or_404(Portfolio,
+                                           portfolio_id=portfolio_id)
+        for i in range(len(data["symbols"])):
+            stock = data["symbols"][i]
+            quantity = data["quantities"][i]
+            if user_portfolio.portfolio_user.pk is not request.user.pk:
+                return HttpResponse(status=403)
+            user_has_stock = user_portfolio.portfolio_stocks.filter(
+                stock__stock_ticker=stock).exists()
+            if user_has_stock:
+                if quantity <= 0:
+                    user_portfolio.portfolio_stocks.all().get(
+                        stock__stock_ticker=stock).delete()
+                else:
+                    user_portfolio.portfolio_stocks.filter(
+                        stock__stock_ticker=stock).update(
+                            quantity=quantity)
+            elif quantity > 0:
+                _add_stock_helper(user_portfolio, quantity, stock)
+        if data["name"]:
+            user_portfolio.portfolio_name = data["name"]
+            user_portfolio.save()
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=403)
+
 
 def list_top_portfolios(request, category):
     """
@@ -367,8 +367,11 @@ def download_porfolio_data(request, portfolio_id):
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
     response = HttpResponse(content_type='text/csv')
-    portfolio_name = portfolio.portfolio_name if portfolio.portfolio_name is not None else 'portfolio' 
-    response['Content-Disposition'] = 'attachment; filename="backup-' + portfolio_name + '.csv"'
+    portfolio_name = portfolio.portfolio_name
+    portfolio_name = portfolio_name if portfolio_name else 'portfolio'
+    portfolio_name = 'attachment; filename="backup-{}.csv"'.format(
+        portfolio_name)
+    response['Content-Disposition'] = portfolio_name
     writer = csv.writer(response)
     writer.writerow(['symbol', 'name', 'sector', 'quantity', 'risk'])
     for sp in portfolio.portfolio_stocks.all():
@@ -380,19 +383,23 @@ def download_porfolio_data(request, portfolio_id):
             last_risk = last_risk.risk_value
         writer.writerow([stock.stock_ticker, stock.stock_name,
                          stock.stock_sector, sp.quantity,
-                         last_risk]);
+                         last_risk])
     return response
+
 
 def upload_portfolio_data(request):
     if request.method == 'POST':
         form = PortfolioUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            portfolio_id = _parse_portfolio_file(request.FILES['file'], request.user)
+            portfolio_id = _parse_portfolio_file(
+                request.FILES['file'], request.user)
             if portfolio_id is None:
                 return HttpResponse(status=500)
-            return HttpResponse(content=json.dumps({"portfolio_id": portfolio_id}), status=200,
-                                content_type='application/json')
+            return HttpResponse(
+                content=json.dumps({"portfolio_id": portfolio_id}), status=200,
+                content_type='application/json')
         return HttpResponse(status=500)
+
 
 def _parse_portfolio_file(file, user):
     df = csv.DictReader(file)
@@ -400,7 +407,8 @@ def _parse_portfolio_file(file, user):
     for row in df:
         try:
             stock = Stock.objects.get(stock_ticker=row["symbol"])
-            stockportfolio = StockPortfolio.objects.create(stock=stock, quantity=row["quantity"])
+            stockportfolio = StockPortfolio.objects.create(
+                stock=stock, quantity=row["quantity"])
             stockportfolio.save()
             portfolio.portfolio_stocks.add(stockportfolio)
         except None:
@@ -419,6 +427,7 @@ def _diversify_by_sector(portfolio):
     for sector in sectors:
         q.exclude(stock_sector=sector)
     return list(q)
+
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
     stock_name = get_company_name(stock_ticker)
@@ -444,10 +453,10 @@ def _verify_stock_ticker_validity(stocks, quantity):
     invalid_stocks = []
     for stock in stocks.values():
         try:
-            stock_sector = get_company_name(stock)
+            get_company_name(stock)
         except (KeyError, IndexError):
             invalid_stocks.append(stock)
-    #remove any invalid stocks with quantity 0
+    # remove any invalid stocks with quantity 0
     for i, stock in stocks.items():
         if stock in invalid_stocks and int(quantity[i]) == 0:
             invalid_stocks.remove(stock)
@@ -497,6 +506,6 @@ def _calculate_sector_allocations(portfolio):
     total_mkt_value = sum(sector_allocations_raw.values())
     sector_allocations_pct = {}
     for sector, _mkt_value in sector_allocations_raw.iteritems():
-        sector_allocations_pct[sector] = float(_mkt_value/total_mkt_value)
+        sector_allocations_pct[sector] = float(_mkt_value / total_mkt_value)
 
     return sector_allocations_pct
