@@ -112,7 +112,7 @@ class ApiTestCase(TestCase):
         portfolio.pop('date_created', None)
         expected_content.update(
             {'portfolio_userid': self.user.id,
-            'portfolio_id': self.portfolio.portfolio_id})
+             'portfolio_id': self.portfolio.portfolio_id})
         expected_content.pop('date_created', None)
         self.assertEqual(expected_content, portfolio)
 
@@ -208,11 +208,10 @@ class ApiTestCase(TestCase):
         request.user = self.user
         response = api.get_list_of_portfolios(request, self.user.id)
         self.assertEqual(response.status_code, 200)
-        content = '{"portfolio_list": [{"id": {}, "name": null}]}'
         expected_content = {
             'portfolio_list': [{
                 'id': self.portfolio.portfolio_id,
-                'name': None }]}
+                'name': None}]}
         received_content = json.loads(response.content)
         self.assertEqual(expected_content, received_content)
 

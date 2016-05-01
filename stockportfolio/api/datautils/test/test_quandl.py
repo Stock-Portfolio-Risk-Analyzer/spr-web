@@ -1,6 +1,11 @@
 import unittest
+from datetime import datetime as dt
 
-from stockportfolio.api.datautils.quandl_info import *
+from stockportfolio.api.datautils.quandl_info import (get_options_data_quandl,
+                                                      get_pct_returns,
+                                                      get_returns,
+                                                      get_stock_data,
+                                                      get_stock_data_multiple)
 
 
 class TestQuandl(unittest.TestCase):
@@ -14,7 +19,7 @@ class TestQuandl(unittest.TestCase):
     def test_get_stock_data_multiple(self):
         start = dt(year=2015, month=1, day=5)
         end = dt(year=2015, month=1, day=6)
-        data = get_stock_data_multiple(["GOOG", "AAPL"],  start, end)
+        data = get_stock_data_multiple(["GOOG", "AAPL"], start, end)
         self.assertEqual(data['GOOG']['Close'][0], 513.87)
         self.assertEqual(data['AAPL']['Close'][0], 106.25)
 

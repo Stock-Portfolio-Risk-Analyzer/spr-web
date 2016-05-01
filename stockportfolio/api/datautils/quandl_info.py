@@ -32,14 +32,15 @@ def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     return symbol_data
 
 
-def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_code="WIKI"):
+def get_stock_data_multiple(
+        symbols=None, start_date=None, end_date=None, db_code="WIKI"):
     """
     Get OHLC stock data from Quandl for multiple stocks
     :param symbols: list of symbols (strings)
     :param start_date: datetime
     :param end_date: datetime
     :param db_code: Quandl database code.
-    :return: OrderedDict of DataFrames of stock data from start_date to end_date
+    :return: OrderedDict of DataFrames of data from start_date to end_date
     """
     data = OrderedDict()
 

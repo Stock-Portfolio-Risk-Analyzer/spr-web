@@ -12,6 +12,8 @@ notifications:
 before_script:
   # Check imports
   - isort --check-only --diff --quiet
+  # Check flake8
+  - flake8 stockportfolio
   - "export DATABASE_URL=postgres://postgres@localhost:5432/spra"
   - psql -c 'create database spra;' -U postgres
   - "python manage.py collectstatic --no-input"
