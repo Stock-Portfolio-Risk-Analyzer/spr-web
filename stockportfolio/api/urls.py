@@ -58,6 +58,9 @@ urlpatterns = [
         r'^top-ten/portfolio/(?P<portfolio_id>\d+)$',
         api.get_public_portfolio, name='get_public_portfolio'),
     url(
+        r'^portfolio/(?P<portfolio_id>\d+)/simulateportfolio',
+        views.simulate_portfolio, name="simulate_portfolio"),
+    url(
         r'^portfolio/(?P<portfolio_id>\d+)/(?P<rec_type>\w+)/recommendation$',
         views.stock_rec, name="stock_rec"),
     url(

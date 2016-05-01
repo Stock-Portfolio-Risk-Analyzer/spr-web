@@ -273,50 +273,6 @@ def generate_portfolio(request):
                         content_type='application/json')
 
 
-def stock_rec(request, portfolio_id):
-    """
-    Returns stock recommendations in several categories based on a specific
-    portfolio
-    :param request
-    :param portfolio_id
-    """
-    portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
-    if portfolio.portfolio_user.pk is not request.user.pk:
-        return HttpResponse(status=403)
-    risks = portfolio.portfolio_risk.all()
-    if len(risks) == 0:
-        err = 'No recommendations available at this time.'
-        err_dict = {'low': err,
-                    'high': err,
-                    'stable': err,
-                    'diverse': err}
-        return HttpResponse(
-            content=json.dumps(err_dict), status=200,
-            content_type='application/json')
-    p_risk = risks[0].risk_value
-
-    less_risk = map(
-        _jsonify,
-        list(Stock.objects.exclude(stock_beta__lt=p_risk)))
-    more_risk = map(
-        _jsonify,
-        list(Stock.objects.exclude(stock_beta__gt=p_risk)))
-    diverse = map(
-        _jsonify,
-        list(_diversify_by_sector(portfolio)))
-    # stock w/ in a 20% range of current portfolio riskiness
-    stable = map(
-        _jsonify,
-        list(Stock.objects.exclude(stock_beta__gt=(1.1 * p_risk))
-             .exclude(stock_beta__lt=0.9 * p_risk)))
-    rec_dict = {'low': less_risk[:4],
-                'high': more_risk[:4],
-                'diverse': diverse[:4],
-                'stable': stable[:4]}
-    return HttpResponse(content=json.dumps(rec_dict), status=200,
-                        content_type='application/json')
-
-
 @csrf_exempt
 def modify_gen(request, portfolio_id):
     if request.method == 'POST':
@@ -553,11 +509,3 @@ def _calculate_sector_allocations(portfolio):
         sector_allocations_pct[sector] = float(_mkt_value / total_mkt_value)
 
     return sector_allocations_pct
-
-
-def _jsonify(instance):
-    """
-    Django inserts a '_state' attribute into every model. We don't need it in
-    our json, so it's removed here.
-    """
-    return {i: instance.__dict[i] for i in instance.__dict__ if i != '_state'}

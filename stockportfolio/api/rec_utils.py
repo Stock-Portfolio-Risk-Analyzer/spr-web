@@ -34,7 +34,7 @@ def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     return stocks
 
 
-def get_recommendations(compare, stocks, num_stocks):
+def get_recommendations(compare, stocks, num_stocks, p_risk):
     """
     Fetches stock recommendations based on the result of a parameter function
     :param compare: function that returns a bool when given stock risk
@@ -48,7 +48,7 @@ def get_recommendations(compare, stocks, num_stocks):
             return recs
         new_stock = stocks[random.randint(0, len(stocks) - 1)]
         risk = _get_latest_stock_risk(new_stock)
-        if compare(risk):
+        if compare(risk, p_risk):
             recs.append(new_stock)
         iterations += 1
     return recs
@@ -193,7 +193,7 @@ def stock_to_dict(stock):
                   .format(stock.stock_ticker))
     else:
         blurb += 'As of {}, {} had a risk of {:,.2f}'.format(
-            date, stock.stick_ticker, risk)
+            date, stock.stock_ticker, risk)
     return {'ticker': stock.stock_ticker,
             'name': stock.stock_name,
             'sector': stock.stock_sector,
@@ -225,7 +225,8 @@ def stock_recommender(request, portfolio_id, rec_type):
             rec_fn = _recommender_stable
         recs = get_recommendations(rec_fn, all_stocks,
                                    random.randint(lower_bound,
-                                                  upper_bound))
+                                                  upper_bound),
+                                   p_risk)
     recs = map(stock_to_dict, recs)
     return recs
 

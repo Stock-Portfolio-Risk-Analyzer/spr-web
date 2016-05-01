@@ -147,3 +147,8 @@ NOSE_ARGS = [
     '--cover-branches',
     '-s',
 ]
+
+ADVANCED_SETTINGS = {
+    'SIMULATION_ENABLED': os.getenv('MATPLOTLIB_AVAILABLE', 'NO') == 'YES',
+    'REMOTE_SIMULATION_URL': os.getenv('REMOTE_SIMULATION_URL', '127.0.0.1:8000'),
+}

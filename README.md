@@ -22,3 +22,11 @@ Analyzes and displays the riskiness of your stock portfolio. A project for CS428
 
 ## Check for PEP-8 compatability
 `flake8 stockportfolio`
+
+## Setup for Portfolio Simulation
+
+Optionally, you can configure the site to simulate portfolios for you.
+
+1. `pip install -r simulation-requirements.txt`
+    Note that there are several system requirements that must be met.
+2. Set up the environment: `export MATPLOTLIB_AVAILABLE=YES`

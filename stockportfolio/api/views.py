@@ -6,6 +6,8 @@ import string
 import time
 
 import feedparser
+import requests
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -14,9 +16,11 @@ from django.shortcuts import (get_object_or_404, redirect, render,
                               render_to_response)
 from django.template.context_processors import csrf
 
+import datautils.portfolio_simulation as ps
 import stockportfolio.api.rec_utils as rec_utils
-from datautils import yahoo_finance as yf
-from datautils import sentiment
+from stockportfolio.api.api import _calculate_stock_info
+from stockportfolio.api.datautils import yahoo_finance as yf
+from stockportfolio.api.datautils import sentiment
 from stockportfolio.api.forms import PortfolioUploadForm, UpdateProfile
 from stockportfolio.api.models import Portfolio, Stock, UserSettings
 from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
@@ -222,3 +226,27 @@ def generate_portfolio(request):
                'portfolio': new_portfolio}
     context.update(csrf(request))
     return render_to_response('modal/gen_portfolio.html', context)
+
+
+def simulate_portfolio(request, portfolio_id):
+    if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
+        url = (settings.ADVANCED_SETTINGS['REMOTE_SIMULATION_URL'] +
+               request.path)
+        try:
+            response = requests.get(url, stream=True)
+            return HttpResponse(response.raw, content_type='image/png')
+        except:
+            return HttpResponse(500)
+
+    portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+    if not portfolio.portfolio_stocks.count() > 0:
+        return HttpResponse(status=400)
+    portfolio_stocks = []
+    for stock in portfolio.portfolio_stocks.all():
+        portfolio_stocks.append(_calculate_stock_info(stock))
+
+    portfolio_dict = {}
+    for stock_dict in portfolio_stocks:
+        portfolio_dict[stock_dict['ticker']] = stock_dict['quantity']
+    return ps.create_returns_tear_sheet(
+        portfolio.portfolio_name, portfolio_dict)
