@@ -8,7 +8,6 @@ Subpackages
 
     spr_api.datautils
     spr_api.models
-    spr_api.notebooks
     spr_api.portfolio_utils
     spr_api.test
 

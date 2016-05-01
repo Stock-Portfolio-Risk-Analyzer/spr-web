@@ -188,5 +188,10 @@ def get_stock_volume_traded_for_a_month(symbol):
 
 
 def get_average_stock_volume_traded(list):
+    """
+    TODO
+    :param list:
+    :return:
+    """
     val = int(np.average(list))
     return val

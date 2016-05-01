@@ -33,6 +33,11 @@ tickers = list(set(tickers))
 
 
 def get_stock_sentiment_api(symbol):
+    """
+    TODO
+    :param symbol:
+    :return:
+    """
     link = str("AOS/" + symbol)
     today = date.today()
     sentiment = Quandl.get(link, authtoken=quandl_key, trim_start=today)[
@@ -41,6 +46,11 @@ def get_stock_sentiment_api(symbol):
 
 
 def get_stock_sentiment(symbol):
+    """
+    TODO
+    :param symbol:
+    :return:
+    """
     if symbol.lower() in tickers:
         return 1 if float(ticker_sentiment[symbol.upper()]) > 0 else -1
     else:
@@ -48,6 +58,11 @@ def get_stock_sentiment(symbol):
 
 
 def get_sentiment_of_a_portfolio(stocks):
+    """
+    TODO
+    :param stocks:
+    :return:
+    """
     sentiment = []
 
     for stock in stocks:
@@ -58,6 +73,13 @@ def get_sentiment_of_a_portfolio(stocks):
 
 
 def get_stock_sentiment_for_a_range(symbol, start_date, end_date):
+    """
+    TODO
+    :param symbol:
+    :param start_date:
+    :param end_date:
+    :return:
+    """
     link = str("AOS/" + symbol)
     temp_sentiment_list = Quandl.get(
         link, authtoken=quandl_key, trim_start=start_date, trim_end=end_date)
@@ -71,12 +93,23 @@ def get_stock_sentiment_for_a_range(symbol, start_date, end_date):
 
 
 def get_average_stock_sentiment_for_a_range(symbol, start_date, end_date):
+    """
+    TODO
+    :param symbol:
+    :param start_date:
+    :param end_date:
+    :return:
+    """
     sentiment_list = get_stock_sentiment_for_a_range(
         symbol, start_date, end_date)
     return np.average(sentiment_list)
 
 
 def get_market_sentiment():
+    """
+    TODO
+    :return:
+    """
     sentiment = Quandl.get(
         "AOS/SNP", authtoken=quandl_key, trim_end=date.today())
     return sentiment["Article Sentiment"][len(sentiment) - 1]

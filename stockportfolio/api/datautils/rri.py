@@ -24,6 +24,14 @@ with open(fpath, 'rb') as csvfile:
 
 
 def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
+    """
+    TODO
+    :param symbol:
+    :param start_date:
+    :param end_date:
+    :param yahoo_data:
+    :return:
+    """
     link = str("WIKI/" + symbol)
     quandl_key = "SyH7V4ywJGho77EC6W7C"
     quandl_data = Quandl.get(

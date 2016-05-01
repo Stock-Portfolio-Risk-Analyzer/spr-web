@@ -7,6 +7,10 @@ from stockportfolio.api.datautils.yahoo_finance import get_current_price
 
 
 def send_emails():
+    """
+    TODO
+    :return:
+    """
     subscribers = User.objects.all()
     key = os.environ.get('SENDGRID_API_KEY')
     if key is None:
