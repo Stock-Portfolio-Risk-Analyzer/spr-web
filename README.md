@@ -30,7 +30,3 @@ Optionally, you can configure the site to simulate portfolios for you.
 1. `pip install -r simulation-requirements.txt`
     Note that there are several system requirements that must be met.
 2. Set up the environment: `export MATPLOTLIB_AVAILABLE=YES`
-
-If you encounter a segfault when using the portfolio simulation feature, you may need to set matplotlib's backend directly.
-
-Find `matplotlibrc` and overwrite the current backend setting with `backend : agg`
