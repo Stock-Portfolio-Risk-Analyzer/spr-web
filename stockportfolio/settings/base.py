@@ -150,4 +150,5 @@ NOSE_ARGS = [
 
 ADVANCED_SETTINGS = {
     'SIMULATION_ENABLED': os.getenv('MATPLOTLIB_AVAILABLE', 'NO') == 'YES',
+    'REMOTE_SIMULATION_URL': 'http://localhost:5001',
 }

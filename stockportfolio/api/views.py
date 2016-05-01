@@ -4,6 +4,7 @@ import random
 import re
 import string
 import time
+import requests
 
 import feedparser
 from django.conf import settings
@@ -227,22 +228,14 @@ def generate_portfolio(request):
     return render_to_response('modal/gen_portfolio.html', context)
 
 
-def simulate_portfolio(request, user_id):
+def simulate_portfolio(request, portfolio_id):
     if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
-        return HttpResponse(status=501)
-    user = get_object_or_404(User, pk=user_id)
-    if user is None:
-        raise Http404
-    portfolios = user.portfolio_set.all()
-    p_list = []
-    for p in portfolios:
-        p_basic_info = {"id": p.pk, "name": p.portfolio_name}
-        p_list.append(p_basic_info)
-
-    portfolio_id = p_list[0]['id']
-    name = p_list[0]['name']
+        url = settings.ADVANCED_SETTINGS['REMOTE_SIMULATION_URL'] + request.path
+        return requests.get(url).content()
 
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+    if not portfolio.portfolio_stocks.count() > 0:
+        return HttpResponse(status=400)
     portfolio_stocks = []
     for stock in portfolio.portfolio_stocks.all():
         portfolio_stocks.append(_calculate_stock_info(stock))
@@ -250,4 +243,5 @@ def simulate_portfolio(request, user_id):
     portfolio_dict = {}
     for stock_dict in portfolio_stocks:
         portfolio_dict[stock_dict['ticker']] = stock_dict['quantity']
-    return ps.create_returns_tear_sheet(name, portfolio_dict)
+    return ps.create_returns_tear_sheet(
+        portfolio.portfolio_name, portfolio_dict)

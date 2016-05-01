@@ -5,9 +5,6 @@ from stockportfolio.api import api, views
 urlpatterns = [
     url(r'^(?P<symbol>[A-Z]+)/$', views.ticker, name='ticker'),
     url(
-        r'^user/(?P<user_id>\d+)/simulateportfolio',
-        views.simulate_portfolio, name="simulate_portfolio"),
-    url(
         r'^name/(?P<symbol>[A-Z]+)/$',
         views.company_name, name='company_name'),
     url(
@@ -60,6 +57,9 @@ urlpatterns = [
     url(
         r'^top-ten/portfolio/(?P<portfolio_id>\d+)$',
         api.get_public_portfolio, name='get_public_portfolio'),
+    url(
+        r'^portfolio/(?P<portfolio_id>\d+)/simulateportfolio',
+        views.simulate_portfolio, name="simulate_portfolio"),
     url(
         r'^portfolio/(?P<portfolio_id>\d+)/(?P<rec_type>\w+)/recommendation$',
         views.stock_rec, name="stock_rec"),

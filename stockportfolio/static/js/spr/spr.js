@@ -1,15 +1,19 @@
 window.onload = function sprInit() {
-    attachEvents() 
+    attachEvents()
     setDownloadLink()
-    var img = document.createElement('img');
-    img.style.width = '1120px';
-    img.style.height = '4800px';
-    img.src = "/api/user/" + currentUser_id  +"/simulateportfolio";
-    $('#simPortfolioContent').append(img);
-    document.getElementById("simulate-portfolio").onclick=function() {
-        $('#simPortfolio').modal('show'); 
-    }
 }
+
+$('#simulate-portfolio').on('click', function() {
+    var img = document.createElement('img');
+    img.setAttribute('id', 'simulatePortfolioImage');
+    img.src = "/api/portfolio/" + user_portfolio.portfolio_id  +"/simulateportfolio";
+    $('#simPortfolioContent').append(img);
+    $('#simPortfolio').modal('show');
+});
+
+$('#simPortfolio').on('hidden.bs.modal', function() {
+    $('#simulatePortfolioImage').remove();
+});
 
 function setDownloadLink() {
     var l = document.getElementById("portfolio-download-form")
@@ -26,14 +30,14 @@ function attachEvents() {
 
 function loadGenPortfolio() {
     var request = new XMLHttpRequest()
-    $('#genPortfolio').modal('show'); 
+    $('#genPortfolio').modal('show');
     request.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("genPortfolioContent").insertAdjacentHTML('beforeend', this.responseText);
             console.log(this.responseText)
         }
     }
-    request.open("GET", 
+    request.open("GET",
                  window.location.protocol+"//"+window.location.host+
                  "/api/portfolio/generate_portfolio")
     request.send()
@@ -55,7 +59,7 @@ function getRecs(recType, contentId) {
             document.getElementById(contentId).insertAdjacentHTML('beforeend', this.responseText);
         }
     }
-    request.open("GET", 
+    request.open("GET",
                  window.location.protocol+"//"+window.location.host+
                  "/api/portfolio/"+curr+"/"+recType+"/recommendation")
     request.send()

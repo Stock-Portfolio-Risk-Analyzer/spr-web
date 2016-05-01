@@ -30,7 +30,7 @@
 </div>
 <div class="modal fade" id="simPortfolio" tabindex="-1" role="dialog">
   <div class="modal-dialog">
-    <div class="modal-content" style="height:650px;width:1120px;margin-left:-280px;overflow:auto;">
+    <div class="modal-content" style="width:1280px;margin-left:-300px;overflow:auto;">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -45,14 +45,14 @@
 <script>
     document.getElementById("generate-portfolio").onclick=function() {
         var request = new XMLHttpRequest()
-        $('#genPortfolio').modal('show'); 
+        $('#genPortfolio').modal('show');
         request.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             $('#genPortfolioContent').empty();
             $('#genPortfolioContent').append(this.responseText);
             }
         }
-        request.open("GET", 
+        request.open("GET",
                     window.location.protocol+"//"+window.location.host+
                     "/api/portfolio/generate_portfolio")
         request.send()

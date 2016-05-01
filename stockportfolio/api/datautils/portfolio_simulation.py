@@ -501,16 +501,16 @@ def create_returns_tear_sheet(portfolio_id, portfolio, benchmark_rets=None):
         benchmark_rets = get_benchmark_returns('SPY')
         benchmark_rets.index = pd.DatetimeIndex([i.replace(tzinfo=None) for i in benchmark_rets.index])
 
-    vertical_sections = 10
-    fig = plt.figure(figsize=(14, vertical_sections * 6))
-    gs = gridspec.GridSpec(vertical_sections, 3, wspace=0.5, hspace=0.5)
-    ax_rolling_returns = plt.subplot(gs[:2, :])
-    ax_rolling_returns_vol_match = plt.subplot(gs[2, :], sharex=ax_rolling_returns)
-    ax_rolling_beta = plt.subplot(gs[3, :], sharex=ax_rolling_returns)
-    ax_drawdown = plt.subplot(gs[4, :], sharex=ax_rolling_returns)
-    ax_monthly_heatmap = plt.subplot(gs[5, 0])
-    ax_annual_returns = plt.subplot(gs[5, 1])
-    ax_monthly_dist = plt.subplot(gs[5, 2])
+    vertical_sections = 4
+    fig = plt.figure(figsize=(14, vertical_sections * 3))
+    gs = gridspec.GridSpec(vertical_sections, 3, wspace=0.5, hspace=0.5, right=0.99)
+    ax_rolling_returns = plt.subplot(gs[0, :])
+    ax_rolling_returns_vol_match = plt.subplot(gs[0, :], sharex=ax_rolling_returns)
+    ax_rolling_beta = plt.subplot(gs[1, :], sharex=ax_rolling_returns)
+    ax_drawdown = plt.subplot(gs[2, :], sharex=ax_rolling_returns)
+    ax_monthly_heatmap = plt.subplot(gs[3, 0])
+    ax_annual_returns = plt.subplot(gs[3, 1])
+    ax_monthly_dist = plt.subplot(gs[3, 2])
 
     # plots
     plot_rolling_returns(portfolio_id, portfolio, ax=ax_rolling_returns, volatility_match=False)
@@ -525,8 +525,7 @@ def create_returns_tear_sheet(portfolio_id, portfolio, benchmark_rets=None):
 
     for ax in fig.axes:
         plt.setp(ax.get_xticklabels(), visible=True)
-
     canvas = FigureCanvasAgg(fig)
-    response = HttpResponse(content_type='image/jp')
+    response = HttpResponse(content_type='image/png')
     canvas.print_png(response)
     return response
