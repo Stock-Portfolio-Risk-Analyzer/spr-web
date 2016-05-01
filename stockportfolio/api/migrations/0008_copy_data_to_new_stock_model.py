@@ -7,7 +7,6 @@ from django.db import migrations
 
 def migrate_stock_to_stock_portfolio_object(apps, schema_editor):
     Portfolio = apps.get_model('api', 'Portfolio')
-    Stock = apps.get_model('api', 'Stock')
     StockPortfolio = apps.get_model('api', 'StockPortfolio')
 
     for portfolio in Portfolio.objects.all():
@@ -27,4 +26,3 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(migrate_stock_to_stock_portfolio_object, ),
     ]
-

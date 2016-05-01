@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -49,9 +50,7 @@ class Stock(models.Model):
         return '{} {}'.format(self.stock_id, self.stock_ticker)
 
     def __iter__(self):
-        return iter([self.stock_ticker,
-                self.stock_name,
-                self.stock_sector])
+        return iter([self.stock_ticker, self.stock_name, self.stock_sector])
 
 
 class StockPortfolio(models.Model):

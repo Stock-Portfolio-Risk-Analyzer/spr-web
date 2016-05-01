@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+
 import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -144,4 +145,10 @@ NOSE_ARGS = [
     '--with-coverage',
     '--cover-package=stockportfolio',
     '--cover-branches',
+    '-s',
 ]
+
+ADVANCED_SETTINGS = {
+    'SIMULATION_ENABLED': os.getenv('MATPLOTLIB_AVAILABLE', 'NO') == 'YES',
+    'REMOTE_SIMULATION_URL': os.getenv('REMOTE_SIMULATION_URL', '127.0.0.1:8000'),
+}

@@ -1,10 +1,12 @@
-from django.test import TestCase, RequestFactory
-from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User, AnonymousUser
-from stockportfolio.api.models import Portfolio
-from django.http import Http404
-from stockportfolio.api import api
 import json
+
+from django.contrib.auth.models import AnonymousUser, User
+from django.core.urlresolvers import reverse
+from django.http import Http404
+from django.test import RequestFactory, TestCase
+
+from stockportfolio.api import api
+from stockportfolio.api.models import Portfolio
 
 
 class ApiTestCase(TestCase):
@@ -108,7 +110,9 @@ class ApiTestCase(TestCase):
             '"date_created": "2016-03-17 02:35:55.273000", "stocks": [], '
             '"name": null, "rank": null}')
         portfolio.pop('date_created', None)
-        expected_content.update({'portfolio_userid': self.user.id})
+        expected_content.update(
+            {'portfolio_userid': self.user.id,
+             'portfolio_id': self.portfolio.portfolio_id})
         expected_content.pop('date_created', None)
         self.assertEqual(expected_content, portfolio)
 
@@ -204,11 +208,10 @@ class ApiTestCase(TestCase):
         request.user = self.user
         response = api.get_list_of_portfolios(request, self.user.id)
         self.assertEqual(response.status_code, 200)
-        content = '{"portfolio_list": [{"id": {}, "name": null}]}'
         expected_content = {
             'portfolio_list': [{
                 'id': self.portfolio.portfolio_id,
-                'name': None }]}
+                'name': None}]}
         received_content = json.loads(response.content)
         self.assertEqual(expected_content, received_content)
 

@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from stockportfolio.api.newsletter import newsletter
 
@@ -10,4 +10,3 @@ class Command(BaseCommand):
         newsletter.send_emails()
         self.stdout.write(
             self.style.SUCCESS('Successfully sent out all emails!'))
-

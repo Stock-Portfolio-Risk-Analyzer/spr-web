@@ -1,9 +1,10 @@
 import os
-import ystockquote
-import pandas as pd
-import pandas_datareader.data as web
 from collections import OrderedDict
 from datetime import datetime as dt
+
+import pandas as pd
+import pandas_datareader.data as web
+import ystockquote
 
 
 def get_stock_data(symbol, start_date=None, end_date=None):
@@ -35,7 +36,8 @@ def get_stock_data_multiple(symbols, start_date=None, end_date=None):
     :param symbols: (list) of symbols (string)
     :param start_date: (DateTime)
     :param end_date: (DateTime)
-    :return: (OrderedDict) of DataFrames of stock data from start_date to end_date
+    :return: (OrderedDict) of DataFrames of
+        stock data from start_date to end_date
     """
     data = OrderedDict()
 
@@ -90,7 +92,8 @@ def get_company_name(symbol):
     :param symbol:
     :return:
     """
-    fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
+    fpath = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
     df = pd.read_csv(fpath)
     company_info = df[df.Ticker == symbol]
     code = company_info['Name'].keys()[0]
@@ -104,7 +107,8 @@ def get_company_sector(symbol):
     :param symbol: (str)
     :return: (str)
     """
-    fpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
+    fpath = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
     df = pd.read_csv(fpath)
     company_info = df[df.Ticker == symbol]
     code = company_info['Name'].keys()[0]
