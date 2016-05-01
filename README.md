@@ -19,3 +19,6 @@ Analyzes and displays the riskiness of your stock portfolio. A project for CS428
 
 ## Sort your Imports
 `isort -rc --atomic .`
+
+## Check for PEP-8 compatability
+`flake8 stockportfolio`
