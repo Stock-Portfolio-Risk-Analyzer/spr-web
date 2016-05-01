@@ -1,15 +1,22 @@
-import pandas as pd
 import datetime as dt
-import seaborn as sns
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
 from functools import partial
-from matplotlib import gridspec
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from django.conf import settings
 from django.http import HttpResponse
+
 from yahoo_finance import get_stock_data
-from matplotlib.ticker import FuncFormatter
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as FigureCanvas
+
+if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
+    import matplotlib  # isort:skip
+    matplotlib.use('agg')
+    import matplotlib.pyplot as plt  # isort:skip
+    from matplotlib import gridspec  # isort:skip
+    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas # isort:skip
+    from matplotlib.ticker import FuncFormatter  # isort:skip
+    
 
 
 def get_benchmark_returns(benchmark='SPY', start_date=None, end_date=None, price_field='Adj Close'):

@@ -1,8 +1,11 @@
-import unittest
-import pandas as pd
 import datetime as dt
-import stockportfolio.api.datautils.yahoo_finance as yf
+import unittest
+
+import pandas as pd
+
 import stockportfolio.api.datautils.portfolio_simulation as ps
+import stockportfolio.api.datautils.yahoo_finance as yf
+
 
 class TestPortfolioSimulation(unittest.TestCase):
 

@@ -6,6 +6,7 @@ import string
 import time
 
 import feedparser
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
@@ -16,9 +17,11 @@ from django.shortcuts import (get_object_or_404, redirect, render,
 from django.template.context_processors import csrf
 from registration.models import RegistrationManager
 
+import datautils.portfolio_simulation as ps
 import stockportfolio.api.rec_utils as rec_utils
 from datautils import yahoo_finance as yf
 from datautils import sentiment, stock_info
+from stockportfolio.api.api import _calculate_stock_info
 from stockportfolio.api.forms import PortfolioUploadForm, UpdateProfile
 from stockportfolio.api.models import Portfolio, Risk, Stock, UserSettings
 from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
@@ -218,3 +221,28 @@ def generate_portfolio(request):
                'portfolio': new_portfolio}
     context.update(csrf(request))
     return render_to_response('modal/gen_portfolio.html', context)
+
+def simulate_portfolio(request, user_id):
+    if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
+        return HttpResponse(status=501)
+    user = get_object_or_404(User, pk=user_id)
+    if user is None:
+        raise Http404
+    portfolios = user.portfolio_set.all()
+    p_list = []
+    for p in portfolios:
+        p_basic_info = {"id": p.pk, "name": p.portfolio_name}
+        p_list.append(p_basic_info)
+
+    portfolio_id = p_list[0]['id']
+    name = p_list[0]['name']
+
+    portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
+    portfolio_stocks = []
+    for stock in portfolio.portfolio_stocks.all():
+        portfolio_stocks.append(_calculate_stock_info(stock))
+
+    portfolio_dict = {}
+    for stock_dict in portfolio_stocks:
+        portfolio_dict[stock_dict['ticker']] = stock_dict['quantity']
+    return ps.create_returns_tear_sheet(name, portfolio_dict)

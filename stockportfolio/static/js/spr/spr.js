@@ -1,6 +1,14 @@
 window.onload = function sprInit() {
     attachEvents() 
     setDownloadLink()
+    var img = document.createElement('img');
+    img.style.width = '1120px';
+    img.style.height = '4800px';
+    img.src = "/api/user/" + currentUser_id  +"/simulateportfolio";
+    $('#simPortfolioContent').append(img);
+    document.getElementById("simulate-portfolio").onclick=function() {
+        $('#simPortfolio').modal('show'); 
+    }
 }
 
 function setDownloadLink() {
