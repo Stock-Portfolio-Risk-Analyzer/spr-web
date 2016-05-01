@@ -1,5 +1,4 @@
 import numpy
-import pandas
 from django.db.models import Count
 
 from datautils import rri as rri
@@ -123,6 +122,7 @@ def precompute_prices_for_all_stocks():
                 stock.save()
         except:
             continue
+
 
 def _calculate_risk(risk):
     """

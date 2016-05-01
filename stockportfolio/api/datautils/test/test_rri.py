@@ -1,10 +1,10 @@
 import math
 import unittest
-from datetime import datetime as dt
 
 from mock import Mock
 
-from stockportfolio.api.datautils.rri import *
+from stockportfolio.api.datautils.rri import (compute_portfolio_rri_for_range,
+                                              compute_stock_rri_for_range)
 
 
 """
@@ -12,6 +12,7 @@ Test methods in rri.py
 Author: Shivam Gupta (sgupta40@illinois.edu)
         Rohan Kapoor (rkapoor6@illinois.edu)
 """
+
 
 class TestRRI(unittest.TestCase):
 
@@ -33,7 +34,10 @@ class TestRRI(unittest.TestCase):
         self.assertTrue(rri > 0)
 
     def test_compute_portfolio_rri_for_range2(self):
-        """ Tests the compute_portfolio_rri_for_range function when quantity is zero"""
+        """
+        Tests the compute_portfolio_rri_for_range function
+        when quantity is zero
+        """
         apple = Mock()
         apple.stock.stock_ticker = 'AAPL'
         apple.quantity = 0

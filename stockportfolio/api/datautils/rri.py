@@ -25,13 +25,17 @@ with open(fpath, 'rb') as csvfile:
 
 def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
     link = str("WIKI/" + symbol)
-    quandl_key  = "SyH7V4ywJGho77EC6W7C"
-    quandl_data = Quandl.get(link, authtoken=quandl_key, trim_start=start_date, trim_end=end_date)["Close"]
+    quandl_key = "SyH7V4ywJGho77EC6W7C"
+    quandl_data = Quandl.get(
+        link, authtoken=quandl_key, trim_start=start_date, trim_end=end_date)
+    quandl_data = quandl_data["Close"]
     verify = []
 
     if len(yahoo_data) == len(quandl_data):
         for i in range(0, len(yahoo_data)):
-            tolerance = ( (quandl_data[i] -  (quandl_data[i]*0.02) ) < yahoo_data[i] < (quandl_data[i] +  (quandl_data[i]*0.02) ) )
+            cur_quandl = quandl_data[i]
+            tolerance = ((cur_quandl - (cur_quandl * 0.02)) <
+                         yahoo_data[i] < (cur_quandl + (cur_quandl * 0.02)))
             if tolerance:
                 verify.append(1)
             else:
@@ -42,6 +46,7 @@ def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
             return yahoo_data
         else:
             return quandl_data
+
 
 def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
     """
@@ -58,11 +63,14 @@ def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
 
     # Data Integrity
     if symbol.lower() in tickers:
-        closing_price = verify_data_with_quandl(symbol, start_date, end_date, closing_price)
+        closing_price = verify_data_with_quandl(
+            symbol, start_date, end_date, closing_price)
 
     daily_change = []
-    for i in range(0, len(closing_price)-1):
-        daily_change.append(((closing_price[i+1] - closing_price[i])/closing_price[i])*100)
+    for i in range(0, len(closing_price) - 1):
+        cur = closing_price[i]
+        daily_change.append(
+            ((closing_price[i + 1] - cur) / cur) * 100)
 
     return daily_change
 
@@ -70,7 +78,7 @@ def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
 def compute_daily_change_for_range(symbol, start_date, end_date):
     """
     Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-            start_date, end_date -> range you want to compute on (Type -> String)
+        start_date, end_date -> range you want to compute on (Type -> String)
 
     return: list of daily change (Type -> list float)
     """
@@ -79,11 +87,13 @@ def compute_daily_change_for_range(symbol, start_date, end_date):
 
     # Data Integrity
     if symbol.lower() in tickers:
-        closing_price = verify_data_with_quandl(symbol, start_date, end_date, closing_price)
+        closing_price = verify_data_with_quandl(
+            symbol, start_date, end_date, closing_price)
 
     daily_change = []
-    for i in range(0, len(closing_price)-1):
-        daily_change.append(((closing_price[i+1] - closing_price[i])/closing_price[i])*100)
+    for i in range(0, len(closing_price) - 1):
+        cur = closing_price[i]
+        daily_change.append(((closing_price[i + 1] - cur) / cur) * 100)
 
     return daily_change
 
@@ -95,15 +105,15 @@ def compute_covariance(a, b):
     Return: float
     """
 
-    a_mean = (sum(a)/len(a))
-    b_mean = (sum(b)/len(b))
+    a_mean = (sum(a) / len(a))
+    b_mean = (sum(b) / len(b))
 
     total = 0
 
     for i in range(0, len(a)):
         total += ((a[i] - a_mean) * (b[i] - b_mean))
 
-    return (total/(len(a)-1))
+    return (total / (len(a) - 1))
 
 
 def compute_variance(a):
@@ -124,27 +134,32 @@ def compute_stock_rri_for_today(symbol, number_of_days_back):
 
     return: float
     """
-    stock_daily_change  = compute_daily_change_for_past_given_days(symbol, number_of_days_back)
-    index_daily_change  = compute_daily_change_for_past_given_days("NYA", number_of_days_back)
+    stock_daily_change = compute_daily_change_for_past_given_days(
+        symbol, number_of_days_back)
+    index_daily_change = compute_daily_change_for_past_given_days(
+        "NYA", number_of_days_back)
 
     covariance_val = compute_covariance(stock_daily_change, index_daily_change)
-    vairance_val   = compute_variance(index_daily_change)
-    rri = covariance_val/vairance_val
+    vairance_val = compute_variance(index_daily_change)
+    rri = covariance_val / vairance_val
     return (rri + 1)
 
 
 def compute_stock_rri_for_range(symbol, start_date, end_date):
     """
     Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-            start_date, end_date -> range you want to compute rri on (Type -> String)
+            start_date, end_date ->
+                range you want to compute rri on (Type -> String)
     return: float
     """
-    stock_daily_change  = compute_daily_change_for_range(symbol, start_date, end_date)
-    index_daily_change  = compute_daily_change_for_range("NYA", start_date, end_date)
+    stock_daily_change = compute_daily_change_for_range(
+        symbol, start_date, end_date)
+    index_daily_change = compute_daily_change_for_range(
+        "NYA", start_date, end_date)
 
     covariance_val = compute_covariance(stock_daily_change, index_daily_change)
     vairance_val = compute_variance(index_daily_change)
-    rri = covariance_val/vairance_val
+    rri = covariance_val / vairance_val
     return (rri + 1)
 
 
@@ -175,7 +190,8 @@ def compute_portfolio_rri_for_range(stocks, start_date, end_date):
     """
     Computes RRI for a portfolio
     Parameter:  stocks -> list of stock objects
-            start_date, end_date -> range you want to compute rri on (Type -> String)
+            start_date, end_date ->
+                range you want to compute rri on (Type -> String)
     Return: float
     """
     total_rri = 0.0
