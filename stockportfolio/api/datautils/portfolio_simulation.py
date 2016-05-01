@@ -1,9 +1,8 @@
-import datetime as dt
-from functools import partial
-
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import datetime as dt
+from functools import partial
 from django.conf import settings
 from django.http import HttpResponse
 
@@ -11,12 +10,12 @@ from yahoo_finance import get_stock_data
 
 if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
     import matplotlib  # isort:skip
-    matplotlib.use('agg')
     import matplotlib.pyplot as plt  # isort:skip
     from matplotlib import gridspec  # isort:skip
-    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas # isort:skip
+    from matplaotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas  # isort:skip
     from matplotlib.ticker import FuncFormatter  # isort:skip
-    
+    matplotlib.use('agg')
+
 
 
 def get_benchmark_returns(benchmark='SPY', start_date=None, end_date=None, price_field='Adj Close'):
@@ -126,7 +125,7 @@ def get_cum_returns(returns, starting_value=None):
     return df_cum * starting_value
 
 
-def one_dec_places(x, pos):
+def one_dec_places(x, pos=None):
     """
     1/10 decimal places for plot ticks.
     :param x:
@@ -211,8 +210,6 @@ def plot_rolling_returns(portfolio_id, portfolio, ax, volatility_match=False):
 
     :param portfolio_id: (int)
     :param portfolio: (dict) ticker:quantity
-    :param benchmark_returns: (pd.Series) will load by default if None
-    :param legend_loc: (matplotlib.loc) optional
     :param volatility_match: (bool) optional
     :return: (HttpResponse) of a png
     """
@@ -318,7 +315,7 @@ def get_top_drawdowns(returns, n_drawdowns=10):
 
     :param returns: (pd.Series)
     :param n_drawdowns: (int)
-    :return: (list) of pearks/valleys/recoveries
+    :return: (list) of peaks/valleys/recoveries
     """
     returns = returns.copy()
     df_cum = get_cum_returns(returns, 1.0)
@@ -333,7 +330,7 @@ def get_top_drawdowns(returns, n_drawdowns=10):
             underwater.drop(underwater[peak: recovery].index[1:-1],
                             inplace=True)
         else:
-            underwater = underwater.loc[:peak] # still in drawdown period
+            underwater = underwater.loc[:peak]  # still in drawdown period
 
         drawdowns.append((peak, valley, recovery))
         if (len(returns) == 0) or (len(underwater) == 0):
