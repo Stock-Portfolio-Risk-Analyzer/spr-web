@@ -4,9 +4,9 @@ import random
 import re
 import string
 import time
-import requests
 
 import feedparser
+import requests
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -20,7 +20,7 @@ import datautils.portfolio_simulation as ps
 import stockportfolio.api.rec_utils as rec_utils
 from stockportfolio.api.api import _calculate_stock_info
 from stockportfolio.api.datautils import yahoo_finance as yf
-from stockportfolio.api.datautils import sentiment, stock_info
+from stockportfolio.api.datautils import sentiment
 from stockportfolio.api.forms import PortfolioUploadForm, UpdateProfile
 from stockportfolio.api.models import Portfolio, Stock, UserSettings
 from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
@@ -230,8 +230,13 @@ def generate_portfolio(request):
 
 def simulate_portfolio(request, portfolio_id):
     if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
-        url = settings.ADVANCED_SETTINGS['REMOTE_SIMULATION_URL'] + request.path
-        return requests.get(url).content()
+        url = (settings.ADVANCED_SETTINGS['REMOTE_SIMULATION_URL'] +
+               request.path)
+        try:
+            response = requests.get(url, stream=True)
+            return HttpResponse(response.raw, content_type='image/png')
+        except:
+            return HttpResponse(500)
 
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if not portfolio.portfolio_stocks.count() > 0:

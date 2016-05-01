@@ -10,16 +10,17 @@ from yahoo_finance import get_stock_data
 
 if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
     import matplotlib  # isort:skip
+    matplotlib.use('agg')
     import matplotlib.pyplot as plt  # isort:skip
     from matplotlib import gridspec  # isort:skip
     from matplotlib.backends.backend_agg import FigureCanvasAgg  # isort:skip
     from matplotlib.ticker import FuncFormatter  # isort:skip
-    import seaborn as sns # isort:skip
-    matplotlib.use('agg')
+    import seaborn as sns  # isort:skip
 
 
-
-def get_benchmark_returns(benchmark='SPY', start_date=None, end_date=None, price_field='Adj Close'):
+def get_benchmark_returns(
+        benchmark='SPY', start_date=None, end_date=None,
+        price_field='Adj Close'):
     """
     Get the daily (non-cumulative) percent returns for the benchmark.
     :param start_date: (DateTime)
@@ -33,13 +34,16 @@ def get_benchmark_returns(benchmark='SPY', start_date=None, end_date=None, price
     if end_date is None:
         end_date = dt.datetime.today()
 
-    benchmark_price_series = get_stock_data(benchmark, start_date=start_date, end_date=end_date)[price_field]
+    benchmark_price_series = get_stock_data(
+        benchmark, start_date=start_date, end_date=end_date)[price_field]
     return benchmark_price_series.pct_change().dropna()
 
 
-def get_portfolio_returns_series(portfolio, start_date=None, end_date=None, price_field='Adj Close'):
+def get_portfolio_returns_series(
+        portfolio, start_date=None, end_date=None, price_field='Adj Close'):
     """
-    Simulates portfolio returns assuming the portfolio was bought on start_date and held through end_date
+    Simulates portfolio returns assuming the portfolio was bought on
+    start_date and held through end_date
     :param portfolio:
     :param start_date:
     :param end_date:
@@ -51,18 +55,19 @@ def get_portfolio_returns_series(portfolio, start_date=None, end_date=None, pric
     if end_date is None:
         end_date = dt.datetime.today()
 
-    portfolio_value_series = get_portfolio_value_series(portfolio,
-                                                        start_date=start_date,
-                                                        end_date=end_date,
-                                                        price_field=price_field)
+    portfolio_value_series = get_portfolio_value_series(
+        portfolio, start_date=start_date, end_date=end_date,
+        price_field=price_field)
 
     portfolio_returns_series = portfolio_value_series.pct_change().dropna()
     return portfolio_returns_series
 
 
-def get_portfolio_value_series(portfolio, start_date=None, end_date=None, price_field='Adj Close'):
+def get_portfolio_value_series(
+        portfolio, start_date=None, end_date=None, price_field='Adj Close'):
     """
-    Generate a time-series of the portfolio assuming the portfolio was bought on start_date and held through end_date.
+    Generate a time-series of the portfolio assuming the portfolio was bought
+    on start_date and held through end_date.
     :param portfolio: (dict) symbol:quantity
     :param start_date: (DateTime)
     :param end_date: (DateTime)
@@ -77,20 +82,24 @@ def get_portfolio_value_series(portfolio, start_date=None, end_date=None, price_
     position_values = []
     date_range = pd.date_range(start_date, end_date)
     for symbol, quantity in portfolio.items():
-        position_value_series = get_position_value_series(symbol, quantity, start_date, end_date, price_field)
+        position_value_series = get_position_value_series(
+            symbol, quantity, start_date, end_date, price_field)
         position_values.append(position_value_series)
 
     portfolio_value_series = pd.Series(data=0, index=date_range)
     for symbol_value_series in position_values:
-        portfolio_value_series = portfolio_value_series+symbol_value_series
+        portfolio_value_series = portfolio_value_series + symbol_value_series
 
     portfolio_value_series = portfolio_value_series.dropna()
     return portfolio_value_series
 
 
-def get_position_value_series(symbol, quantity, start_date=None, end_date=None, price_field='Adj Close'):
+def get_position_value_series(
+        symbol, quantity, start_date=None,
+        end_date=None, price_field='Adj Close'):
     """
-    Generate a time-series of a single position's value assuming it was bought on start_date and held through end_date.
+    Generate a time-series of a single position's value assuming
+    it was bought on start_date and held through end_date.
     :param symbol: (str)
     :param quantity: (float)
     :param start_date: (DateTime)
@@ -104,8 +113,9 @@ def get_position_value_series(symbol, quantity, start_date=None, end_date=None, 
         end_date = dt.datetime.today()
 
     price_series = get_stock_data(symbol, start_date, end_date)[price_field]
-    holdings = pd.Series(data=quantity, index=pd.date_range(start_date, end_date))
-    position_value_series = (price_series*holdings).dropna()
+    holdings = pd.Series(
+        data=quantity, index=pd.date_range(start_date, end_date))
+    position_value_series = (price_series * holdings).dropna()
     return position_value_series
 
 
@@ -152,7 +162,8 @@ def basic_linear_regression(x, y):
     sum_y = sum(y)
     sum_x_squared = sum(map(lambda a: a * a, x))
     sum_of_products = sum([x[i] * y[i] for i in range(length)])
-    a = (sum_of_products - (sum_x * sum_y) / length) / (sum_x_squared - ((sum_x ** 2) / length))
+    a = ((sum_of_products - (sum_x * sum_y) / length) /
+         (sum_x_squared - ((sum_x ** 2) / length)))
     b = (sum_y - a * sum_x) / length
     return a, b
 
@@ -161,11 +172,13 @@ def alpha_beta(returns, benchmark_returns):
     """
     Calculates alpha and beta.
     :param returns: (pd.Series) daily returns (non-cumulative)
-    :param benchmark_returns:  (pd.Series) benchmark daily returns (non-cumulative) used to calculate beta
+    :param benchmark_returns:  (pd.Series) benchmark daily returns
+        (non-cumulative) used to calculate beta
     :return: (float) alpha, (float) beta
     """
     ret_index = returns.index
-    beta, alpha = basic_linear_regression(benchmark_returns.loc[ret_index].values, returns.values)[:2]
+    beta, alpha = basic_linear_regression(
+        benchmark_returns.loc[ret_index].values, returns.values)[:2]
     return alpha * 21, beta
 
 
@@ -200,7 +213,8 @@ def aggregate_returns(daily_returns, convert_to):
             [lambda x: x.year]).apply(cumulate_returns)
     else:
         ValueError(
-            'convert_to must be {}, {} or {}'.format('weekly', 'monthly', 'yearly')
+            'convert_to must be {}, {} or {}'.format(
+                'weekly', 'monthly', 'yearly')
         )
 
 
@@ -222,7 +236,8 @@ def plot_rolling_returns(portfolio_id, portfolio, ax, volatility_match=False):
     benchmark_returns = get_benchmark_returns('SPY')
 
     if volatility_match and benchmark_returns is None:
-        raise ValueError('volatility_match requires passing of factor_returns.')
+        raise ValueError(
+            'volatility_match requires passing of factor_returns.')
     elif volatility_match and benchmark_returns is not None:
         benchmark_vol = benchmark_returns.loc[returns.index].std()
         returns = (returns / returns.std()) * benchmark_vol
@@ -240,11 +255,12 @@ def plot_rolling_returns(portfolio_id, portfolio, ax, volatility_match=False):
                                 ax=ax,)
 
     is_cum_returns = cum_returns
-    is_cum_returns.plot(lw=3,
-                        color='forestgreen',
-                        alpha=0.6,
-                        label='Portfolio {} Simulated Returns'.format(portfolio_id),
-                        ax=ax, )
+    is_cum_returns.plot(
+        lw=3,
+        color='forestgreen',
+        alpha=0.6,
+        label='Portfolio {} Simulated Returns'.format(portfolio_id),
+        ax=ax, )
 
     ax.legend(loc='best')
     ax.axhline(1.0, linestyle='--', color='black', lw=2)
@@ -253,19 +269,25 @@ def plot_rolling_returns(portfolio_id, portfolio, ax, volatility_match=False):
 
 def rolling_beta(returns, benchmark_returns, rolling_window=21 * 6):
     """
-    Calculates the rolling beta (given the rolling_window) of the portfolio simulation vs the benchmark_returns.
+    Calculates the rolling beta (given the rolling_window) of the portfolio
+    simulation vs the benchmark_returns.
     :param returns: (pd.Series) noncumulative daily returns of portfolio
-    :param benchmark_returns: (pd.Series) noncumulative daily returns of the benchmark
+    :param benchmark_returns: (pd.Series) noncumulative daily returns of
+        the benchmark
     :param rolling_window: (int) size of rolling window in days
     :return: (pd.Series) rolling beta
     See https://en.wikipedia.org/wiki/Beta_(finance) for more details.
     """
     if benchmark_returns.ndim > 1:
-        return benchmark_returns.apply(partial(rolling_beta, returns), rolling_window=rolling_window)
+        return benchmark_returns.apply(
+            partial(rolling_beta, returns), rolling_window=rolling_window)
     else:
         out = pd.Series(index=returns.index)
-        for beg, end in zip(returns.index[0:-rolling_window], returns.index[rolling_window:]):
-            out.loc[end] = alpha_beta(returns.loc[beg:end], benchmark_returns.loc[beg:end])[1]
+        tuples = zip(
+            returns.index[0:-rolling_window], returns.index[rolling_window:])
+        for beg, end in tuples:
+            out.loc[end] = alpha_beta(
+                returns.loc[beg:end], benchmark_returns.loc[beg:end])[1]
         return out
 
 
@@ -273,7 +295,8 @@ def plot_rolling_beta(returns, benchmark_returns, ax):
     """
     Plots the rolling 6-month and 12-month beta versus date.
     :param returns: (pd.Series) noncumulative daily returns of portfolio
-    :param benchmark_returns: (pd.Series) noncumulative daily returns of the benchmark
+    :param benchmark_returns: (pd.Series) noncumulative daily returns of
+        the benchmark
     :param ax: (matplotlib.Axes)
     :return:
     """
@@ -348,30 +371,40 @@ def gen_drawdown_table(returns, n_drawdown_periods=10):
     :return:
     """
     cum_returns = get_cum_returns(returns, 1.0)
-    drawdown_periods = get_top_drawdowns(returns, n_drawdowns=n_drawdown_periods)
-    df_drawdowns = pd.DataFrame(index=list(range(n_drawdown_periods)),columns=['net drawdown in %',
-                                                                               'peak date',
-                                                                               'valley date',
-                                                                               'recovery date',
-                                                                               'duration'])
+    drawdown_periods = get_top_drawdowns(
+        returns, n_drawdowns=n_drawdown_periods)
+    df_drawdowns = pd.DataFrame(
+        index=list(range(n_drawdown_periods)), columns=['net drawdown in %',
+                                                        'peak date',
+                                                        'valley date',
+                                                        'recovery date',
+                                                        'duration'])
 
     for i, (peak, valley, recovery) in enumerate(drawdown_periods):
         if pd.isnull(recovery):
             df_drawdowns.loc[i, 'duration'] = np.nan
         else:
-            df_drawdowns.loc[i, 'duration'] = len(pd.date_range(peak, recovery, freq='B'))
-        df_drawdowns.loc[i, 'peak date'] = (peak.to_pydatetime().strftime('%Y-%m-%d'))
-        df_drawdowns.loc[i, 'valley date'] = (valley.to_pydatetime().strftime('%Y-%m-%d'))
+            df_drawdowns.loc[i, 'duration'] = len(
+                pd.date_range(peak, recovery, freq='B'))
+        df_drawdowns.loc[i, 'peak date'] = (
+            peak.to_pydatetime().strftime('%Y-%m-%d'))
+        df_drawdowns.loc[i, 'valley date'] = (
+            valley.to_pydatetime().strftime('%Y-%m-%d'))
         if isinstance(recovery, float):
             df_drawdowns.loc[i, 'recovery date'] = recovery
         else:
-            df_drawdowns.loc[i, 'recovery date'] = (recovery.to_pydatetime().strftime('%Y-%m-%d'))
+            df_drawdowns.loc[i, 'recovery date'] = (
+                recovery.to_pydatetime().strftime('%Y-%m-%d'))
         df_drawdowns.loc[i, 'net drawdown in %'] = \
-            ((cum_returns.loc[peak] - cum_returns.loc[valley]) / cum_returns.loc[peak]) * 100
+            ((cum_returns.loc[peak] - cum_returns.loc[valley]) /
+             cum_returns.loc[peak]) * 100
 
-    df_drawdowns['peak date'] = pd.to_datetime(df_drawdowns['peak date'], unit='D')
-    df_drawdowns['valley date'] = pd.to_datetime(df_drawdowns['valley date'], unit='D')
-    df_drawdowns['recovery date'] = pd.to_datetime(df_drawdowns['recovery date'], unit='D')
+    df_drawdowns['peak date'] = pd.to_datetime(
+        df_drawdowns['peak date'], unit='D')
+    df_drawdowns['valley date'] = pd.to_datetime(
+        df_drawdowns['valley date'], unit='D')
+    df_drawdowns['recovery date'] = pd.to_datetime(
+        df_drawdowns['recovery date'], unit='D')
 
     return df_drawdowns
 
@@ -387,12 +420,14 @@ def plot_drawdown_periods(returns, ax, n_drawdown_periods=10):
     y_axis_formatter = FuncFormatter(one_dec_places)
     ax.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
     df_cum_rets = get_cum_returns(returns, starting_value=1.0)
-    df_drawdowns = gen_drawdown_table(returns, n_drawdown_periods=n_drawdown_periods)
+    df_drawdowns = gen_drawdown_table(
+        returns, n_drawdown_periods=n_drawdown_periods)
 
     df_cum_rets.plot(ax=ax)
     lim = ax.get_ylim()
     colors = sns.cubehelix_palette(len(df_drawdowns))[::-1]
-    for i, (peak, recovery) in df_drawdowns[['peak date', 'recovery date']].iterrows():
+    objs = df_drawdowns[['peak date', 'recovery date']]
+    for i, (peak, recovery) in objs.iterrows():
         if pd.isnull(recovery):
             recovery = returns.index[-1]
         ax.fill_between((peak, recovery), lim[0], lim[1],
@@ -448,7 +483,8 @@ def plot_annual_returns(returns, ax):
                linestyle='--',
                lw=4,
                alpha=0.7)
-    (100 * annual_returns.sort_index(ascending=False)).plot(ax=ax, kind='barh', alpha=0.70)
+    ((100 * annual_returns.sort_index(ascending=False))
+     .plot(ax=ax, kind='barh', alpha=0.70))
     ax.axvline(0.0, color='black', linestyle='-', lw=3)
     ax.set_ylabel('Year')
     ax.set_xlabel('Returns')
@@ -499,13 +535,16 @@ def create_returns_tear_sheet(portfolio_id, portfolio, benchmark_rets=None):
     returns = get_portfolio_returns_series(portfolio)
     if benchmark_rets is None:
         benchmark_rets = get_benchmark_returns('SPY')
-        benchmark_rets.index = pd.DatetimeIndex([i.replace(tzinfo=None) for i in benchmark_rets.index])
+        benchmark_rets.index = pd.DatetimeIndex(
+            [i.replace(tzinfo=None) for i in benchmark_rets.index])
 
     vertical_sections = 4
     fig = plt.figure(figsize=(14, vertical_sections * 3))
-    gs = gridspec.GridSpec(vertical_sections, 3, wspace=0.5, hspace=0.5, right=0.99)
+    gs = gridspec.GridSpec(
+        vertical_sections, 3, wspace=0.5, hspace=0.5, right=0.99)
     ax_rolling_returns = plt.subplot(gs[0, :])
-    ax_rolling_returns_vol_match = plt.subplot(gs[0, :], sharex=ax_rolling_returns)
+    ax_rolling_returns_vol_match = plt.subplot(
+        gs[0, :], sharex=ax_rolling_returns)
     ax_rolling_beta = plt.subplot(gs[1, :], sharex=ax_rolling_returns)
     ax_drawdown = plt.subplot(gs[2, :], sharex=ax_rolling_returns)
     ax_monthly_heatmap = plt.subplot(gs[3, 0])
@@ -513,10 +552,14 @@ def create_returns_tear_sheet(portfolio_id, portfolio, benchmark_rets=None):
     ax_monthly_dist = plt.subplot(gs[3, 2])
 
     # plots
-    plot_rolling_returns(portfolio_id, portfolio, ax=ax_rolling_returns, volatility_match=False)
+    plot_rolling_returns(
+        portfolio_id, portfolio, ax=ax_rolling_returns, volatility_match=False)
     ax_rolling_returns.set_title('Cumulative Returns')
-    plot_rolling_returns(portfolio_id, portfolio, ax=ax_rolling_returns_vol_match, volatility_match=True)
-    ax_rolling_returns_vol_match.set_title('Cumulative returns volatility matched to benchmark.')
+    plot_rolling_returns(
+        portfolio_id, portfolio,
+        ax=ax_rolling_returns_vol_match, volatility_match=True)
+    ax_rolling_returns_vol_match.set_title(
+        'Cumulative returns volatility matched to benchmark.')
     plot_rolling_beta(returns, benchmark_rets, ax=ax_rolling_beta)
     plot_drawdown_periods(returns, ax=ax_drawdown, n_drawdown_periods=5)
     plot_monthly_returns_heatmap(returns, ax=ax_monthly_heatmap)
