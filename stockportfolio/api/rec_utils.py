@@ -9,6 +9,7 @@ def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     """
     Helper function to pick stocks by sector
 
+
     :param portfolio: user's portfolio
     :param all_stocks: list of all available stocks
     :param num_stocks: number of stocks to fetch
@@ -275,7 +276,7 @@ def _fetch_target_value(portfolio):
     """
     Given a portfolio, this function returns a range within which the value of
     the portfolio lies. Used to calculate quantities for generated portfolios
-    
+
     :param portfolio:
     """
     tvalue_low = 0

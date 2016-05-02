@@ -12,7 +12,7 @@ API that computes sentiment for a given Stock or Portfolio
 Author - Shivam Gupta (sgupta40@illinois.edu)
 """
 
-quandl_key = "hJFsm6TLFgZmhD8NtsS9"
+quandl_key = '-6X6UvP1aeit_zybGREM'
 
 tickers = []
 ticker_sentiment = {}
