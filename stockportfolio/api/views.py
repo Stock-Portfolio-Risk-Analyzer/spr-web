@@ -206,7 +206,7 @@ def generate_portfolio(request):
         else:
             ' than ' + str(p_risk)
         new_portfolio = rec_utils.get_recommendations(
-            rec_utils._recommender_high_risk,
+            rec_utils._recommender_high_risk, all_stocks,
             random.randint(lower_bound, upper_bound), p_risk)
     new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(
         portfolio, new_portfolio)

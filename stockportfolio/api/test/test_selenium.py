@@ -39,6 +39,7 @@ class SeleniumTestCase(LiveServerTestCase):
         cls.login()
 
     def setUp(self):
+        self.cls = SeleniumTestCase
         self.new_page = lambda driver: driver.find_element_by_tag_name('body')
         self.timeout = 20
 
@@ -121,56 +122,11 @@ class SeleniumTestCase(LiveServerTestCase):
        ma = cls.driver.find_elements_by_xpath("//*[@data-target='#userAccountModal']") 
        self.assertEqual(len(ma), 1)
        ma[0].click()
-       username_box = cls.driver.find_elements_by_xpath("//*[@value='%s']" % (cls.user_info['user_name']))[0]
+       username_box = cls.driver.find_elements_by_xpath(
+        "//*[@value='%s']" % (cls.user_info['user_name']))[0]
        cls.user_info['user_name'] = 'test_user_2'
        wait = WebDriverWait(cls.driver, 60)
        wait.until(EC.visibility_of_element_located((By.ID, 'id_username')))
        username_box.send_keys(SeleniumTestCase.user_info['user_name'])
        SeleniumTestCase.driver.find_element_by_id('submit-id-submit').click() 
-
-    '''
-    def test_add_portfolios(self):
-        cls = SeleniumTestCase
-        SeleniumTestCase.driver.get(SeleniumTestCase.live_server_url + '/dashboard/')       
-        self.wait(self.new_page, self.timeout)
-        self.assertEqual(cls.driver.title, 'SPRA | %s\'s profile' % (cls.user_info['user_name']))
-        for p in cls.portfolios:
-            add_btn  = cls.driver.find_element_by_id('add-portfolio')
-            WebDriverWait(cls.driver, 60)
-            add_btn.click()
-            wait = WebDriverWait(cls.driver, 60)
-            wait.until(EC.visibility_of_element_located((By.ID, 'pname')))
-            # fill out portfolio form
-            portfolio_name = cls.driver.find_element_by_id('pname')
-            portfolio_name.send_keys(p['portfolio_name'])
-            row_btn  = cls.driver.find_element_by_id('add-row')
-            save_btn = cls.driver.find_element_by_id('save-button')
-            row_btn.click()
-            ac = ActionChains(cls.driver)
-            t = cls.driver.find_elements_by_class_name('modal-title')
-            ac.move_to_element(t[0]).move_by_offset(0,0).click().perform()
-            wait = WebDriverWait(cls.driver, 60)
-            wait.until(EC.visibility_of_element_located((By.ID, 'quantity')))
-            symbol = cls.driver.find_element_by_id('symbol')
-            symbol.send_keys(p['stock_symbol'])
-            quantity = cls.driver.find_element_by_id('quantity')
-            quantity.send_keys(p['stock_amount'])
-            save_btn.click()
-    '''
-    def test_import_export_portfolio(self):
-        cls = SeleniumTestCase
-        dl_button = cls.driver.find_element_by_id('download-portfolio')
-        self.assertEqual(dl_button.text, 'Export Portfolio (csv)')
-        ul_button = cls.driver.find_element_by_id('upload-portfolio')
-        #self.assertEqual(ul_button.text, 'Import Portfolio (csv)')
-
-
-
-    def test_generated_portfolio(self):
-        cls = SeleniumTestCase
-        gen_button = cls.driver.find_element_by_id('generate-portfolio')
-        self.assertEqual(gen_button.text, 'Generate Portfolio')
-        #gen_button.click()
-        #x = cls.driver.find_elements_by_xpath("//*[@data-dismiss='modal']") 
-        #x.click()
     
