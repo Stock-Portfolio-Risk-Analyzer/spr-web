@@ -33,7 +33,7 @@ def dashboard(request):
     Prepares the context of dashboard adding portfolio,user, stock information
 
     :param request: (HTTPRequest Object)
-    :return render_template:
+    :return render_template: renders index.html
     """
     
     if request.user.is_anonymous():
@@ -69,8 +69,8 @@ def landing(request):
     """
     Redirects authenticated user from landing page to dashboard
 
-    :param request:
-    :return HttpResponseRedirect: 
+    :param request:(HTTPRequest Object)
+    :return HttpResponseRedirect: HTTPResponse
     """
 
     if request.user.is_anonymous():
@@ -82,9 +82,9 @@ def ticker(request, symbol):
     """         
     Gets current stock price having a ticker
 
-    :param request:
+    :param request:(HTTPRequest Object)
     :param symbol: (string)   
-    :return HttpResponseRedirect: 
+    :return HttpResponseRedirect: creates HTTPResponse 
     """
 
     return HttpResponse(yf.get_current_price(symbol))
@@ -93,9 +93,9 @@ def company_name(request, symbol):
     """         
     Gets current stock price having a ticker
 
-    :param request:
+    :param request:(HTTPRequest Object)
     :param symbol: (string)   
-    :return HttpResponseRedirect 
+    :return HttpResponseRedirect: creates HTTPResponse
     """
 
     return HttpResponse(yf.get_company_name(symbol))
@@ -105,9 +105,9 @@ def user_profile(request, user_id):
     """         
     Renders user profile
 
-    :param request:
+    :param request:(HTTPRequest Object)
     :param user_id: (string)   
-    :return render_template:
+    :return render_template: renders user_profile.html
     """
 
     user = User.objects.get(user_id)
@@ -123,8 +123,8 @@ def calculate_all_rris(request):
     """         
     Updates rri for all portfolios
 
-    :param request:
-    :return HttpResponse:
+    :param request:(HTTPRequest Object)
+    :return HttpResponse: HTTPResponse with status 200
     """
 
     update_rri_for_all_portfolios()
@@ -136,8 +136,8 @@ def modify_account(request):
     """         
     Modifies user account
 
-    :param request:
-    :return render_template:
+    :param request:(HTTPRequest Object)
+    :return render_template: renders modify_account modal
     """
 
     if request.method == 'POST':
@@ -153,9 +153,9 @@ def stock_interface(request, ticker):
     """         
     Creates context for stock_interface and renders teh modal
 
-    :param request:
+    :param request:(HTTPRequest Object)
     :param ticker: (string)   
-    :return render_template:
+    :return render_template: renders stock_interface modal
     """
 
     ticker = ticker.upper()
@@ -197,9 +197,9 @@ def stock_rec(request, portfolio_id, rec_type):
     """         
     Renders recommendation modal and populatest he context
 
-    :param request:
+    :param request:(HTTPRequest Object)
     :param portfolio_id: (int)   
-    :return render_template:
+    :return render_template: renders recommendation modal
     """
 
     recs = rec_utils.stock_recommender(request, portfolio_id, rec_type)
@@ -234,8 +234,8 @@ def generate_portfolio(request):
     not selected a default. If there are no user portfolios, a risk between
     -2.5 and 2.5 is selected.
 
-    :param request
-    :return render_template:
+    :param request:(HTTPRequest Object)
+    :return render_template: renders generate_portfolio modal
     """
 
     if request.user.is_anonymous():
@@ -299,9 +299,9 @@ def simulate_portfolio(request, portfolio_id):
     """         
     Populates simulate profolio with statistics png
 
-    :param request:
+    :param request:(HTTPRequest Object)
     :param portfolio_id: (int)   
-    :return HttpResponse:
+    :return HttpResponse: redirects to portfolio simulation
     """
 
     if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
