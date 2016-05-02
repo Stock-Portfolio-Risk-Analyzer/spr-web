@@ -163,9 +163,9 @@ def basic_linear_regression(x, y):
     """
     Simple linear-regression function.
 
-    :param x:
-    :param y:
-    :return:
+    :param x: (list of int) scalar
+    :param y: (int) dependent variable
+    :return: least-sq coefficient
     """
     length = len(x)
     sum_x = sum(x)

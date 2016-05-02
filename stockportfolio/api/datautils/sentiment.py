@@ -29,10 +29,10 @@ tickers = list(set(tickers))
 
 def get_stock_sentiment(symbol):
     """
-    TODO
+    This function returns the sentiment for a stock
 
-    :param symbol:
-    :return:
+    :param symbol: symbol for stock
+    :return: returns 1 or -1 depending on function run
     """
     if symbol.lower() in tickers:
         return 1 if float(ticker_sentiment[symbol.upper()]) > 0 else -1
@@ -42,10 +42,11 @@ def get_stock_sentiment(symbol):
 
 def get_sentiment_of_a_portfolio(stocks):
     """
-    TODO
+    This function returns the sentiment for a portfolio by calculating
+    sentiment for each stock and averaging them.
 
-    :param stocks:
-    :return:
+    :param stocks: Stocks is a list of stocks
+    :return: returns a sentiment value
     """
     sentiment = []
     for stock in stocks:
@@ -57,12 +58,13 @@ def get_sentiment_of_a_portfolio(stocks):
 
 def get_stock_sentiment_for_a_range(symbol, start_date, end_date):
     """
-    TODO
+    This function calculates the stock sentiment for a certain symbol
+    for a certain start and end date
 
-    :param symbol:
-    :param start_date:
-    :param end_date:
-    :return:
+    :param symbol: Symbol for stock
+    :param start_date: Start date for the range
+    :param end_date: End date for the range
+    :return: list of sentiments for range
     """
     link = str("AOS/" + symbol)
     temp_sentiment_list = Quandl.get(
@@ -78,12 +80,13 @@ def get_stock_sentiment_for_a_range(symbol, start_date, end_date):
 
 def get_average_stock_sentiment_for_a_range(symbol, start_date, end_date):
     """
-    TODO
+    This function calculates the average stock sentiment for a certain symbol
+    for a certain range between start date and end date
 
-    :param symbol:
-    :param start_date:
-    :param end_date:
-    :return:
+    :param symbol: Symbol for stock
+    :param start_date: Start date for the range
+    :param end_date: End date for the range
+    :return: average sentiment for range
     """
     sentiment_list = get_stock_sentiment_for_a_range(
         symbol, start_date, end_date)
@@ -92,9 +95,10 @@ def get_average_stock_sentiment_for_a_range(symbol, start_date, end_date):
 
 def get_market_sentiment():
     """
-    TODO
+    This function calculates the market sentiment by calling the Quandl
+    API
 
-    :return:
+    :return: market sentiment
     """
     sentiment = Quandl.get(
         "AOS/SNP", authtoken=quandl_key, trim_end=date.today())
