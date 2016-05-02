@@ -12,9 +12,7 @@ class TestPortfolioSimulation(unittest.TestCase):
 
     """
     Create a fixture Portfolio Simulation testing
-​
     :param cls: (class instance)
-
     """
 
     @classmethod
