@@ -8,6 +8,7 @@ from stockportfolio.api.models import Portfolio, Stock
 def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     """
     Helper function to pick stocks by sector
+
     :portfolio
     :param all_stocks: list of all available stocks
     :param num_stocks: number of stocks to fetch
@@ -39,6 +40,7 @@ def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
 def get_recommendations(compare, stocks, num_stocks, p_risk):
     """
     Fetches stock recommendations based on the result of a parameter function
+
     :param compare: function that returns a bool when given stock risk
     :param stocks:
     :param num_stocks: number of stocks to fetch
@@ -61,6 +63,7 @@ def get_portfolio_and_risk(user, user_settings):
     Acquires the user portfolio if it exists, as well as risk
     If the user has no portfolios, a portfolio risk between
     -2.5 and 2.5 is chosen
+
     :param user
     :param user_settings
     """
@@ -81,6 +84,7 @@ def get_portfolio_and_risk(user, user_settings):
 def fetch_tickers(portfolio):
     """
     Helper function to get all stock tickers in a current portfolio
+
     :param portfolio
     """
     tickers = None
@@ -93,6 +97,7 @@ def fetch_tickers(portfolio):
 def stock_slice(all_stocks, limit):
     """
     Helper function to get a random subset of stocks
+
     :param all_stocks: list of stocks
     :param limit: number of stocks to select
     """
@@ -117,6 +122,7 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
     Given an old portfolio and a list of stocks, this function tries to
     generate an appropriate quantity for each stock, s.t. the value of the
     resulting portfolio is within +/- 20 percent of the old
+
     :param curr_portfolio: portfolio to match
     :param new_portfolio: list of stocks to weight w/ quantities
     """
@@ -235,6 +241,7 @@ def _fetch_target_value(portfolio):
     """
     Given a portfolio, this function returns a range within which the value of
     the portfolio lies. Used to calculate quantities for generated portfolios
+
     :param portfolio
     """
     tvalue_low = 0
@@ -256,6 +263,7 @@ def _fetch_target_value(portfolio):
 def _calculate_portfolio_value(portfolio):
     """
     Determines portfolio value
+
     :param portfolio: a list of (ticker, quantity, price)
     """
     value = 0
@@ -276,6 +284,7 @@ def _get_latest_stock_price(stock):
 def _get_latest_stock_risk(stock):
     """
     Helper function to acquire the latest stock risk, if it exists.
+
     :param stock
     """
     stock_risk = None
@@ -291,6 +300,7 @@ def _get_latest_stock_risk(stock):
 def _get_latest_portfolio_risk(portfolio):
     """
     Helper function to fetch the latest portfolio risk, if it exists.
+
     :param portfolio
     """
     p_risk = None
@@ -306,6 +316,7 @@ def _get_latest_portfolio_risk(portfolio):
 def _get_all_sectors(portfolio):
     """
     Function to fetch all the sectors a portfolio has
+
     :param portfolio
     """
     sectors = []
