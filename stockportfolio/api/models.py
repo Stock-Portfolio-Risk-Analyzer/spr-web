@@ -71,8 +71,10 @@ class Stock(models.Model):
         stock_ticker: CharField - Holds Stock Symbol
         stock_name: CharField - Holds Company Full Name
         stock_sector: CharField - Holds Sector Stock Belongs To (default=Other)
-        stock_risk: ManyToManyField(Risk) - List of Risk Objects generated for stock.
-        stock_price: ManyToManyField(Price) - List of Prices calculated for stock.
+        stock_risk: ManyToManyField(Risk) - List of Risk Objects
+        generated for stock.
+        stock_price: ManyToManyField(Price) - List of Prices calculated
+        for stock.
     """
     stock_id = models.AutoField(primary_key=True)
     stock_ticker = models.CharField(max_length=8, default="")
@@ -84,7 +86,8 @@ class Stock(models.Model):
     def __str__(self):
         """
         Creates a string representation for the model.
-        :return: String Representation of Risk, '(Stock ID in DB) @ (Stock Ticker)'
+        :return: String Representation of Risk,
+        '(Stock ID in DB) @ (Stock Ticker)'
         """
         return '{} {}'.format(self.stock_id, self.stock_ticker)
 
@@ -124,10 +127,13 @@ class Portfolio(models.Model):
     Holds a User's Portfolio Information.
     Includes:
         portfolio_id: AutoField - DB ID for Object
-        portfolio_name: CharField - Holds Name for Portfolio (can be blank/null)
+        portfolio_name: CharField - Holds Name for Portfolio (can be
+         blank/null)
         portfolio_user: ForeignKey - Holds the User this portfolio belongs to.
-        portfolio_risk: ManyToManyField(Risk) - Holds all the Risk Objects computed for a portfolio.
-        portfolio_stocks: ManyToManyField(StockPortfolio) - List of Stocks on Portfolio
+        portfolio_risk: ManyToManyField(Risk) - Holds all the Risk Objects
+         computed for a portfolio.
+        portfolio_stocks: ManyToManyField(StockPortfolio) - List of Stocks on
+         Portfolio
     """
     portfolio_id = models.AutoField(primary_key=True)
     portfolio_name = models.CharField(max_length=50, null=True, blank=True)
@@ -149,7 +155,8 @@ class UserSettings(models.Model):
     Holds a User's Settings
     Includes:
         user: ForeignKey(User) - Holds User for this UserSettings
-        default_portfolio: ForeignKey(Porfolio) - Holds Default/Primary Portfolio for User.
+        default_portfolio: ForeignKey(Porfolio) - Holds Default/Primary
+         Portfolio for User.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     default_portfolio = models.ForeignKey(
@@ -162,7 +169,8 @@ class PortfolioRank(models.Model):
     Holds the rank for portfolio.
     Includes:
         date: DateTimeField - Automatically Timestamped when created.
-        portfolio: ForeignKey(Porfolio) - Holds the Portfolio the Rank belongs to.
+        portfolio: ForeignKey(Porfolio) - Holds the Portfolio the Rank
+         belongs to.
         value: IntegerField - Holds the Rank Value for Portfolio.
     """
     class Meta:
@@ -179,7 +187,8 @@ class PortfolioValue(models.Model):
     Holds the total value for portfolio.
     Includes:
         date: DateTimeField - Automatically Timestamped when created.
-        portfolio: ForeignKey(Porfolio) - Holds the Portfolio the Value belongs to.
+        portfolio: ForeignKey(Porfolio) - Holds the Portfolio the
+         Value belongs to.
         value: FloatField - Holds the total value of the portfolio
     """
 
