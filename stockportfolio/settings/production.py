@@ -9,3 +9,4 @@ EMAIL_HOST_USER = os.environ.get('SPARKPOST_SMTP_USERNAME')
 EMAIL_HOST_PASSWORD = os.environ.get('SPARKPOST_SMTP_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Stock Portfolio <django-sparkpost@sparkpostbox.com>'
+DEBUG = True
