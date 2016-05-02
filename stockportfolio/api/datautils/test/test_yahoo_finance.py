@@ -96,15 +96,5 @@ class TestYahooFinance(unittest.TestCase):
         self.assertEqual(company_name, 'Google Inc.')
 
     def test_get_company_sector(self):
-        """
-        TODO
-
-        :return:
-        """
-        company_sector = yf.get_company_sector(self.symbol)
-        company_name = yf.get_company_name(self.symbol)
-        self.assertEqual(company_name, 'Google Inc.')
-
-    def test_get_company_sector(self):
         company_sector = yf.get_company_sector(self.symbol)
         self.assertEqual(company_sector, 'Technology')

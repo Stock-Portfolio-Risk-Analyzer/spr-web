@@ -27,7 +27,6 @@ with open(fpath, 'rb') as csvfile:
 
 tickers = list(set(tickers))
 
-
 def get_stock_sentiment(symbol):
     """
     TODO

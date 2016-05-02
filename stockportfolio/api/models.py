@@ -7,8 +7,8 @@ from django.utils import timezone
 
 class Risk(models.Model):
     """
-    TODO
-
+    Inherited from the Frameworks Model Class. Holds Risk information
+    for a specific portfolio. Includes date and risk value.
     """
     risk_id = models.AutoField(primary_key=True)
     risk_value = models.FloatField(default=0.0)
