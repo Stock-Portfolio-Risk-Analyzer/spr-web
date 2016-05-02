@@ -1,9 +1,15 @@
+import base64
+import os
+import time
+
+import requests
 from django.test import LiveServerTestCase
 from registration.models import RegistrationProfile
-
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+from stockportfolio.settings.base import BASE_DIR
 
 
 class SeleniumTestCase(LiveServerTestCase):
@@ -74,6 +80,24 @@ class SeleniumTestCase(LiveServerTestCase):
         password_box.send_keys(cls.user_info['password'])
         cls.driver.find_element_by_xpath(
             "//*[contains(text(), 'Sign in')]").click()
+
+    def screenshot(self, prefix="", upload=True):
+        """
+        :param prefix: optional prefix for the resulting file
+        :param upload: upload the image to Imgur (default)
+        """
+        fname = os.path.join(
+            BASE_DIR, 'api', 'test',
+            prefix + '_' + str(time.time()) + '.png')
+        self.cls.driver.save_screenshot(fname)
+        with open(fname, "rb") as img:
+            b64 = base64.b64encode(img.read())
+            if upload:
+                r = requests.post(
+                    'https://api.imgur.com/3/image',
+                    data={'image': b64},
+                    headers={'Authorization': 'Client-ID 5adddc48c3f790d'})
+                print 'image link ' + r.content
 
     def wait(self, fn, time=20):
         WebDriverWait(SeleniumTestCase.driver, time).until(fn)

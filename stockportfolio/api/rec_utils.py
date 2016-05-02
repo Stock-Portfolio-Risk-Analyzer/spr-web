@@ -1,13 +1,15 @@
 import random
 
+from stockportfolio.api.datautils.yahoo_finance import (get_company_name,
+                                                        get_company_sector)
 from stockportfolio.api.models import Portfolio, Stock
 
 
 def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     """
     Helper function to pick stocks by sector
-    :param portfolio:
-    :param all_stocks: list all available stocks
+    :portfolio
+    :param all_stocks: list of all available stocks
     :param num_stocks: number of stocks to fetch
     :param diversify: pick stocks from different sectors
     """
@@ -96,7 +98,11 @@ def stock_slice(all_stocks, limit):
     """
     stocks = []
     tickers = []
+    if all_stocks is None:
+        return None
     count = all_stocks.count() - 1
+    if count < limit:
+        return None
     while len(stocks) < limit:
         idx = random.randint(0, count)
         stock = all_stocks[idx]
@@ -132,6 +138,8 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
     value = _calculate_portfolio_value(portfolio)
     iterations = 0
     portfolio = sorted(portfolio, key=lambda s: s[2])
+    if len(portfolio) == 0:
+        return [], 0, 0, 0
     for iterations in range(0, 10):
         if value > tvalue_low and value < tvalue_high:
             break
@@ -159,33 +167,13 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
     return final_port, value, tvalue_low, tvalue_high
 
 
-def get_all_stocks(all_stocks, sort_by_risk=False):
-    """
-    Fetches all stocks and optionally sorts by risk
-    :param all_stocks: list of stocks
-    """
-    stock_tuples = []
-    for stock in all_stocks:
-        risk = _get_latest_stock_risk(stock)
-        if risk is None:
-            continue
-        else:
-            stock_tuples.append((stock.stock_ticker, risk))
-    if(sort_by_risk):
-        stock_tuples = sorted(stock_tuples, key=lambda s: s[1])
-    ret_stocks = []
-    for s in stock_tuples:
-        ret_stocks.append(all_stocks.get(stock_ticker=s[0]))
-    return ret_stocks
-
-
 def stock_to_dict(stock):
     risk = _get_latest_stock_risk(stock)
     price = _get_latest_stock_price(stock)
     date = None
     if risk is not None:
         date = stock.stock_risk.all().order_by('risk_date').last().risk_date
-        date = "{:%d %B %Y}".format(date)
+        date = '{:%d %B %Y}'.format(date)
     blurb = stock.stock_ticker + ' is currently valued at '
     blurb += '${:,.2f}'.format(price) + '. '
     if date is None:
@@ -329,3 +317,17 @@ def _get_all_sectors(portfolio):
             else:
                 sectors.append(sector)
     return sectors
+
+
+def _add_stock(symbol, quantity, portfolio):
+    name = get_company_name(symbol)
+    sector = get_company_sector(symbol)
+    s = Stock.objects.get_or_create(
+            stock_name=name,
+            stock_ticker=symbol,
+            stock_sector=sector)[0]
+    sp = portfolio.portfolio_stocks.get_or_create(
+            stock=s,
+            defaults={'quantity': float(quantity)})[0]
+    sp.save()
+    return s
