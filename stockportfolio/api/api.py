@@ -26,9 +26,8 @@ def add_stock(request, portfolio_id):
 
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portoflio Object
-    :return: HTTPResponse
-        - CODE - 200 if successful, 403 if unauthorized user is
-        requesting, 400 if specified stock not found in Database
+    :return: HTTPResponse - CODE - 200 if successful, 403 if unauthorized user is
+    requesting, 400 if specified stock not found in Database
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -79,8 +78,7 @@ def create_portfolio(request, user_id):
 
     :param request: HTTP Request Object
     :param user_id: (int) ID for the User Object
-    :return: HTTPResponse
-    - JSON - {'id'(portfolio_id)} - id of newly created portfolio
+    :return: HTTPResponse - JSON - {'id'(portfolio_id)} - id of newly created portfolio
     - CODE - 200 if successful, 404 if user not found.
     """
     assert(request is not None)
