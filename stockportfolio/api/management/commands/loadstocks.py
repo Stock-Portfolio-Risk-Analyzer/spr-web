@@ -11,6 +11,10 @@ from stockportfolio.settings.base import BASE_DIR
 
 
 class Command(BaseCommand):
+    """
+    Extends Django BaseCommand, generates all stock objects from secwiki_tickers.
+
+    """
     help = 'Creates all of the stock objects if they do not exist'
 
     def handle(self, *args, **options):

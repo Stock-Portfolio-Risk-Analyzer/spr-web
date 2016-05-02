@@ -24,6 +24,7 @@ with open(fpath, 'rb') as csvfile:
 def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
     """
     Verifies the given data with Quandl data
+
     :param start_date: (DateTime)
     :param end_date: (DateTime)
     :param yahoo_data: (list)
@@ -55,6 +56,7 @@ def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
 def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
     """
     Computes daily change in value
+
     :param symbol: (String) ticker symbol of the stock
     :param number_of_days_back: (Int) number of days back from today
     :return: (list) List of daily changes
@@ -81,6 +83,7 @@ def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
 def compute_daily_change_for_range(symbol, start_date, end_date):
     """
     Computes daily change in value over a range
+
     :param symbol: (String) ticker symbol of the stock
     :param start_date: (DateTime)
     :param end_date: (DateTime)
@@ -132,6 +135,7 @@ def compute_covariance(a, b):
 def compute_variance(a):
     """
     Computes variance
+
     :param a: (list) first list
     :return: (float) variance
     """
@@ -141,6 +145,7 @@ def compute_variance(a):
 def compute_stock_rri_for_today(symbol, number_of_days_back):
     """
     Computes RRI for a symbol for given number of days
+
     :param symbol: (String) ticker symbol of the stock
     :param number_of_days_back: (int) number of days back from today
     :return: (float) RRI
@@ -159,6 +164,7 @@ def compute_stock_rri_for_today(symbol, number_of_days_back):
 def compute_stock_rri_for_range(symbol, start_date, end_date):
     """
     Computes RRI for a symbol for a range
+
     :param symbol: (String) ticker symbol of the stock
     :param start_date: (DateTime)
     :param end_date: (DateTime)
@@ -178,6 +184,7 @@ def compute_stock_rri_for_range(symbol, start_date, end_date):
 def compute_portfolio_rri_for_today(stocks, number_of_days_back):
     """
     Computes RRI for a portfolio for given number of days
+
     :param stocks: (list) list of stocks in a portfolio
     :param number_of_days_back: (int) number of days back from today
     :return: (float) RRI
@@ -199,6 +206,7 @@ def compute_portfolio_rri_for_today(stocks, number_of_days_back):
 def compute_portfolio_rri_for_range(stocks, start_date, end_date):
     """
     Computes RRI for a portfolio for a range
+    
     :param stocks: (list) list of stocks in a portfolio
     :param start_date: (DateTime)
     :param end_date: (DateTime)
