@@ -23,8 +23,9 @@ from stockportfolio.api.utils import _calculate_risk
 def add_stock(request, portfolio_id):
     """
     Add a stock to a portfolio.
+
     :param request:
-    :param portfolio_id:
+    :param portfolio_id: (int)
     :return:
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
@@ -49,9 +50,10 @@ def add_stock(request, portfolio_id):
 
 def remove_stock(request, portfolio_id):
     """
-    Remove a stock from the portfolio
+    Remove a stock from the portfolio.
+
     :param request:
-    :param portfolio_id:
+    :param portfolio_id: (int)
     :return:
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
@@ -70,8 +72,9 @@ def remove_stock(request, portfolio_id):
 def create_portfolio(request, user_id):
     """
     Creates a new portfolio model.
+
     :param request:
-    :param user_id:
+    :param user_id: (int)
     :return:
     """
     assert(request is not None)
@@ -87,8 +90,9 @@ def create_portfolio(request, user_id):
 def delete_portfolio(request, portfolio_id):
     """
     Deletes a portfolio based on portfolio_id.
+
     :param request:
-    :param portfolio_id:
+    :param portfolio_id: (int)
     :return:
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
@@ -99,6 +103,13 @@ def delete_portfolio(request, portfolio_id):
 
 
 def get_portfolio_by_user(request, user_id):
+    """
+    TODO
+
+    :param request:
+    :param user_id: (int)
+    :return:
+    """
     user = get_object_or_404(User, pk=user_id)
     user_settings = UserSettings.objects.get_or_create(user=user)[0]
     if user_settings.default_portfolio:
@@ -124,6 +135,13 @@ def get_list_of_portfolios(request, user_id):
 
 
 def get_public_portfolio(request, portfolio_id):
+    """
+    TODO
+
+    :param request:
+    :param portfolio_id: (int)
+    :return:
+    """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
 
     portfolio_dict = {'portfolio_id': portfolio.portfolio_id,
@@ -139,9 +157,10 @@ def get_public_portfolio(request, portfolio_id):
 
 def get_portfolio(request, portfolio_id):
     """
+    TODO
 
     :param request:
-    :param portfolio_id:
+    :param portfolio_id: (int)
     :return:
     """
     assert(request is not None)
@@ -175,6 +194,13 @@ def get_portfolio(request, portfolio_id):
 
 
 def modify_portfolio_form_post(request, portfolio_id):
+    """
+    TODO
+
+    :param request:
+    :param portfolio_id: (int)
+    :return:
+    """
     if request.method == 'POST':
         data = request.POST.get("data", None)
         data = json.loads(data)
@@ -219,6 +245,7 @@ def generate_portfolio(request):
     either the user's default portfolio or their first portfolio if they have
     not selected a default. If there are no user portfolios, a risk between
     -2.5 and 2.5 is selected.
+
     :param request
     """
     if request.user.is_anonymous():
@@ -275,6 +302,13 @@ def generate_portfolio(request):
 
 @csrf_exempt
 def modify_gen(request, portfolio_id):
+    """
+    TODO
+
+    :param request:
+    :param portfolio_id: (int)
+    :return:
+    """
     if request.method == 'POST':
         data = request.POST.get("data", None)
         data = json.loads(data)
@@ -307,6 +341,9 @@ def modify_gen(request, portfolio_id):
 
 def list_top_portfolios(request, category):
     """
+    TODO
+
+    :param request:
     :param category
         0 - most risky
         1 - least risky
@@ -388,6 +425,12 @@ def download_porfolio_data(request, portfolio_id):
 
 
 def upload_portfolio_data(request):
+    """
+    TODO
+
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         form = PortfolioUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -402,6 +445,13 @@ def upload_portfolio_data(request):
 
 
 def _parse_portfolio_file(file, user):
+    """
+    TODO
+
+    :param file:
+    :param user:
+    :return:
+    """
     df = csv.DictReader(file)
     portfolio = Portfolio.objects.create(portfolio_user=user)
     for row in df:
@@ -418,6 +468,8 @@ def _parse_portfolio_file(file, user):
 
 def _diversify_by_sector(portfolio):
     """
+    TODO
+
     :param portfolio
     :return stocks from various sectors not present in portfolio
     """
@@ -430,6 +482,15 @@ def _diversify_by_sector(portfolio):
 
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
+    """
+    TODO
+
+    :param portfolio:
+    :param stock_quantity:
+    :param stock_ticker:
+    :param overwrite:
+    :return:
+    """
     stock_name = get_company_name(stock_ticker)
     stock_sector = get_company_sector(stock_ticker)
     try:
@@ -450,6 +511,13 @@ def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
 
 
 def _verify_stock_ticker_validity(stocks, quantity):
+    """
+    TODO
+
+    :param stocks:
+    :param quantity:
+    :return:
+    """
     invalid_stocks = []
     for stock in stocks.values():
         try:
@@ -466,7 +534,8 @@ def _verify_stock_ticker_validity(stocks, quantity):
 
 def _calculate_stock_info(stock_portfolio):
     """
-    Get's some information for a stock such as symbol, name, price
+    Get's some information for a stock such as symbol, name, price.
+
     :param stock: (Stock)
     :return: (dict)
     """
@@ -486,7 +555,8 @@ def _calculate_stock_info(stock_portfolio):
 
 def _calculate_sector_allocations(portfolio):
     """
-    Calculates the sector allocations of a portfolio
+    Calculates the sector allocations of a portfolio.
+
     :param portfolio:
     :return: (dict (str):(float)) {"sector": pct_allocation}
     """
