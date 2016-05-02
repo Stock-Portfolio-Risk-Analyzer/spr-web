@@ -10,6 +10,7 @@ import ystockquote
 def get_stock_data(symbol, start_date=None, end_date=None):
     """
     Get OHLC stock data from Yahoo Finance for a single stock
+
     :param symbol: (string)
     :param start_date: (DateTime)
     :param end_date: (DateTime)
@@ -33,6 +34,7 @@ def get_stock_data(symbol, start_date=None, end_date=None):
 def get_stock_data_multiple(symbols, start_date=None, end_date=None):
     """
     Get OHLC stock data from Yahoo Finance for multiple stocks
+
     :param symbols: (list) of symbols (string)
     :param start_date: (DateTime)
     :param end_date: (DateTime)
@@ -50,9 +52,10 @@ def get_stock_data_multiple(symbols, start_date=None, end_date=None):
 
 def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     """
+    Get percent returns
 
     :param symbol: (string)
-    :param start_date: (datetime
+    :param start_date: (DateTime)
     :param end_date:
     :param col: (string) name of column to calculate the pct returns from
     :return:
@@ -63,11 +66,12 @@ def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
 
 def get_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     """
+    Get returns
 
     :param symbol:
     :param start_date:
     :param end_date:
-    :param col:  (string) name of column to calculate the returns from
+    :param col: name of column to calculate the returns from
     :return:
     """
     data = get_stock_data(symbol, start_date, end_date)[col]
@@ -76,9 +80,10 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
 
 def get_current_price(symbol):
     """
-    Get the latest price!
-    :param symbol:
-    :return:
+    Get the latest price
+
+    :param symbol: (str)
+    :return: (str)
     """
     quote = ystockquote.get_price(symbol)
     if quote == 'N/A':
@@ -88,9 +93,10 @@ def get_current_price(symbol):
 
 def get_company_name(symbol):
     """
-    Get the full name of the company by the symbol
-    :param symbol:
-    :return:
+    Get the full name of the company by the symbol.
+
+    :param symbol: (str)
+    :return: (str)
     """
     fpath = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
@@ -103,7 +109,8 @@ def get_company_name(symbol):
 
 def get_company_sector(symbol):
     """
-    Get the sector of the company
+    Get the sector of the company.
+
     :param symbol: (str)
     :return: (str)
     """

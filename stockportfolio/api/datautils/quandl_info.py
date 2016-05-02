@@ -9,6 +9,7 @@ quandl_key = '-6X6UvP1aeit_zybGREM'
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     """
     Get OHLC stock data from Quandl for a single stock
+
     :param symbol: string
     :param start_date: datetime
     :param end_date: datetime
@@ -32,10 +33,10 @@ def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     return symbol_data
 
 
-def get_stock_data_multiple(
-        symbols=None, start_date=None, end_date=None, db_code="WIKI"):
+def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_code="WIKI"):
     """
     Get OHLC stock data from Quandl for multiple stocks
+
     :param symbols: list of symbols (strings)
     :param start_date: datetime
     :param end_date: datetime
@@ -69,11 +70,11 @@ def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
 
 def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
-    :param symbol:
-    :param start_date:
-    :param end_date:
-    :param col:  (string) name of column to calculate the returns from
-    :return:
+    :param symbol: shit
+    :param start_date: foo
+    :param end_date: bar
+    :param col:  name of column to calculate the returns from
+    :return: some shit
     """
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.diff().fillna(0)

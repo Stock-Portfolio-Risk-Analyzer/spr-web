@@ -55,14 +55,12 @@ def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
         else:
             return quandl_data
 
-
 def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-            number_of_days_back -> number of days back from today
-                        for which you want the daily change
-                        (Type -> integer)
-    return: list of daily change (Type -> list float)
+    TODO
+    :param symbol: (string) ticker symbol
+    :param number_of_days_back: (int) number of days back from today for which you want the daily change
+    :return: (list) list of daily change
     """
     start_date = date.today() - timedelta(days=number_of_days_back)
     end_date = date.today()
