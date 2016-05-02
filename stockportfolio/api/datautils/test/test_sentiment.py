@@ -39,5 +39,4 @@ class TestSentiment(unittest.TestCase):
 
     def test_get_market_sentiment(self):
         mstm = stm.get_market_sentiment()
-        print mstm
         self.assertTrue(-1 <= mstm <= 1)
