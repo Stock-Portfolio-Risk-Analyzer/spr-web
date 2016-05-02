@@ -12,8 +12,9 @@ from stockportfolio.api.datautils.rri import (compute_stock_rri_for_range,
 def get_company_industry(symbol):
     """
     Returns the industry of the company given the stock symbol / ticker
-    Parameter:  symbol -> ticket of the stock (string)
-    Return: company industry (string)
+
+    :param symbol: (str)
+    :return: (str) company industry
     """
     fpath = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
@@ -26,29 +27,34 @@ def get_company_industry(symbol):
 
 def get_company_rri_for_today(symbol, number_of_days_back):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-                number_of_days_back ->  number of days back from today
-                                        for which you want rri
-                                        (Type -> integer)
-    return: float
+    TODO
+
+    :param symbol: (str)
+    :param number_of_days_back: (int) number of days back from today for which you want rri
+    :return:
     """
     return compute_stock_rri_for_today(symbol, number_of_days_back)
 
 
 def get_company_rri_for_range(symbol, start_date, end_date):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-            start_date, end_date ->
-                range you want to compute rri on (Type -> String)
-    return: float
+    TODO
+
+    :param symbol: (str)
+    :param start_date: (str)
+    :param end_date: (str)
+    :return:
     """
     return compute_stock_rri_for_range(symbol, start_date, end_date)
 
 
 def get_company_rri_for_days_back(symbol, days_back):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-    return: List [ [date1, rri], [date2, rri], .... [date7, rri] ]
+    TODO
+
+    :param symbol: (str)
+    :param days_back: (int)
+    :return: (list)m[ [date1, rri], [date2, rri], .... [date7, rri] ]
     """
     rri_list = []
     for i in range(days_back + 5, 5, -1):
@@ -64,8 +70,9 @@ def get_company_rri_for_days_back(symbol, days_back):
 def get_company_name(symbol):
     """
     Returns the name of the company given the stock symbol / ticker
-    Parameter:  symbol -> ticket of the stock (string)
-    Return: company name (string)
+
+    :param symbol: (str)
+    :return: (str) company name
     """
     fpath = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
@@ -79,8 +86,9 @@ def get_company_name(symbol):
 def get_company_sector(symbol):
     """
     Returns the sector of the company given the stock symbol / ticker
-    Parameter:  symbol -> ticket of the stock (string)
-    Return: company sector (string)
+
+    :param symbol: (str)
+    :return: (str) company sector
     """
     fpath = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), 'secwiki_tickers.csv')
@@ -93,11 +101,11 @@ def get_company_sector(symbol):
 
 def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-                number_of_days_back -> number of days back from today
-                        for which you want the closing price
-                        (Type -> integer)
-    return: list of daily closing prices (Type -> list float)
+    TODO
+
+    :param symbol: (str)
+    :param number_of_days_back: (int) number of days back from today for which you want the closing price
+    :return: (list of float) list of daily closing prices
     """
     start_date = date.today() - timedelta(days=number_of_days_back)
     end_date = date.today()
@@ -112,8 +120,10 @@ def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
 
 def get_company_rri_for_a_week(symbol):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-    return: List [ [date1, rri], [date2, rri], .... [date7, rri] ]
+    TODO
+
+    :param symbol: (str)
+    :return: (list) [ [date1, rri], [date2, rri], .... [date7, rri] ]
     """
     rri_list = []
 
@@ -129,8 +139,10 @@ def get_company_rri_for_a_week(symbol):
 
 def get_company_rri_for_a_month(symbol):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-    return: List [ [date1, rri], [date2, rri], .... [date30, rri] ]
+    TODO
+
+    :param symbol: (str)
+    :return: (list) [ [date1, rri], [date2, rri], .... [date30, rri] ]
     """
     rri_list = []
     month_range = range(100)[1:31]
@@ -147,8 +159,8 @@ def get_company_rri_for_a_month(symbol):
 
 def get_company_rri_for_a_year(symbol):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-    return: List [ [date1, rri], [date2, rri], .... [date365, rri] ]
+    :param symbol: (str)
+    :return: (list) [ [date1, rri], [date2, rri], .... [date365, rri] ]
     """
     rri_list = []
     month_range = range(400)[1:366]
@@ -165,8 +177,9 @@ def get_company_rri_for_a_year(symbol):
 
 def get_stock_volume_traded_for_a_week(symbol):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-    return: List [ [date1, rri], [date2, rri], .... [date365, rri] ]
+
+    :param symbol: (str)
+    :return: (list) [ [date1, rri], [date2, rri], .... [date365, rri] ]
     """
     start_date = date.today() - timedelta(days=7)
     end_date = date.today()
@@ -177,8 +190,9 @@ def get_stock_volume_traded_for_a_week(symbol):
 
 def get_stock_volume_traded_for_a_month(symbol):
     """
-    Parameter:  symbol -> ticker symbol of the stock (Type -> String)
-    return: List [ [date1, rri], [date2, rri], .... [date365, rri] ]
+
+    :param symbol: (str)
+    :return: (list) [ [date1, rri], [date2, rri], .... [date365, rri] ]
     """
     start_date = date.today() - timedelta(days=30)
     end_date = date.today()
@@ -189,7 +203,6 @@ def get_stock_volume_traded_for_a_month(symbol):
 
 def get_average_stock_volume_traded(list):
     """
-    TODO
     :param list:
     :return:
     """
