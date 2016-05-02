@@ -16,7 +16,8 @@ class ApiTestCase(TestCase):
     def setUp(self):
         """
         Sets up a request factory and creates a user and a portfolio in th
-        test database
+        test database.
+        
         :return: None
         """
 
