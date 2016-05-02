@@ -10,9 +10,9 @@ from stockportfolio.api.datautils.rri import (compute_portfolio_rri_for_range,
 class TestRRI(unittest.TestCase):
 
     def test_compute_portfolio_rri_for_range1(self):
-    """
-    Tests if rri computation works and provides positive risk
-    """
+        """
+        Tests if rri computation works and provides positive risk
+        """
 
         apple = Mock()
         apple.stock.stock_ticker = 'AAPL'
@@ -30,10 +30,10 @@ class TestRRI(unittest.TestCase):
         self.assertTrue(rri > 0)
 
     def test_compute_portfolio_rri_for_range2(self):
-    """
-    Tests the compute_portfolio_rri_for_range function
-    when quantity is zero
-    """
+        """
+        Tests the compute_portfolio_rri_for_range function
+        when quantity is zero
+        """
 
         apple = Mock()
         apple.stock.stock_ticker = 'AAPL'
@@ -51,9 +51,9 @@ class TestRRI(unittest.TestCase):
         self.assertTrue(math.isnan(rri))
 
     def test_compute_stock_rri_for_range1(self):
-    """
-    Tests rri calculation for single stock
-    """
+        """
+        Tests rri calculation for single stock
+        """
 
         symbol = "AAPL"
         start_date = "03/03/2016"
@@ -62,9 +62,9 @@ class TestRRI(unittest.TestCase):
         self.assertTrue(rri > 0)
 
     def test_compute_stock_rri_for_range2(self):
-    """
-    Tests rri calculation for different stock
-    """
+        """
+        Tests rri calculation for different stock
+        """
     
         symbol = "GDDY"
         start_date = "03/03/2016"
