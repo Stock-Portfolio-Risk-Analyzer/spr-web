@@ -113,8 +113,7 @@ def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
 
 def get_company_rri_for_a_week(symbol):
     """
-    TODO
-
+    Gets a week's worth of risk values.
     :param symbol: (str)
     :return: (list) [ [date1, rri], [date2, rri], .... [date7, rri] ]
     """
@@ -132,8 +131,7 @@ def get_company_rri_for_a_week(symbol):
 
 def get_company_rri_for_a_month(symbol):
     """
-    TODO
-
+    Gets a month's worth of risk values.
     :param symbol: (str)
     :return: (list) [ [date1, rri], [date2, rri], .... [date30, rri] ]
     """

@@ -22,11 +22,12 @@ from stockportfolio.api.utils import _calculate_risk
 
 def add_stock(request, portfolio_id):
     """
-    Add a stock to a portfolio.
-
-    :param request:
-    :param portfolio_id: (int)
-    :return:
+    Adds Stock from Portfolio
+    :param request: HTTP Request Object
+    :param portfolio_id: (int) ID for the Portoflio Object
+    :return: HTTPResponse
+        - CODE - 200 if successful, 403 if unauthorized user is
+        requesting, 400 if specified stock not found in Database
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -50,11 +51,12 @@ def add_stock(request, portfolio_id):
 
 def remove_stock(request, portfolio_id):
     """
-    Remove a stock from the portfolio.
-
-    :param request:
-    :param portfolio_id: (int)
-    :return:
+    Removes Stock from Portfolio
+    :param request: HTTP Request Object
+    :param portfolio_id: (int) ID for the Portoflio Object
+    :return: HTTPResponse
+     - CODE - 200 if successful, 403 if unauthorized user is requesting, 400 if
+     specified stock or portfolio are not found in Database
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -71,11 +73,12 @@ def remove_stock(request, portfolio_id):
 
 def create_portfolio(request, user_id):
     """
-    Creates a new portfolio model.
-
-    :param request:
-    :param user_id: (int)
-    :return:
+    Creates a portfolio for a specified user.
+    :param request: HTTP Request Object
+    :param user_id: (int) ID for the User Object
+    :return: HTTPResponse
+    - JSON - {'id'(portfolio_id)} - id of newly created portfolio
+    - CODE - 200 if successful, 404 if user not found.
     """
     assert(request is not None)
     user = User.objects.get(pk=user_id)
@@ -89,11 +92,11 @@ def create_portfolio(request, user_id):
 
 def delete_portfolio(request, portfolio_id):
     """
-    Deletes a portfolio based on portfolio_id.
-
-    :param request:
-    :param portfolio_id: (int)
-    :return:
+    Deletes the specified portfolio from the Database.
+    :param request: HTTP Request Object
+    :param portfolio_id: (int) ID for the Portoflio Object
+    :return: HTTPResponse
+     - CODE - 200 if successful, 403 if unauthorized user is requesting.
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -104,11 +107,14 @@ def delete_portfolio(request, portfolio_id):
 
 def get_portfolio_by_user(request, user_id):
     """
-    TODO
-
-    :param request:
-    :param user_id: (int)
-    :return:
+    Returns the default portfolio for the user if it has one specified
+    else it returns one of the portfolio's of the user (random), if the
+    user doesn't have one it will create a new one.
+    :param request: HTTP Request Object
+    :param user_id: (int) ID for the User Object
+    :return: HTTPResponse
+    - JSON - Look at get_portfolio documentation function for JSON info.
+    - CODE - 200 if successful, 404 if not found.
     """
     user = get_object_or_404(User, pk=user_id)
     user_settings = UserSettings.objects.get_or_create(user=user)[0]
@@ -122,6 +128,15 @@ def get_portfolio_by_user(request, user_id):
 
 
 def get_list_of_portfolios(request, user_id):
+    """
+        Returns the list of portfolios for the user with their name and id.
+        :param request: HTTP Request Object
+        :param user_id: (int) ID for the User Object
+        :return: HTTPResponse
+        - JSON - {'portfolio_list': [{"id"(portfolio_id),
+                    "name"(portfolio_name)},...]}
+        - CODE - 200 if successful, 404 if not found.
+    """
     user = get_object_or_404(User, pk=user_id)
     if user is None:
         raise Http404
@@ -136,11 +151,10 @@ def get_list_of_portfolios(request, user_id):
 
 def get_public_portfolio(request, portfolio_id):
     """
-    TODO
-
-    :param request:
-    :param portfolio_id: (int)
-    :return:
+    Returns public information for a specified portfolio.
+    :param request: (HTTPRequest) HTTP Request Object
+    :param portfolio_id: (int) Portfolio unique id
+    :return: {'portfolio_id' (int), 'name' (str), 'stocks':[(stock_info),...]}
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
 
@@ -157,11 +171,15 @@ def get_public_portfolio(request, portfolio_id):
 
 def get_portfolio(request, portfolio_id):
     """
-    TODO
-
-    :param request:
-    :param portfolio_id: (int)
-    :return:
+    Returns thorough information for the specified portfolio_id
+    :param request: HTTP Request Object
+    :param portfolio_id: (int) ID for the Portfolio Object
+    :return: HTTPResponse
+    - JSON -
+    {'portfolio_id'(int), 'name'(str), 'portfoio_user_id'(int),
+    'stocks'(list), 'risk_history'(list), 'date_created'(list),
+    'rank'(list), 'sector_alloactions'(list)}
+    - CODE - 200 if successful, 404 if not found.
     """
     assert(request is not None)
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
@@ -195,11 +213,18 @@ def get_portfolio(request, portfolio_id):
 
 def modify_portfolio_form_post(request, portfolio_id):
     """
-    TODO
-
-    :param request:
-    :param portfolio_id: (int)
-    :return:
+    Parses Portfolio Form Post. Given our Front-End generates a dynamic
+    form, since the user is allowed to add rows and remove them we had
+    to parse it manually.
+    :param request: (HTTPRequest) HTTP Request Object
+    :param portfolio_id: (int) id of the portfolio to be modified
+    :return: HTTPResponse
+    - JSON -
+        if invalid the json will include:
+        {"success" : "false", "message": an error message}
+        if valid the json will include:
+        {"success" : "true"}
+    - CODE - 200 if successful, 400 if invalid
     """
     if request.method == 'POST':
         data = request.POST.get("data", None)
@@ -245,8 +270,11 @@ def generate_portfolio(request):
     either the user's default portfolio or their first portfolio if they have
     not selected a default. If there are no user portfolios, a risk between
     -2.5 and 2.5 is selected.
-
-    :param request
+    :param request: (HTTPRequest) HTTP Request Object
+    :return: HTTPResponse
+    - CODE - 200 if successful, 403 if unauthorized
+    - JSON - {"message"(str)} Useful message on why the portfolio was
+     generated.
     """
     if request.user.is_anonymous():
         return HttpResponse(status=403)
@@ -303,11 +331,13 @@ def generate_portfolio(request):
 @csrf_exempt
 def modify_gen(request, portfolio_id):
     """
-    TODO
-
-    :param request:
-    :param portfolio_id: (int)
-    :return:
+    Adds a generated portfolio stocks into the specified portfolio_id.
+    :param request: (HTTPRequest) HTTP Request Object - includes form data
+     with {'data': {'symbols'(list), 'quantities'(list}, 'name'(str)}}
+    :param portfolio_id: (int) Portfolio ID where generated portfolio
+     will be added.
+    :return: (HTTPResponse) 200 if successful, 403 if forbidden, 404
+     if Portfolio was not found.
     """
     if request.method == 'POST':
         data = request.POST.get("data", None)
@@ -341,10 +371,10 @@ def modify_gen(request, portfolio_id):
 
 def list_top_portfolios(request, category):
     """
-    TODO
-
-    :param request:
-    :param category
+    Searches the DB and returns json list of top portfolios for specified
+    category.
+    :param request: (HTTPRequest) HTTP Request Object
+    :param category: (int)
         0 - most risky
         1 - least risky
         2 - most valuable
@@ -400,6 +430,12 @@ def list_top_portfolios(request, category):
 
 
 def download_porfolio_data(request, portfolio_id):
+    """
+    Downloads a CSV file representation for the specified portfolio.
+    :param request: (HTTPRequest) HTTP Request Object
+    :param portfolio_id: ID for the portfolio we wish to download.
+    :return: (HTTPResponse) with attachment named 'backup-[portfolio_name].csv'
+    """
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
         return HttpResponse(status=403)
@@ -426,10 +462,13 @@ def download_porfolio_data(request, portfolio_id):
 
 def upload_portfolio_data(request):
     """
-    TODO
-
-    :param request:
-    :return:
+    Uses Portfolio Form to allow user to upload a Portfolio Information CSV
+    File.
+    :param request: (HTTPRequest) Request Object
+    :return: HTTPResponse
+     - CODE - 200 if successful, 500 if invalid portfolio_id or if invalid
+     form fields.
+     - JSON - {'portfolio_id' (int)} of newly created portfolio.
     """
     if request.method == 'POST':
         form = PortfolioUploadForm(request.POST, request.FILES)
@@ -446,11 +485,11 @@ def upload_portfolio_data(request):
 
 def _parse_portfolio_file(file, user):
     """
-    TODO
-
-    :param file:
-    :param user:
-    :return:
+    Parses a csv File extracts symbols and quantities and creates a portfolio
+    for the specified user.
+    :param file: (File) CSV Format File with Portfolio Informaiton
+    :param user: (User) User to add the protfolio object
+    :return: ID for Portfolio Object Created, None if failed to create one.
     """
     df = csv.DictReader(file)
     portfolio = Portfolio.objects.create(portfolio_user=user)
@@ -468,10 +507,10 @@ def _parse_portfolio_file(file, user):
 
 def _diversify_by_sector(portfolio):
     """
-    TODO
-
-    :param portfolio
-    :return stocks from various sectors not present in portfolio
+    Returns a list of Stock objects which are from sectors not currently
+    included in the specified porfolio
+    :param portfolio: (Portfolio) Portfolio object to check for sectors
+    :return: stocks from various sectors not present in portfolio
     """
     sectors = list(portfolio.portfolio_stocks.
                    values_list('stock_sector').distinct())
@@ -483,13 +522,12 @@ def _diversify_by_sector(portfolio):
 
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
     """
-    TODO
-
-    :param portfolio:
-    :param stock_quantity:
-    :param stock_ticker:
-    :param overwrite:
-    :return:
+    Given a portfolio object it creates and adds a stock object to it.
+    :param portfolio: (Portfolio) Portfolio to add stocks to
+    :param stock_quantity: (int) quantity of stocks to be added
+    :param stock_ticker: (str) stock symbol to be added
+    :param overwrite: if stock exists it is ovewritted with new quantity.
+    :return: True if successful, False otherwise.
     """
     stock_name = get_company_name(stock_ticker)
     stock_sector = get_company_sector(stock_ticker)
@@ -512,11 +550,12 @@ def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
 
 def _verify_stock_ticker_validity(stocks, quantity):
     """
-    TODO
-
-    :param stocks:
-    :param quantity:
-    :return:
+    Verifies if Stock Tickers are valid, by checking through our DB of Stocks.
+    Both stock and quantity have a one-to-one correspondence for each stock
+    symbol and their corresponding quantity.
+    :param stocks: list(str) - List of Stock Symbols
+    :param quantity: list(str) - List of Stock Quantities
+    :return: list(str) - List of Invalid Stock Symbols, can be empty list.
     """
     invalid_stocks = []
     for stock in stocks.values():
@@ -556,8 +595,7 @@ def _calculate_stock_info(stock_portfolio):
 def _calculate_sector_allocations(portfolio):
     """
     Calculates the sector allocations of a portfolio.
-
-    :param portfolio:
+    :param portfolio: (Portfolio)
     :return: (dict (str):(float)) {"sector": pct_allocation}
     """
     sector_allocations_raw = {}

@@ -7,40 +7,27 @@ from django.core.urlresolvers import reverse
 from stockportfolio.api.models import Portfolio, UserSettings
 
 
-# Used the following as reference
-# http://stackoverflow.com/questions/6142025/dynamically-add-field-to-a-form
-#
-
-# class StockField(forms.CharField):
-#     def __init__(self, user, *args, **kwargs):
-#         super(StockField, self).__init__(*args, **kwargs)
-#     def clean(self, value):
-#         super(StockField, self).clean(value)
-#         Stock.object.get()
-#
-# class PortfolioForm(forms.ModelForm):
-#     def __init__(self, user, *args, **kwargs):
-#         self.user = user
-#         super(PortfolioForm, self).__init__(*args, **kwargs)
-#         for k, v in args[0].items():
-#             if
-
-
 class UpdateProfile(forms.ModelForm):
+    """
+    Form used to update profile. Extends ModelForm
+    """
     default_portfolio = forms.ModelChoiceField(
         queryset=Portfolio.objects.all())
 
     class Meta:
+        """
+        Specifies which User Fields To Prompt in Form
+        """
         model = User
         fields = ('username', 'email', 'default_portfolio')
 
     def __init__(self, *args, **kwargs):
         """
-        TODO
-
-        :param args:
-        :param kwargs:
-        :return:
+        Initializes a Form Object, and adds a submit button
+        and form action to it.
+        :param args: Arguments for overwrittn init function
+        :param kwargs: Keyword Arguments for overwrittn init function
+        :return: (Form) UpdateProfile Form
         """
         super(UpdateProfile, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -48,9 +35,17 @@ class UpdateProfile(forms.ModelForm):
         self.helper.form_action = reverse('modify_account')
 
     def clean_username(self):
+        """
+        Cleans the username input field
+        :return: (str) username
+        """
         return self.cleaned_data.get('username')
 
     def clean_email(self):
+        """
+        Cleans the email input field
+        :return: (str) email
+        """
         email = self.cleaned_data.get('email')
 
         if email and User.objects.filter(email=email).count() > 1:
@@ -60,6 +55,13 @@ class UpdateProfile(forms.ModelForm):
         return email
 
     def save(self, commit=True):
+        """
+        Overwritten Save Function, which generates a new user on
+        creation.
+        :param commit: True if user needs to be saved,
+        False otherwise (just modified).
+        :return: (User) Modified User
+        """
         user = User.objects.get(username=self.cleaned_data["username"])
         user.email = self.cleaned_data['email']
         user_settings = UserSettings.objects.get(user=user)
@@ -73,4 +75,8 @@ class UpdateProfile(forms.ModelForm):
 
 
 class PortfolioUploadForm(forms.Form):
+    """
+    Form used to Upload CSV File into backend file - FileField.
+    Extends everything from forms.Form.
+    """
     file = forms.FileField()
