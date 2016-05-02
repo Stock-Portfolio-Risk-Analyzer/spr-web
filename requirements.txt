@@ -29,3 +29,4 @@ selenium==2.53.1
 sendgrid==2.0.0
 isort==4.2.5
 flake8==2.5.4
+sphinx==1.4.1
