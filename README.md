@@ -20,6 +20,8 @@ Analyzes and displays the riskiness of your stock portfolio. A project for CS428
 ## Local Database Setup
 
 Download and install PostgresSQL, including the development packages. 
+For details on how to do this, consult the PostgresSQL documentation for your 
+operating system or Linux distribution. 
 
 Then you must create a database called `spra` along with a user/password called `spra`.
 Alternatively, you can change these settings in `stockportfolio/settings/local.py`
@@ -45,9 +47,9 @@ Optionally, you can configure the site to simulate portfolios for you.
 - Enrique Espaillat
 - Alex Ashley
 - Ronit Chakraborty
+- Arpit Dev Mathur
 - Shivam Gupta
 - Thibaut Xiong
-- Arpit Dev Mathur
 
 
 
