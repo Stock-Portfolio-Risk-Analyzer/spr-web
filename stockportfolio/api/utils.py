@@ -13,7 +13,7 @@ def update_rri_for_all_portfolios():
     """         
     Recalculates rri for every portfolio and updates it
 
-    :return:
+    :return: None
     """
 
     for portfolio in Portfolio.objects.all():
@@ -34,7 +34,7 @@ def update_rank_for_all_portfolios():
     """         
     Recalculates rank for every portfolio and updates it
 
-    :return:
+    :return: None
     """
 
     risks = []
@@ -60,7 +60,7 @@ def update_value_for_all_portfolios():
     """         
     Recalculates value for every portfolio and updates it
 
-    :return:
+    :return: None
     """
 
     for portfolio in Portfolio.objects.all():
@@ -78,7 +78,7 @@ def update_rri_for_all_stocks():
     """         
     Recalculates rri for every stock and updates it
 
-    :return:
+    :return: None
     """
 
     for stock in Stock.objects.all():
@@ -97,7 +97,7 @@ def update_price_for_all_stocks():
     """         
     Recalculates price for every stock and updates it
 
-    :return:
+    :return: None
     """
 
     for stock in Stock.objects.all():
@@ -114,7 +114,7 @@ def precompute_rri_for_all_stocks():
     """         
     Precomputes rri for every stock
 
-    :return:
+    :return: None
     """
 
     stocks_to_precompute = (Stock.objects.values('stock_id')
@@ -142,7 +142,7 @@ def precompute_prices_for_all_stocks():
     """         
     Precomputes price for every stock
 
-    :return:
+    :return: None
     """
 
     stocks_to_precompute = (Stock.objects.values('stock_id')
