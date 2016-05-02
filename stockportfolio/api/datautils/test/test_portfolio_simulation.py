@@ -10,6 +10,13 @@ import stockportfolio.api.datautils.yahoo_finance as yf
 
 class TestPortfolioSimulation(unittest.TestCase):
 
+    """
+    Create a fixture Portfolio Simulation testing
+​
+    :param cls: (class instance)
+
+    """
+
     @classmethod
     def setUpClass(cls):
 
