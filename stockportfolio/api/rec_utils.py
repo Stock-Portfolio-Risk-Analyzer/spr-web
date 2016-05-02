@@ -9,7 +9,8 @@ def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     """
     Helper function to pick stocks by sector
 
-    :portfolio
+
+    :param portfolio: user's portfolio
     :param all_stocks: list of all available stocks
     :param num_stocks: number of stocks to fetch
     :param diversify: pick stocks from different sectors
@@ -174,6 +175,13 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
 
 
 def stock_to_dict(stock):
+    """
+    Given a stock, this function converts all its data to a dictionary and 
+    returns that dictionary
+
+    :param stock: stock to convert
+    :return dictionary_of_stock
+    """
     risk = _get_latest_stock_risk(stock)
     price = _get_latest_stock_price(stock)
     date = None
@@ -197,6 +205,15 @@ def stock_to_dict(stock):
 
 
 def stock_recommender(request, portfolio_id, rec_type):
+    """
+    Given a request, portfolio_id and a recommendation type, this function
+    generates a map that contains stock recommendations for the user
+    
+    :param request: request object
+    :param portfolio_id: portfolio id for the specific portfolio
+    :param rec_type: the type of recommendation
+    :return recs: list of stocks to weight w/ quantities
+    """
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     p_risk = _get_latest_portfolio_risk(portfolio)
     if not p_risk:
@@ -226,14 +243,32 @@ def stock_recommender(request, portfolio_id, rec_type):
 
 
 def _recommender_low_risk(x, p_risk):
+    """
+    Helper function that returns recommendations lower than portfolio risk
+
+    :param x: recommendation risk
+    :param p_risk: portfolio risk
+    """
     return x <= p_risk
 
 
 def _recommender_high_risk(x, p_risk):
+    """
+    Helper function that returns recommendations greater than portfolio risk
+
+    :param x: recommendation risk
+    :param p_risk: portfolio risk
+    """
     return x > p_risk
 
 
 def _recommender_stable(x, p_risk):
+    """
+    Helper function that returns recommendations within 1.2 and 0.8 of portfolio risk
+
+    :param x: recommendation risk
+    :param p_risk: portfolio risk
+    """
     return x < p_risk * 1.2 and x > p_risk * 0.8
 
 
@@ -242,7 +277,7 @@ def _fetch_target_value(portfolio):
     Given a portfolio, this function returns a range within which the value of
     the portfolio lies. Used to calculate quantities for generated portfolios
 
-    :param portfolio
+    :param portfolio:
     """
     tvalue_low = 0
     tvalue_high = 0
@@ -273,6 +308,12 @@ def _calculate_portfolio_value(portfolio):
 
 
 def _get_latest_stock_price(stock):
+    """
+    Helper function that returns the latest stock price lower than portfolio risk
+
+    :param stock: stock whose price has to be checked
+    :param stock_price: latest stock price
+    """
     stock_price = 0
     try:
         stock_price = stock.stock_price.all().order_by('date').last().value
@@ -331,6 +372,13 @@ def _get_all_sectors(portfolio):
 
 
 def _add_stock(symbol, quantity, portfolio):
+    """
+    Function to add certain quantities of a stock to a portfolio
+
+    :param symbol: symbol for stock to be added
+    :param quantity: quantity to be added
+    :param portfolio: portfolio to which stock has to be added
+    """
     name = get_company_name(symbol)
     sector = get_company_sector(symbol)
     s = Stock.objects.get_or_create(
