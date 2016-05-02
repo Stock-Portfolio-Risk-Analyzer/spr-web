@@ -26,7 +26,7 @@ def add_stock(request, portfolio_id):
 
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portoflio Object
-    :return: HTTPResponse - CODE - 200 if successful, 403 if unauthorized user is
+    :return: HTTPResponse - CODE - 200 if successful, 403 if unauthorized user is \
     requesting, 400 if specified stock not found in Database
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
@@ -55,9 +55,9 @@ def remove_stock(request, portfolio_id):
 
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portoflio Object
-    :return: HTTPResponse
-     - CODE - 200 if successful, 403 if unauthorized user is requesting, 400 if
-     specified stock or portfolio are not found in Database
+    :return: HTTPResponse \
+     - CODE - 200 if successful, 403 if unauthorized user is requesting, 400 \
+     if specified stock or portfolio are not found in Database
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -78,8 +78,8 @@ def create_portfolio(request, user_id):
 
     :param request: HTTP Request Object
     :param user_id: (int) ID for the User Object
-    :return: HTTPResponse - JSON - {'id'(portfolio_id)} - id of newly created portfolio
-    - CODE - 200 if successful, 404 if user not found.
+    :return: HTTPResponse - JSON - {'id'(portfolio_id)} - id of newly created\
+    portfolio - CODE - 200 if successful, 404 if user not found.
     """
     assert(request is not None)
     user = User.objects.get(pk=user_id)
@@ -97,8 +97,8 @@ def delete_portfolio(request, portfolio_id):
 
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portoflio Object
-    :return: HTTPResponse
-     - CODE - 200 if successful, 403 if unauthorized user is requesting.
+    :return: HTTPResponse \
+     - CODE - 200 if successful, 403 if unauthorized user is requesting. \
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -115,9 +115,9 @@ def get_portfolio_by_user(request, user_id):
 
     :param request: HTTP Request Object
     :param user_id: (int) ID for the User Object
-    :return: HTTPResponse
-    - JSON - Look at get_portfolio documentation function for JSON info.
-    - CODE - 200 if successful, 404 if not found.
+    :return: HTTPResponse \
+    - JSON - Look at get_portfolio documentation function for JSON info. \
+    - CODE - 200 if successful, 404 if not found. \
     """
     user = get_object_or_404(User, pk=user_id)
     user_settings = UserSettings.objects.get_or_create(user=user)[0]
@@ -136,10 +136,10 @@ def get_list_of_portfolios(request, user_id):
 
         :param request: HTTP Request Object
         :param user_id: (int) ID for the User Object
-        :return: HTTPResponse
-        - JSON - {'portfolio_list': [{"id"(portfolio_id),
-                    "name"(portfolio_name)},...]}
-        - CODE - 200 if successful, 404 if not found.
+        :return: HTTPResponse \
+        - JSON - {'portfolio_list': [{"id"(portfolio_id), \
+                    "name"(portfolio_name)},...]} \
+        - CODE - 200 if successful, 404 if not found. \
     """
     user = get_object_or_404(User, pk=user_id)
     if user is None:
@@ -180,11 +180,11 @@ def get_portfolio(request, portfolio_id):
 
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portfolio Object
-    :return: HTTPResponse
-    - JSON -
-    {'portfolio_id'(int), 'name'(str), 'portfoio_user_id'(int),
-    'stocks'(list), 'risk_history'(list), 'date_created'(list),
-    'rank'(list), 'sector_alloactions'(list)}
+    :return: HTTPResponse \
+    - JSON - \
+    {'portfolio_id'(int), 'name'(str), 'portfoio_user_id'(int), \
+    'stocks'(list), 'risk_history'(list), 'date_created'(list), \
+    'rank'(list), 'sector_alloactions'(list)} \
     - CODE - 200 if successful, 404 if not found.
     """
     assert(request is not None)
@@ -225,13 +225,13 @@ def modify_portfolio_form_post(request, portfolio_id):
 
     :param request: (HTTPRequest) HTTP Request Object
     :param portfolio_id: (int) id of the portfolio to be modified
-    :return: HTTPResponse
-    - JSON -
-        if invalid the json will include:
-        {"success" : "false", "message": an error message}
-        if valid the json will include:
-        {"success" : "true"}
-    - CODE - 200 if successful, 400 if invalid
+    :return: HTTPResponse \
+    - JSON - \
+        if invalid the json will include: \
+        {"success" : "false", "message": an error message} \
+        if valid the json will include: \
+        {"success" : "true"} \
+    - CODE - 200 if successful, 400 if invalid \
     """
     if request.method == 'POST':
         data = request.POST.get("data", None)
@@ -279,10 +279,10 @@ def generate_portfolio(request):
     -2.5 and 2.5 is selected.
 
     :param request: (HTTPRequest) HTTP Request Object
-    :return: HTTPResponse
-    - CODE - 200 if successful, 403 if unauthorized
-    - JSON - {"message"(str)} Useful message on why the portfolio was
-     generated.
+    :return: HTTPResponse \
+    - CODE - 200 if successful, 403 if unauthorized \
+    - JSON - {"message"(str)} Useful message on why the portfolio was \
+     generated. \
     """
     if request.user.is_anonymous():
         return HttpResponse(status=403)
@@ -345,7 +345,7 @@ def modify_gen(request, portfolio_id):
      with {'data': {'symbols'(list), 'quantities'(list}, 'name'(str)}}
     :param portfolio_id: (int) Portfolio ID where generated portfolio
      will be added.
-    :return: (HTTPResponse) 200 if successful, 403 if forbidden, 404
+    :return: (HTTPResponse) 200 if successful, 403 if forbidden, 404 \
      if Portfolio was not found.
     """
     if request.method == 'POST':
@@ -445,7 +445,7 @@ def download_porfolio_data(request, portfolio_id):
 
     :param request: (HTTPRequest) HTTP Request Object
     :param portfolio_id: ID for the portfolio we wish to download.
-    :return: (HTTPResponse) with attachment named 'backup-[portfolio_name].csv'
+    :return: (HTTPResponse) with attachment named 'backup-[portfolio_name].csv' \
     """
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -477,10 +477,10 @@ def upload_portfolio_data(request):
     File.
 
     :param request: (HTTPRequest) Request Object
-    :return: HTTPResponse
-     - CODE - 200 if successful, 500 if invalid portfolio_id or if invalid
-     form fields.
-     - JSON - {'portfolio_id' (int)} of newly created portfolio.
+    :return: HTTPResponse \
+     - CODE - 200 if successful, 500 if invalid portfolio_id or if invalid \
+     form fields. \
+     - JSON - {'portfolio_id' (int)} of newly created portfolio. \
     """
     if request.method == 'POST':
         form = PortfolioUploadForm(request.POST, request.FILES)
