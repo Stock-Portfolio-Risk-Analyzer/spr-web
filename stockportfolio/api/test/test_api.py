@@ -17,7 +17,7 @@ class ApiTestCase(TestCase):
         """
         Sets up a request factory and creates a user and a portfolio in th
         test database.
-        
+
         :return: None
         """
 
