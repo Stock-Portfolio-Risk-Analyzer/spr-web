@@ -11,7 +11,7 @@ from stockportfolio.api.models import Portfolio
 
 class ApiTestCase(TestCase):
     """
-    Class Tests our REST API Functions.
+    Tests for the REST API functionality.
     """
     def setUp(self):
         """
@@ -235,7 +235,7 @@ class ApiTestCase(TestCase):
 
     def test_get_portfolio_by_user_unauthorized_user(self):
         """
-        Test get portfolio doesn't if requested by
+        Test get portfolio doesn't provide portfolio details if requested by
         anonymous user.
 
         :return: None
@@ -250,7 +250,7 @@ class ApiTestCase(TestCase):
 
     def test_get_portfolio_by_user_non_existent_user(self):
         """
-        Test get portfolio doesn't if requested by
+        Test get portfolio doesn't provide portfolio details if requested by
         non-existent user.
 
         :return: None
@@ -333,7 +333,7 @@ class ApiTestCase(TestCase):
 
     def test_get_portfolio_unauthorized_user(self):
         """
-        Check that test portfolio returns 403 error code when
+        Check that get portfolio returns 403 error code when
         request is made by anonymous user.
 
         :return: None
@@ -352,7 +352,7 @@ class ApiTestCase(TestCase):
 
     def test_get_portfolio_non_existent_portfolio(self):
         """
-        Check that test portfolio returns 404 error code if portfolio
+        Check that get portfolio returns 404 error code if portfolio
         does not exist.
 
         :return: None

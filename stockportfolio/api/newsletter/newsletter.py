@@ -1,3 +1,6 @@
+"""
+Handles sending a weekly newsletter about the user's portfolio
+"""
 import os
 
 import sendgrid
@@ -12,7 +15,7 @@ def send_emails():
     looks through the users "default" portfolio. Uses the SendGrid
     API to generate an email template, and send out all the transactional
     emails.
-    
+
     :return: None
     """
     subscribers = User.objects.all()
