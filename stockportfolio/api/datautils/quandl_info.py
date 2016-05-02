@@ -43,6 +43,7 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_cod
     :param db_code: Quandl database code.
     :return: OrderedDict of DataFrames of data from start_date to end_date
     """
+    
     data = OrderedDict()
 
     if symbols is not None:
@@ -58,7 +59,7 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_cod
 
 def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
-    TODO
+    Get OHLC stock percentage returns from Quandl for a single stock
 
     :param symbol:
     :param start_date:
@@ -66,13 +67,14 @@ def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     :param col: (string) name of column to calculate the pct returns from
     :return:
     """
+
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.pct_change().fillna(0)
 
 
 def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
-    TODO
+    Get OHLC stock returns from Quandl for a single stock
 
     :param symbol: shit
     :param start_date: foo
@@ -80,15 +82,17 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     :param col:  name of column to calculate the returns from
     :return: some shit
     """
+
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.diff().fillna(0)
 
 
 def get_options_data_quandl(symbol=None):
     """
-    TODO
+    Get OHLC stock options from Quandl for a single stock
 
     :param symbol: ticker symbol
     :return: list of column names
     """
+
     return list(get_stock_data(symbol).columns.values)
