@@ -8,8 +8,11 @@ from stockportfolio.api.datautils.yahoo_finance import get_current_price
 
 def send_emails():
     """
-    TODO
-    :return:
+    Method when executed will go through all users of the DB, and
+    looks through the users "default" portfolio. Uses the SendGrid
+    API to generate an email template, and send out all the transactional
+    emails.
+    :return: None
     """
     subscribers = User.objects.all()
     key = os.environ.get('SENDGRID_API_KEY')
