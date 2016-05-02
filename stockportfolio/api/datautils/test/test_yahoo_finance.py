@@ -92,7 +92,7 @@ class TestYahooFinance(unittest.TestCase):
 
         :return:
         """
-        company_name = get_company_name(self.symbol)
+        company_name = yf.get_company_name(self.symbol)
         self.assertEqual(company_name, 'Google Inc.')
 
     def test_get_company_sector(self):
