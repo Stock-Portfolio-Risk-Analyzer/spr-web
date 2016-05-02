@@ -13,6 +13,11 @@ class TestYahooFinance(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """
+        TODO
+
+        :return:
+        """
         cls.symbol = 'GOOG'
         cls.symbol2 = 'AAPL'
         cls.start_date = dt(year=2016, month=1, day=1)
@@ -20,6 +25,11 @@ class TestYahooFinance(unittest.TestCase):
         cls.test_date = dt(year=2016, month=2, day=1)
 
     def test_get_stock_data(self):
+        """
+        TODO
+
+        :return:
+        """
         data = get_stock_data(self.symbol, self.start_date, self.end_date)
         self.assertTrue(data.keys().__contains__('Open'))
         self.assertTrue(data.keys().__contains__('High'))
@@ -35,6 +45,11 @@ class TestYahooFinance(unittest.TestCase):
         self.assertTrue(data_no_start_or_end.keys().__contains__('Volume'))
 
     def test_get_stock_data_multiple(self):
+        """
+        TODO
+
+        :return:
+        """
         data = get_stock_data(
             [self.symbol, 'AAPL'], self.start_date, self.end_date)
         self.assertTrue(data.keys().__contains__('Open'))
@@ -44,23 +59,48 @@ class TestYahooFinance(unittest.TestCase):
         self.assertTrue(data.keys().__contains__('Volume'))
 
     def test_get_pct_returns(self):
+        """
+        TODO
+
+        :return:
+        """
         pct_returns = get_pct_returns(
             self.symbol, self.start_date, self.end_date)
         self.assertAlmostEqual(pct_returns[self.test_date], .0121811533129)
 
     def test_get_returns(self):
+        """
+        TODO
+
+        :return:
+        """
         returns = get_returns(self.symbol, self.start_date, self.end_date)
         self.assertAlmostEqual(returns[self.test_date], 9.049988)
 
     def test_get_current_price(self):
+        """
+        TODO
+
+        :return:
+        """
         current_price = get_current_price(self.symbol)
         self.assertTrue(type(current_price) is float)
         self.assertGreaterEqual(current_price, 500)
 
     def test_get_company_name(self):
+        """
+        TODO
+
+        :return:
+        """
         company_name = get_company_name(self.symbol)
         self.assertEqual(company_name, 'Google Inc.')
 
     def test_get_company_sector(self):
+        """
+        TODO
+
+        :return:
+        """
         company_sector = get_company_sector(self.symbol)
         self.assertEqual(company_sector, 'Technology')
