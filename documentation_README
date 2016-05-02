@@ -3,7 +3,7 @@ run in spr-web: sphinx-apidoc -f -o docs/ stockportfolio/ stockportfolio/api/mig
 
 
 to build the html pages:
-make html . BUILDDIR="docs/"   (replace BUILDDIR as needed, the actual html pages are located in BUILDDIR/html)
+cd docs; make html
 
 
 To document your methods (example):
