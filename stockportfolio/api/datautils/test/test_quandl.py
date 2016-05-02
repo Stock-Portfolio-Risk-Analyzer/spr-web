@@ -9,33 +9,43 @@ from stockportfolio.api.datautils.quandl_info import (get_options_data_quandl,
 
 
 class TestQuandl(unittest.TestCase):
-
+    """
+    Tests if fetching stock data works by checking historical value
+    """
     def test_get_stock_data(self):
         start = dt(year=2015, month=1, day=5)
         end = dt(year=2015, month=1, day=6)
         data = get_stock_data("GOOG", start, end)
         self.assertEqual(data['Close'][0], 513.87)
-
+    """
+    Tests if fetching stock data works for multiple stocks by checking historical values
+    """
     def test_get_stock_data_multiple(self):
         start = dt(year=2015, month=1, day=5)
         end = dt(year=2015, month=1, day=6)
         data = get_stock_data_multiple(["GOOG", "AAPL"], start, end)
         self.assertEqual(data['GOOG']['Close'][0], 513.87)
         self.assertEqual(data['AAPL']['Close'][0], 106.25)
-
+    """
+    Tests if getting returns in percents work
+    """
     def test_get_pct_returns(self):
         start = dt(year=2015, month=1, day=5)
         end = dt(year=2015, month=1, day=6)
         close_pct = -0.0231770681301
         qclose_pct = get_pct_returns("GOOG", start, end)[1]
         self.assertTrue(abs(qclose_pct - close_pct) < 0.001)
-
+    """
+    Tests if getting returns match historical value
+    """
     def test_get_returns(self):
         start = dt(year=2015, month=1, day=5)
         end = dt(year=2015, month=1, day=6)
         close = -11.910000000000025
         self.assertEqual(get_returns("GOOG", start, end)[1], close)
-
+    """
+    Tests if options row is correctly formatted
+    """
     def test_get_options_data(self):
         expected_options = ['Open', 'High', 'Low', 'Close', 'Volume',
                             'Ex-Dividend', 'Split Ratio', 'Adj. Open',
