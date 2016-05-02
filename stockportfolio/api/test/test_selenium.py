@@ -8,6 +8,8 @@ from registration.models import RegistrationProfile
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 
 from stockportfolio.settings.base import BASE_DIR
 
@@ -37,6 +39,7 @@ class SeleniumTestCase(LiveServerTestCase):
         cls.login()
 
     def setUp(self):
+        self.cls = SeleniumTestCase
         self.new_page = lambda driver: driver.find_element_by_tag_name('body')
         self.timeout = 20
 
@@ -110,3 +113,20 @@ class SeleniumTestCase(LiveServerTestCase):
         self.assertEqual(
             SeleniumTestCase.driver.title,
             'SPRA | %s\'s profile' % (SeleniumTestCase.user_info['user_name']))
+ 
+    def test_modify_account(self):
+       cls = SeleniumTestCase
+       cls.driver.implicitly_wait(10)
+       dropdown = cls.driver.find_elements_by_class_name('user-profile')[0]
+       dropdown.click()
+       ma = cls.driver.find_elements_by_xpath("//*[@data-target='#userAccountModal']") 
+       self.assertEqual(len(ma), 1)
+       ma[0].click()
+       username_box = cls.driver.find_elements_by_xpath(
+        "//*[@value='%s']" % (cls.user_info['user_name']))[0]
+       cls.user_info['user_name'] = 'test_user_2'
+       wait = WebDriverWait(cls.driver, 60)
+       wait.until(EC.visibility_of_element_located((By.ID, 'id_username')))
+       username_box.send_keys(SeleniumTestCase.user_info['user_name'])
+       SeleniumTestCase.driver.find_element_by_id('submit-id-submit').click() 
+    

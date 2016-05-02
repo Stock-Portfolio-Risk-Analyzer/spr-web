@@ -7,7 +7,6 @@ from django.conf.urls import url
 
 from stockportfolio.api import api, views
 
-
 urlpatterns = [
     url(r'^(?P<symbol>[A-Z]+)/$', views.ticker, name='ticker'),
     url(
