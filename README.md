@@ -17,6 +17,13 @@ Analyzes and displays the riskiness of your stock portfolio. A project for CS428
 9. Run `python manage.py runserver 0.0.0.0:5000`
 10. Connect to `localhost:5000` from your webbrowser to view the existing site
 
+## Local Database Setup
+
+Download and install PostgresSQL, including the development packages. 
+
+Then you must create a database called `spra` along with a user/password called `spra`.
+Alternatively, you can change these settings in `stockportfolio/settings/local.py`
+
 ## Sort your Imports
 `isort -rc --atomic .`
 
@@ -30,3 +37,23 @@ Optionally, you can configure the site to simulate portfolios for you.
 1. `pip install -r simulation-requirements.txt`
     Note that there are several system requirements that must be met.
 2. Set up the environment: `export MATPLOTLIB_AVAILABLE=YES`
+
+## Contributors
+
+- Rohan Kapoor
+- Laurynas Tamulevicius
+- Enrique Espaillat
+- Alex Ashley
+- Ronit Chakraborty
+- Shivam Gupta
+- Thibaut Xiong
+- Arpit Dev Mathur
+
+
+
+
+
+
+
+
+
