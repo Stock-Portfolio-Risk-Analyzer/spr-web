@@ -95,6 +95,8 @@ def compute_daily_change_for_range(symbol, start_date, end_date):
             symbol, start_date, end_date, closing_price)
 
     daily_change = []
+    if closing_price is None:
+        return daily_change
     for i in range(0, len(closing_price) - 1):
         cur = closing_price[i]
         daily_change.append(((closing_price[i + 1] - cur) / cur) * 100)
@@ -109,6 +111,12 @@ def compute_covariance(a, b):
     :param b: (list) second list
     :return: (float) covariance
     """
+
+    if len(a) == 0 or len(b) == 0:
+        return 0.0
+
+    a_mean = (sum(a) / len(a))
+    b_mean = (sum(b) / len(b))
 
     a_mean = (sum(a) / len(a))
     b_mean = (sum(b) / len(b))
