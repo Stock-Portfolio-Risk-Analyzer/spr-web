@@ -35,6 +35,7 @@ tickers = list(set(tickers))
 def get_stock_sentiment_api(symbol):
     """
     TODO
+
     :param symbol:
     :return:
     """
@@ -48,6 +49,7 @@ def get_stock_sentiment_api(symbol):
 def get_stock_sentiment(symbol):
     """
     TODO
+
     :param symbol:
     :return:
     """
@@ -95,6 +97,7 @@ def get_stock_sentiment_for_a_range(symbol, start_date, end_date):
 def get_average_stock_sentiment_for_a_range(symbol, start_date, end_date):
     """
     TODO
+
     :param symbol:
     :param start_date:
     :param end_date:
@@ -108,6 +111,7 @@ def get_average_stock_sentiment_for_a_range(symbol, start_date, end_date):
 def get_market_sentiment():
     """
     TODO
+
     :return:
     """
     sentiment = Quandl.get(
