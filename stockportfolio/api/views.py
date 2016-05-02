@@ -35,6 +35,7 @@ def dashboard(request):
     :param request: (HTTPRequest Object)
     :return render_template:
     """
+    
     if request.user.is_anonymous():
         return redirect("/")
     email = string.lower(string.strip(request.user.email, string.whitespace))
@@ -71,6 +72,7 @@ def landing(request):
     :param request:
     :return HttpResponseRedirect: 
     """
+
     if request.user.is_anonymous():
         return render_to_response('landing.html')
     else:
@@ -84,6 +86,7 @@ def ticker(request, symbol):
     :param symbol: (string)   
     :return HttpResponseRedirect: 
     """
+
     return HttpResponse(yf.get_current_price(symbol))
 
 def company_name(request, symbol):
@@ -94,6 +97,7 @@ def company_name(request, symbol):
     :param symbol: (string)   
     :return HttpResponseRedirect 
     """
+
     return HttpResponse(yf.get_company_name(symbol))
 
 
@@ -105,6 +109,7 @@ def user_profile(request, user_id):
     :param user_id: (string)   
     :return render_template:
     """
+
     user = User.objects.get(user_id)
     if user is None:
         raise Http404
@@ -121,6 +126,7 @@ def calculate_all_rris(request):
     :param request:
     :return HttpResponse:
     """
+
     update_rri_for_all_portfolios()
     update_rank_for_all_portfolios()
     return HttpResponse(status=200)
@@ -133,6 +139,7 @@ def modify_account(request):
     :param request:
     :return render_template:
     """
+
     if request.method == 'POST':
         form = UpdateProfile(request.POST, instance=request.user)
         if form.is_valid():
@@ -150,6 +157,7 @@ def stock_interface(request, ticker):
     :param ticker: (string)   
     :return render_template:
     """
+
     ticker = ticker.upper()
     stock = get_object_or_404(
         Stock, Q(stock_ticker=ticker) | Q(stock_name__iexact=ticker))
@@ -193,6 +201,7 @@ def stock_rec(request, portfolio_id, rec_type):
     :param portfolio_id: (int)   
     :return render_template:
     """
+
     recs = rec_utils.stock_recommender(request, portfolio_id, rec_type)
     message = ''
     if rec_type == 'stable':
@@ -228,6 +237,7 @@ def generate_portfolio(request):
     :param request
     :return render_template:
     """
+
     if request.user.is_anonymous():
         return HttpResponse(status=403)
     upper_bound = random.randint(16, 20)
@@ -293,6 +303,7 @@ def simulate_portfolio(request, portfolio_id):
     :param portfolio_id: (int)   
     :return HttpResponse:
     """
+
     if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
         url = (settings.ADVANCED_SETTINGS['REMOTE_SIMULATION_URL'] +
                request.path)
