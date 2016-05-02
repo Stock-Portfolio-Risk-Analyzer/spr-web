@@ -13,6 +13,11 @@ class RecUtilsTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """
+        Set up the class for test with username, email and password
+
+        :param cls: Class method variable
+        """
         super(RecUtilsTestCase, cls).setUpClass()
         cls.user = User.objects.create_user(
             username='test', email='test@test.com', password='testing123')
@@ -21,13 +26,30 @@ class RecUtilsTestCase(TestCase):
         cls._load_stocks()
 
     def setUp(self):
+        """
+        Setting up method
+
+        :param self: Instance method variable
+        """
         self.cls = RecUtilsTestCase
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Tears down test class
+        
+        :param cls: Class method variable
+        """
         super(RecUtilsTestCase, cls).tearDownClass()
 
     def test_stock_slice(self):
+        """
+        Tests the function to check if the stock_slice function works
+        Stock slice gets random subset of stocks
+        Checks if stock_slice returns some subset of stocks.
+
+        :param self: Instance method variable
+        """
         num_stocks = 10
         nslice = rec_utils.stock_slice(None, num_stocks)
         self.assertEqual(nslice, None)
@@ -35,18 +57,35 @@ class RecUtilsTestCase(TestCase):
         self.assertEqual(len(sslice), num_stocks)
 
     def test_get_portfolio_and_risk(self):
+        """
+        Tests to check if portfolio and risk are valid
+
+        :param self: Instance method variable
+        """
         user = self.cls.user
         usettings = UserSettings.objects.get_or_create(user=user)[0]
         p, r, u = rec_utils.get_portfolio_and_risk(user, usettings)
         self.assertIsNotNone(p)
 
     def test_get_recommendations(self):
+        """
+        Tests to check if the stock recommmendations are returned as
+        expected
+
+        :param self: Instance method variable
+        """
         c = rec_utils._recommender_low_risk
         s = Stock.objects.all()
         recs = rec_utils.get_recommendations(c, s, 5, 0)
         self.assertTrue(len(recs) > 0)
 
     def test_fetch_tickers(self):
+        """
+        Tests to check if fetch_tickers is returning the tickers
+        requested by the user
+
+        :param self: Instance method variable
+        """
         tickers = rec_utils.fetch_tickers(None)
         self.assertEqual(tickers, None)
         symbols = ['AAPL', 'GOOG', 'MSFT']
@@ -59,6 +98,12 @@ class RecUtilsTestCase(TestCase):
         self.assertEqual(set(tickers), set(symbols))
 
     def test_determine_stock_quantities(self):
+        """
+        Tests to check if the stock_quantities being returned are
+        the same as the one in the portfolio
+        
+        :param self: Instance method variable
+        """
         curr = self.cls.portfolio
         f, v, l, h = rec_utils.determine_stock_quantities(curr, [])
         self.assertEqual(f, [])
@@ -74,6 +119,12 @@ class RecUtilsTestCase(TestCase):
         self.assertTrue(v >= 0)
 
     def test_stock_to_dict(self):
+        """
+        Tests to check if the stock data is the same as the stock_dictionary
+        data
+
+        :param self: Instance method variable
+        """
         stock = rec_utils._add_stock('FB', 80, self.cls.portfolio)
         sdict = rec_utils.stock_to_dict(stock)
         self.assertEqual(sdict['ticker'], 'FB')
@@ -82,12 +133,24 @@ class RecUtilsTestCase(TestCase):
         self.assertTrue(sdict['blurb'] != '')
 
     def test_fetch_target_value(self):
+        """
+        Tests to check if fetch_target values is within the targets set by 
+        the user
+        
+        :param self: Instance method variable
+        """
         portfolio = None
         l, h = rec_utils._fetch_target_value(portfolio)
         self.assertTrue(l >= 10000 and l <= 20000)
         self.assertTrue(h >= 20000 and h <= 50000)
 
     def test_calculate_portfolio_value(self):
+        """
+        Tests to check if the portfolio value is as expected by the totalled 
+        value of stocks by their respective quantities
+        
+        :param self: Instance method variable
+        """
         p = [('AAPL', 10, 130.4), ('TTPH', 2, 10),
              ('FC', 2, 1.2),      ('WU', 126, 4.6),
              ('TSLA', 19, 172.5), ('GOOG', 2, 666.42)]
@@ -95,21 +158,47 @@ class RecUtilsTestCase(TestCase):
         self.assertEqual(value, 6516.34)
 
     def test_get_latest_stock_price(self):
+        """
+        Tests to check that when the function is called on an empty stock,
+        it returns 0 as the stock_price
+        
+        :param self: Instance method variable
+        """
         stock = None
         price = rec_utils._get_latest_stock_price(stock)
         self.assertEqual(price, 0)
 
     def test_get_latest_stock_risk(self):
+        """
+        Tests to check that when the function is called on an empty stock,
+        it returns the beta as None
+
+        :param self: Instance method variable
+        """
         stock = None
         beta = rec_utils._get_latest_stock_risk(stock)
         self.assertEqual(beta, None)
 
     def test_get_latest_portfolio_risk(self):
+        """
+        Tests to check that when the function is called on an empty portfolio,
+        it returns None as the portfolio risk
+
+        :param self: Instance method variable
+        """
         portfolio = None
         p_risk = rec_utils._get_latest_portfolio_risk(portfolio)
         self.assertEqual(p_risk, None)
 
     def test_get_all_sectors(self):
+        """
+        Tests to check that when the function is called on an empty portfolio,
+        it returns an empty list as the sectors
+        but when called on an actual portfolio,
+        it returns a non-empty list
+        
+        :param self: Instance method variable
+        """
         portfolio = None
         sectors = rec_utils._get_all_sectors(portfolio)
         self.assertEqual(sectors, [])
@@ -118,6 +207,12 @@ class RecUtilsTestCase(TestCase):
 
     @classmethod
     def _load_stocks(cls):
+        """
+        Checks to see if the stocks are being loaded correctly from the
+        portfolio
+        
+        :param cls: Class method variable
+        """
         fpath = os.path.join(
             BASE_DIR, 'api', 'datautils', 'secwiki_tickers.csv')
         df = pandas.read_csv(fpath)
