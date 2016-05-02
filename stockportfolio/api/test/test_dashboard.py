@@ -31,6 +31,10 @@ class SeleniumTestCase(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """
+        Fixture for class
+        """
+
         super(SeleniumTestCase, cls).setUpClass()
         LOGGER.setLevel(logging.WARNING)
         cls.driver = webdriver.Firefox()
@@ -39,16 +43,29 @@ class SeleniumTestCase(LiveServerTestCase):
         cls.login()
 
     def setUp(self):
+        """
+        Fixture for tests
+        """
+
         self.new_page = lambda driver: driver.find_element_by_tag_name('body')
         self.timeout = 20
 
     @classmethod
+
     def tearDownClass(cls):
+        """
+        Fixture for tests
+        """
+
         cls.driver.quit()
         super(SeleniumTestCase, cls).tearDownClass()
 
     @classmethod
     def register_and_activate(cls):
+        """
+        Registers new user and activates it
+        """
+
         cls.driver.get(cls.live_server_url + '/accounts/register/')
         username_box = cls.driver.find_element_by_name('username')
         username_box.send_keys(cls.user_info['user_name'])
@@ -69,6 +86,10 @@ class SeleniumTestCase(LiveServerTestCase):
 
     @classmethod
     def login(cls):
+        """
+        Tries to login into account 
+        """
+
         cls.driver.get(cls.live_server_url)
         WebDriverWait(cls.driver, 20).until(
             EC.title_contains('Stock Portfolio Risk Analyzer'))
@@ -84,13 +105,23 @@ class SeleniumTestCase(LiveServerTestCase):
             "//*[contains(text(), 'Sign in')]").click()
 
     def wait(self, fn, time=20):
+        """
+        Wait for some time
+
+        param fn: (function) 
+        param time: (int)
+        """
+
         WebDriverWait(SeleniumTestCase.driver, time).until(fn)
 
     def screenshot(self, prefix="", upload=True):
         """
+        Function that takes a screenshot and uploads to image site
+
         :param prefix: optional prefix for the resulting file
         :param upload: upload the image to Imgur (default)
         """
+        
         fname = os.path.join(
             BASE_DIR, 'api', 'test',
             prefix + '_' + str(time.time()) + '.png')
@@ -108,15 +139,27 @@ class SeleniumTestCase(LiveServerTestCase):
 class DashboardTest(SeleniumTestCase):
 
     def setUp(self):
+        """
+        Setting up test fixture
+        """
+
         self.cls = DashboardTest
         super(DashboardTest, self).setUp()
 
     def test_all(self):
+        """
+        Runs everything sequentially
+        """
+
         self.display_risk_rank()
         self.search_stock_no_stocks_exist()
         self.top_ten_loads()
 
     def display_risk_rank(self):
+        """
+        Tests if risk and rank exists 
+        """
+
         self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
@@ -131,6 +174,12 @@ class DashboardTest(SeleniumTestCase):
         self.assertEqual(rank.text, 'N/A')
 
     def search_stock_no_stocks_exist(self):
+        """
+        Tests if searching stock pops the suggestion 
+        and invokes stock interface also that correct 
+        warning is raised if stock does not exist
+        """
+
         self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(
@@ -147,6 +196,10 @@ class DashboardTest(SeleniumTestCase):
         self.cls.driver.find_element_by_class_name('ac_results')
 
     def top_ten_loads(self):
+        """
+        Checks if top ten protfolio section is loaded
+        """
+
         self.cls.driver.implicitly_wait(10)
         self.cls.driver.get(self.cls.live_server_url + '/dashboard/')
         WebDriverWait(

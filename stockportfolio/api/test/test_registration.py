@@ -8,6 +8,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 class SeleniumTestCase(StaticLiveServerTestCase):
 
     def setUp(self):
+        """
+        Test fixture 
+        """
+
         super(SeleniumTestCase, self).setUp()
         self.driver = webdriver.Firefox()
         self.driver.maximize_window()
@@ -18,10 +22,18 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.new_page = lambda driver: driver.find_element_by_tag_name('body')
 
     def tearDown(self):
+        """
+        Test fixture 
+        """
+
         self.driver.quit()
         super(SeleniumTestCase, self).tearDown()
 
     def test_runner(self):
+        """
+        Runs everything sequentially
+        """
+
         self.landing()
         self.register()
         self.register_complete()
@@ -31,9 +43,20 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.dashboard()
 
     def wait(self, fn, time=20):
+        """
+        Wait for some time
+
+        param fn: (function) 
+        param time: (int)
+        """
+
         WebDriverWait(self.driver, time).until(fn)
 
     def landing(self):
+        """
+        Checks if landing page is rendered
+        """
+
         self.driver.get(self.live_server_url)
         WebDriverWait(self.driver, self.timeout).until(
             EC.title_contains('Stock Portfolio Risk Analyzer'))
@@ -52,6 +75,10 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.wait(self.new_page)
 
     def register(self):
+        """
+        Checks if register functionality works
+        """
+
         self.assertEqual(self.driver.title, 'User test')
         username_box = self.driver.find_element_by_name('username')
         username_box.send_keys(self.un)
@@ -67,6 +94,10 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.wait(self.new_page)
 
     def register_complete(self):
+        """
+        Checks if register was succesfully completed
+        """
+
         self.assertEqual(self.driver.title, 'User test')
         content = self.driver.find_element_by_id('content')
         message = content.find_elements_by_tag_name('p')
@@ -75,6 +106,10 @@ class SeleniumTestCase(StaticLiveServerTestCase):
                          'You are now registered. Activation email sent.')
 
     def activation(self):
+        """
+        Checks if activation worked
+        """
+
         test_profile = RegistrationProfile.objects.get(activated=False)
         test_user = test_profile.user
         self.assertFalse(test_profile.activated)
@@ -85,11 +120,19 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         test_profile.save()
 
     def confirm_activation(self):
+        """
+        Confirms that user is active
+        """
+
         profile = RegistrationProfile.objects.get(activated=True)
         self.assertTrue(profile.activated)
         self.assertTrue(profile.user.is_active)
 
     def login(self):
+        """
+        Test the login page 
+        """
+
         self.driver.get(self.live_server_url)
         WebDriverWait(self.driver, self.timeout).until(
             EC.title_contains('Stock Portfolio Risk Analyzer'))
@@ -105,6 +148,10 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             "//*[contains(text(), 'Sign in')]").click()
 
     def dashboard(self):
+        """
+        Checks if dashboard page is loaded
+        """
+
         self.wait(self.new_page, 20)
         self.driver.get(self.live_server_url + '/dashboard/')
         self.wait(self.new_page, 60)
