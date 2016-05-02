@@ -9,12 +9,12 @@ import ystockquote
 
 def get_stock_data(symbol, start_date=None, end_date=None):
     """
-    Get OHLC stock data from Yahoo Finance for a single stock
+    Get OHLC stock data from Yahoo Finance for a single stock.
 
     :param symbol: (string)
-    :param start_date: (DateTime)
-    :param end_date: (DateTime)
-    :return: (DataFrame) of stock data from start_date to end_date
+    :param start_date: (datetime)
+    :param end_date: (datetime)
+    :return: (pd.DataFrame) of stock data from start_date to end_date
     """
     if start_date is None:
         start_date = dt(year=2016, month=1, day=1)
@@ -32,13 +32,12 @@ def get_stock_data(symbol, start_date=None, end_date=None):
 
 def get_stock_data_multiple(symbols, start_date=None, end_date=None):
     """
-    Get OHLC stock data from Yahoo Finance for multiple stocks
+    Get OHLC stock data from Yahoo Finance for multiple stocks.
 
-    :param symbols: (list) of symbols (string)
-    :param start_date: (DateTime)
-    :param end_date: (DateTime)
-    :return: (OrderedDict) of DataFrames of
-        stock data from start_date to end_date
+    :param symbols: (list of str) symbols to get data for
+    :param start_date: (datetime)
+    :param end_date: (datetime)
+    :return: (OrderedDict of str : pd.DataFrame) of DataFrames of stock data from start_date to end_date
     """
     data = OrderedDict()
 
@@ -51,13 +50,13 @@ def get_stock_data_multiple(symbols, start_date=None, end_date=None):
 
 def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     """
-    Get percent returns
+    Get percent returns.
 
-    :param symbol: (string)
+    :param symbol: (str)
     :param start_date: (DateTime)
-    :param end_date:
-    :param col: (string) name of column to calculate the pct returns from
-    :return:
+    :param end_date: (DateTime_
+    :param col: (str) default: 'Adj Close'
+    :return: (pd.Series) non-cumulative daily percent returns
     """
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.pct_change().fillna(0)
@@ -65,13 +64,13 @@ def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
 
 def get_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
     """
-    Get returns
+    Get daily non-cumulative returns for a symbol from start_date to end_date.
 
-    :param symbol:
-    :param start_date:
-    :param end_date:
-    :param col: name of column to calculate the returns from
-    :return:
+    :param symbol: (str)
+    :param start_date: (datetime)
+    :param end_date: (datetime)
+    :param col: (str) default: 'Adj Close'
+    :return: (pd.Series)
     """
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.diff().fillna(0)
@@ -79,10 +78,10 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj Close'):
 
 def get_current_price(symbol):
     """
-    Get the latest price
+    Get the latest price for a symbol.
 
     :param symbol: (str)
-    :return: (str)
+    :return: (float)
     """
     quote = ystockquote.get_price(symbol)
     if quote == 'N/A':
