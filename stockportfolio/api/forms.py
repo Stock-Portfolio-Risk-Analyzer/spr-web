@@ -35,6 +35,13 @@ class UpdateProfile(forms.ModelForm):
         fields = ('username', 'email', 'default_portfolio')
 
     def __init__(self, *args, **kwargs):
+        """
+        TODO
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         super(UpdateProfile, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Submit'))

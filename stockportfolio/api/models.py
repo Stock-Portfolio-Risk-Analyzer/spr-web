@@ -7,6 +7,7 @@ from django.utils import timezone
 
 class Risk(models.Model):
     """
+    TODO
 
     """
     risk_id = models.AutoField(primary_key=True)
@@ -24,6 +25,7 @@ class Risk(models.Model):
 
 class Price(models.Model):
     """
+    TODO
 
     """
     value = models.FloatField()
@@ -37,6 +39,7 @@ class Price(models.Model):
 
 class Stock(models.Model):
     """
+    TODO
 
     """
     stock_id = models.AutoField(primary_key=True)
@@ -55,6 +58,7 @@ class Stock(models.Model):
 
 class StockPortfolio(models.Model):
     """
+    TODO
 
     """
     stock = models.ForeignKey(Stock)
@@ -66,6 +70,7 @@ class StockPortfolio(models.Model):
 
 class Portfolio(models.Model):
     """
+    TODO
 
     """
     portfolio_id = models.AutoField(primary_key=True)
@@ -80,6 +85,7 @@ class Portfolio(models.Model):
 
 class UserSettings(models.Model):
     """
+    TODO
 
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -89,6 +95,7 @@ class UserSettings(models.Model):
 
 class PortfolioRank(models.Model):
     """
+    TODO
 
     """
     class Meta:
@@ -101,6 +108,7 @@ class PortfolioRank(models.Model):
 
 class PortfolioValue(models.Model):
     """
+    TODO
 
     """
 
