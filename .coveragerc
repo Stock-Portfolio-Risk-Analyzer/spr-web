@@ -1,0 +1,10 @@
+[run]
+omit = stockportfolio/api/migrations/*
+       stockportfolio/api/management/*
+       stockportfolio/settings/*
+       stockportfolio/urls.py
+       stockportfolio/api/urls.py
+       stockportfolio/api/admin.py
+       stockportfolio/api/models.py
+       stockportfolio/api/newsletter/*
+       stockportfolio/api/utils.py

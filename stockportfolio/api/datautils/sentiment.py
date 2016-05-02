@@ -12,10 +12,6 @@ API that computes sentiment for a given Stock or Portfolio
 Author - Shivam Gupta (sgupta40@illinois.edu)
 """
 
-# quandl_key = "SyH7V4ywJGho77EC6W7C"
-
-# quandl_key = "svyaA69jUs7XUNys34W7"
-
 quandl_key = "hJFsm6TLFgZmhD8NtsS9"
 
 tickers = []
@@ -30,21 +26,6 @@ with open(fpath, 'rb') as csvfile:
         ticker_sentiment[row[0]] = row[3]
 
 tickers = list(set(tickers))
-
-
-def get_stock_sentiment_api(symbol):
-    """
-    TODO
-
-    :param symbol:
-    :return:
-    """
-    link = str("AOS/" + symbol)
-    today = date.today()
-    sentiment = Quandl.get(link, authtoken=quandl_key, trim_start=today)[
-        "Article Sentiment"][0]
-    return sentiment
-
 
 def get_stock_sentiment(symbol):
     """
@@ -67,7 +48,6 @@ def get_sentiment_of_a_portfolio(stocks):
     :return:
     """
     sentiment = []
-
     for stock in stocks:
         stock_sentiment = get_stock_sentiment(stock)
         sentiment.append(stock_sentiment)
