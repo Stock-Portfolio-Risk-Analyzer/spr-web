@@ -232,13 +232,11 @@ def simulate_portfolio(request, portfolio_id):
     if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
         url = (settings.ADVANCED_SETTINGS['REMOTE_SIMULATION_URL'] +
                request.path)
-        response = requests.get(url, stream=True)
-        return HttpResponse(response.raw, content_type='image/png')
-        # try:
-        #     response = requests.get(url, stream=True)
-        #     return HttpResponse(response.raw, content_type='image/png')
-        # except:
-        #     return HttpResponse(status=500)
+        try:
+            response = requests.get(url, stream=True)
+            return HttpResponse(response.raw, content_type='image/png')
+        except:
+            return HttpResponse(500)
 
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if not portfolio.portfolio_stocks.count() > 0:
