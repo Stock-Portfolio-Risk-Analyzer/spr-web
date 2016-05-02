@@ -62,6 +62,7 @@ def get_stock_sentiment(symbol):
 def get_sentiment_of_a_portfolio(stocks):
     """
     TODO
+
     :param stocks:
     :return:
     """
@@ -77,6 +78,7 @@ def get_sentiment_of_a_portfolio(stocks):
 def get_stock_sentiment_for_a_range(symbol, start_date, end_date):
     """
     TODO
+
     :param symbol:
     :param start_date:
     :param end_date:

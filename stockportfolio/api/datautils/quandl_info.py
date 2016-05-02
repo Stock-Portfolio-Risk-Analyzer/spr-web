@@ -58,6 +58,8 @@ def get_stock_data_multiple(symbols=None, start_date=None, end_date=None, db_cod
 
 def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
+    TODO
+
     :param symbol:
     :param start_date:
     :param end_date:
@@ -70,6 +72,8 @@ def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
 
 def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
+    TODO
+
     :param symbol: shit
     :param start_date: foo
     :param end_date: bar
@@ -82,6 +86,8 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
 
 def get_options_data_quandl(symbol=None):
     """
+    TODO
+
     :param symbol: ticker symbol
     :return: list of column names
     """
