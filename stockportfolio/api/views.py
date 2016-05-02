@@ -192,8 +192,8 @@ def generate_portfolio(request):
         else:
             ' number than ' + str(p_risk)
         new_portfolio = rec_utils.get_recommendations(
-            lambda x: x <= p_risk,
-            all_stocks, random.randint(lower_bound, upper_bound))
+            rec_utils._recommender_low_risk,
+            all_stocks, random.randint(lower_bound, upper_bound), p_risk)
     elif(p_type == 'diverse'):
         message = 'We chose this portfolio with sector diversity in mind.'
         new_portfolio = rec_utils.get_sector_stocks(
@@ -206,8 +206,8 @@ def generate_portfolio(request):
         else:
             ' than ' + str(p_risk)
         new_portfolio = rec_utils.get_recommendations(
-            lambda x: x > p_risk, all_stocks,
-            random.randint(lower_bound, upper_bound))
+            rec_utils._recommender_high_risk,
+            random.randint(lower_bound, upper_bound), p_risk)
     new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(
         portfolio, new_portfolio)
     end = time.time() - start
