@@ -40,6 +40,29 @@ Optionally, you can configure the site to simulate portfolios for you.
     Note that there are several system requirements that must be met.
 2. Set up the environment: `export MATPLOTLIB_AVAILABLE=YES`
 
+## Generating Documentation
+
+To autodoc/generate templates:
+`sphinx-apidoc -f -o docs/ stockportfolio/ stockportfolio/api/migrations stockportfolio/settings`
+
+To build the html pages:
+`cd docs; make html`
+
+An example of how methods should be documented: 
+
+```python
+def get_stock_data(symbol, start_date=None, end_date=None):
+    """
+    Get OHLC stock data from Yahoo Finance for a single stock
+
+    :param symbol: (string)
+    :param start_date: (DateTime)
+    :param end_date: (DateTime)
+    :return: (DataFrame) of stock data from start_date to end_date
+    """
+```
+
+
 ## Contributors
 
 - Rohan Kapoor
