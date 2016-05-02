@@ -5,6 +5,7 @@ import stockportfolio.api.datautils.stock_info as stock_info
 
 
 class TestStockInfo(unittest.TestCase):
+    """Tests the stock_info module"""
 
     def setUp(self):
         """
@@ -22,7 +23,7 @@ class TestStockInfo(unittest.TestCase):
         symbol = 'AAPL'
         name = stock_info.get_company_name(symbol)
         self.assertEqual(name, 'Apple Inc.')
- 
+
     def test_get_company_sector(self):
         """
         Tests if fetching sentiments for single stock works
@@ -54,7 +55,7 @@ class TestStockInfo(unittest.TestCase):
 
     def test_get_stock_volume_traded_for_a_week(self):
         """
-        Tests the volume of that stock moved in the market for last week 
+        Tests the volume of that stock moved in the market for last week
         """
 
         symbol = 'FB'
@@ -68,7 +69,7 @@ class TestStockInfo(unittest.TestCase):
         """
         Tests the volume of that stock moved in the market for last month
         """
-    
+
         symbol = 'GOOG'
         vlist = stock_info.get_stock_volume_traded_for_a_month(symbol)
         self.assertIsNotNone(vlist)

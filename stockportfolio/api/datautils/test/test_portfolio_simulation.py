@@ -9,15 +9,14 @@ import stockportfolio.api.datautils.yahoo_finance as yf
 
 
 class TestPortfolioSimulation(unittest.TestCase):
-
-    """
-    Create a fixture Portfolio Simulation testing
-
-    :param cls: (class instance)
-    """
-
+    """Tests the portfolio_simulation module"""
     @classmethod
     def setUpClass(cls):
+        """
+        Create a fixture Portfolio Simulation testing
+
+        :param cls: (class instance)
+        """
 
         cls.start_date = dt.datetime(year=2015, month=4, day=20)
         cls.end_date = dt.datetime(year=2016, month=4, day=20)

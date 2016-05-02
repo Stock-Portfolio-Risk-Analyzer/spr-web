@@ -4,6 +4,7 @@ import stockportfolio.api.datautils.sentiment as stm
 
 
 class TestSentiment(unittest.TestCase):
+    """Tests the sentiment module"""
 
     def test_get_stock_sentiment(self):
         """
@@ -42,7 +43,7 @@ class TestSentiment(unittest.TestCase):
 
     def test_get_average_stock_sentiment_for_a_range(self):
         """
-        Tests if fetching average sentiment for single stock works 
+        Tests if fetching average sentiment for single stock works
         """
 
         symbol = 'AAPL'

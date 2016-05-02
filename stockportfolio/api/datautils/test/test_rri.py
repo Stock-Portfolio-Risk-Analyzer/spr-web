@@ -8,6 +8,7 @@ from stockportfolio.api.datautils.rri import (compute_portfolio_rri_for_range,
 
 
 class TestRRI(unittest.TestCase):
+    """Tests the rri module"""
 
     def test_compute_portfolio_rri_for_range1(self):
         """
@@ -65,7 +66,7 @@ class TestRRI(unittest.TestCase):
         """
         Tests rri calculation for different stock
         """
-    
+
         symbol = "GDDY"
         start_date = "03/03/2016"
         end_date = "03/13/2016"

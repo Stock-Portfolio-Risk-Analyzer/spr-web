@@ -4,6 +4,7 @@ import stockportfolio.api.datautils.yahoo_finance as yf
 
 
 class TestYahooFinance(unittest.TestCase):
+    """Tests the yahoo_finance module"""
     @classmethod
     def setUpClass(cls):
         """
@@ -35,7 +36,7 @@ class TestYahooFinance(unittest.TestCase):
 
     def test_get_stock_data_multiple(self):
         """
-        Checks if yf fetches multiple stock data correctly having expected format 
+        Checks if yf fetches multiple stock data correctly having expected format
         """
         data = yf.get_stock_data_multiple(
             [self.symbol, 'AAPL'], self.start_date, self.end_date)

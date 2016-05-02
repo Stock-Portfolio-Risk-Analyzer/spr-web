@@ -1,5 +1,5 @@
 to autodoc/generate templates:
-run in spr-web: sphinx-apidoc -f -o docs/ stockportfolio/ stockportfolio/api/migrations stockportfolio/settings stockportfolio/api/management
+run in spr-web: sphinx-apidoc -f -o docs/ stockportfolio/ stockportfolio/api/migrations stockportfolio/settings
 
 
 to build the html pages:
