@@ -13,6 +13,7 @@ class Risk(models.Model):
         risk_id: AutoField - DB ID for Object
         risk_value: FloatField - Risk value for Stock.
         risk_date: DateTimeField - Date, often set to calculation date.
+
     """
     risk_id = models.AutoField(primary_key=True)
     risk_value = models.FloatField(default=0.0)
@@ -21,6 +22,7 @@ class Risk(models.Model):
     def __str__(self):
         """
         Creates a string representation for the model.
+
         :return: String Representation of Risk, '(Risk Value) @ (Date)'
         """
         return '{} @ {}'.format(self.risk_value, self.risk_date)
@@ -29,6 +31,7 @@ class Risk(models.Model):
         """
         Overwritten Save Function for Risk, makes sure we save
         the timezone.
+
         :param args: Arguments for Overwritten function
         :param kwargs: Keyword Arguments for Overwritten function
         :return: Saved Risk Object
@@ -45,6 +48,7 @@ class Price(models.Model):
     Includes:
         value: FloatField - Price of Stock
         date: DateTimeField - Date, often set to calculation date.
+
     """
     value = models.FloatField()
     date = models.DateTimeField()
@@ -53,6 +57,7 @@ class Price(models.Model):
         """
         Overwritten Save Function for Risk, makes sure we save
         the timezone.
+
         :param args: Arguments for Overwritten function
         :param kwargs: Keyword Arguments for Overwritten function
         :return: Saved Risk Object
@@ -75,6 +80,7 @@ class Stock(models.Model):
         generated for stock.
         stock_price: ManyToManyField(Price) - List of Prices calculated
         for stock.
+
     """
     stock_id = models.AutoField(primary_key=True)
     stock_ticker = models.CharField(max_length=8, default="")
@@ -86,6 +92,7 @@ class Stock(models.Model):
     def __str__(self):
         """
         Creates a string representation for the model.
+
         :return: String Representation of Risk,
         '(Stock ID in DB) @ (Stock Ticker)'
         """
@@ -95,6 +102,7 @@ class Stock(models.Model):
         """
         Overwritten Iterator for Stock Objects, which iterates on three values
         stock_ticker, stock_name, stock_sector.
+
         :return: iter object
         """
         return iter([self.stock_ticker, self.stock_name, self.stock_sector])
@@ -109,6 +117,7 @@ class StockPortfolio(models.Model):
         stock: ForeignKey - Foreign Key to DB Stock Object
         quantity: CharField - Holds Stock Symbol
         stock_name: IntegerField - Holds Quantity of Stock
+
     """
     stock = models.ForeignKey(Stock)
     quantity = models.IntegerField()
@@ -116,6 +125,7 @@ class StockPortfolio(models.Model):
     def __str__(self):
         """
         Creates a string representation for the model.
+
         :return: String Representation of StockPortfolio, '(Stock Ticker)'
         """
         return '{}'.format(self.stock.stock_ticker)
@@ -134,6 +144,7 @@ class Portfolio(models.Model):
          computed for a portfolio.
         portfolio_stocks: ManyToManyField(StockPortfolio) - List of Stocks on
          Portfolio
+
     """
     portfolio_id = models.AutoField(primary_key=True)
     portfolio_name = models.CharField(max_length=50, null=True, blank=True)
@@ -144,6 +155,7 @@ class Portfolio(models.Model):
     def __str__(self):
         """
             Creates a string representation for the model.
+
             :return: String Representation of Portfolo, '(Stock Name)'
             """
         return self.portfolio_name if self.portfolio_name else "Unnamed"
@@ -157,6 +169,7 @@ class UserSettings(models.Model):
         user: ForeignKey(User) - Holds User for this UserSettings
         default_portfolio: ForeignKey(Porfolio) - Holds Default/Primary
          Portfolio for User.
+
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     default_portfolio = models.ForeignKey(
@@ -172,6 +185,7 @@ class PortfolioRank(models.Model):
         portfolio: ForeignKey(Porfolio) - Holds the Portfolio the Rank
          belongs to.
         value: IntegerField - Holds the Rank Value for Portfolio.
+
     """
     class Meta:
         unique_together = (("date", "portfolio"), )
@@ -190,6 +204,7 @@ class PortfolioValue(models.Model):
         portfolio: ForeignKey(Porfolio) - Holds the Portfolio the
          Value belongs to.
         value: FloatField - Holds the total value of the portfolio
+
     """
 
     class Meta:

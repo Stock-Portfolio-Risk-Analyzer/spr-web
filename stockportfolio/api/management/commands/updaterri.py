@@ -4,17 +4,21 @@ from stockportfolio.api import utils as utils
 
 
 class Command(BaseCommand):
+    """
+    Extends Django BaseCommand, generates all Risk Values for all portfolios
+    in Database.
+
+    """
     help = 'calculates the current RRI for all portfolios'
 
     def handle(self, *args, **options):
-        # utils.precompute_prices_for_all_stocks()
-        # self.stdout.write(
-        #     self.style.SUCCESS(
-        #         'Successfully precomputed prices for all stocks'))
-        # utils.precompute_rri_for_all_stocks()
-        # self.stdout.write(
-        #     self.style.SUCCESS(
-        #         'Successfully precomputed RRI for all stocks'))
+        """
+        Function loads all risk values for portfolio in Database
+
+        :param args: None
+        :param options: None
+        :return: None
+        """
         utils.update_value_for_all_portfolios()
         self.stdout.write(
             self.style.SUCCESS(
