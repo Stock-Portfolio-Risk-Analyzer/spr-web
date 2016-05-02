@@ -10,6 +10,7 @@ from stockportfolio.api.models import Portfolio, UserSettings
 class UpdateProfile(forms.ModelForm):
     """
     Form used to update profile. Extends ModelForm
+
     """
     default_portfolio = forms.ModelChoiceField(
         queryset=Portfolio.objects.all())
@@ -17,6 +18,7 @@ class UpdateProfile(forms.ModelForm):
     class Meta:
         """
         Specifies which User Fields To Prompt in Form
+
         """
         model = User
         fields = ('username', 'email', 'default_portfolio')
@@ -25,6 +27,7 @@ class UpdateProfile(forms.ModelForm):
         """
         Initializes a Form Object, and adds a submit button
         and form action to it.
+
         :param args: Arguments for overwrittn init function
         :param kwargs: Keyword Arguments for overwrittn init function
         :return: (Form) UpdateProfile Form
@@ -37,6 +40,7 @@ class UpdateProfile(forms.ModelForm):
     def clean_username(self):
         """
         Cleans the username input field
+
         :return: (str) username
         """
         return self.cleaned_data.get('username')
@@ -44,6 +48,7 @@ class UpdateProfile(forms.ModelForm):
     def clean_email(self):
         """
         Cleans the email input field
+
         :return: (str) email
         """
         email = self.cleaned_data.get('email')
@@ -58,6 +63,7 @@ class UpdateProfile(forms.ModelForm):
         """
         Overwritten Save Function, which generates a new user on
         creation.
+
         :param commit: True if user needs to be saved,
         False otherwise (just modified).
         :return: (User) Modified User
@@ -78,5 +84,6 @@ class PortfolioUploadForm(forms.Form):
     """
     Form used to Upload CSV File into backend file - FileField.
     Extends everything from forms.Form.
+
     """
     file = forms.FileField()

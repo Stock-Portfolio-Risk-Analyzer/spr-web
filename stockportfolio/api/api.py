@@ -22,7 +22,8 @@ from stockportfolio.api.utils import _calculate_risk
 
 def add_stock(request, portfolio_id):
     """
-    Adds Stock from Portfolio
+    Adds Stock to Portfolio
+
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portoflio Object
     :return: HTTPResponse
@@ -52,6 +53,7 @@ def add_stock(request, portfolio_id):
 def remove_stock(request, portfolio_id):
     """
     Removes Stock from Portfolio
+
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portoflio Object
     :return: HTTPResponse
@@ -74,6 +76,7 @@ def remove_stock(request, portfolio_id):
 def create_portfolio(request, user_id):
     """
     Creates a portfolio for a specified user.
+
     :param request: HTTP Request Object
     :param user_id: (int) ID for the User Object
     :return: HTTPResponse
@@ -93,6 +96,7 @@ def create_portfolio(request, user_id):
 def delete_portfolio(request, portfolio_id):
     """
     Deletes the specified portfolio from the Database.
+
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portoflio Object
     :return: HTTPResponse
@@ -110,6 +114,7 @@ def get_portfolio_by_user(request, user_id):
     Returns the default portfolio for the user if it has one specified
     else it returns one of the portfolio's of the user (random), if the
     user doesn't have one it will create a new one.
+
     :param request: HTTP Request Object
     :param user_id: (int) ID for the User Object
     :return: HTTPResponse
@@ -130,6 +135,7 @@ def get_portfolio_by_user(request, user_id):
 def get_list_of_portfolios(request, user_id):
     """
         Returns the list of portfolios for the user with their name and id.
+
         :param request: HTTP Request Object
         :param user_id: (int) ID for the User Object
         :return: HTTPResponse
@@ -152,6 +158,7 @@ def get_list_of_portfolios(request, user_id):
 def get_public_portfolio(request, portfolio_id):
     """
     Returns public information for a specified portfolio.
+
     :param request: (HTTPRequest) HTTP Request Object
     :param portfolio_id: (int) Portfolio unique id
     :return: {'portfolio_id' (int), 'name' (str), 'stocks':[(stock_info),...]}
@@ -172,6 +179,7 @@ def get_public_portfolio(request, portfolio_id):
 def get_portfolio(request, portfolio_id):
     """
     Returns thorough information for the specified portfolio_id
+
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portfolio Object
     :return: HTTPResponse
@@ -216,6 +224,7 @@ def modify_portfolio_form_post(request, portfolio_id):
     Parses Portfolio Form Post. Given our Front-End generates a dynamic
     form, since the user is allowed to add rows and remove them we had
     to parse it manually.
+
     :param request: (HTTPRequest) HTTP Request Object
     :param portfolio_id: (int) id of the portfolio to be modified
     :return: HTTPResponse
@@ -270,6 +279,7 @@ def generate_portfolio(request):
     either the user's default portfolio or their first portfolio if they have
     not selected a default. If there are no user portfolios, a risk between
     -2.5 and 2.5 is selected.
+
     :param request: (HTTPRequest) HTTP Request Object
     :return: HTTPResponse
     - CODE - 200 if successful, 403 if unauthorized
@@ -332,6 +342,7 @@ def generate_portfolio(request):
 def modify_gen(request, portfolio_id):
     """
     Adds a generated portfolio stocks into the specified portfolio_id.
+
     :param request: (HTTPRequest) HTTP Request Object - includes form data
      with {'data': {'symbols'(list), 'quantities'(list}, 'name'(str)}}
     :param portfolio_id: (int) Portfolio ID where generated portfolio
@@ -373,6 +384,7 @@ def list_top_portfolios(request, category):
     """
     Searches the DB and returns json list of top portfolios for specified
     category.
+
     :param request: (HTTPRequest) HTTP Request Object
     :param category: (int)
         0 - most risky
@@ -432,6 +444,7 @@ def list_top_portfolios(request, category):
 def download_porfolio_data(request, portfolio_id):
     """
     Downloads a CSV file representation for the specified portfolio.
+
     :param request: (HTTPRequest) HTTP Request Object
     :param portfolio_id: ID for the portfolio we wish to download.
     :return: (HTTPResponse) with attachment named 'backup-[portfolio_name].csv'
@@ -464,6 +477,7 @@ def upload_portfolio_data(request):
     """
     Uses Portfolio Form to allow user to upload a Portfolio Information CSV
     File.
+
     :param request: (HTTPRequest) Request Object
     :return: HTTPResponse
      - CODE - 200 if successful, 500 if invalid portfolio_id or if invalid
@@ -487,6 +501,7 @@ def _parse_portfolio_file(file, user):
     """
     Parses a csv File extracts symbols and quantities and creates a portfolio
     for the specified user.
+
     :param file: (File) CSV Format File with Portfolio Informaiton
     :param user: (User) User to add the protfolio object
     :return: ID for Portfolio Object Created, None if failed to create one.
@@ -509,6 +524,7 @@ def _diversify_by_sector(portfolio):
     """
     Returns a list of Stock objects which are from sectors not currently
     included in the specified porfolio
+
     :param portfolio: (Portfolio) Portfolio object to check for sectors
     :return: stocks from various sectors not present in portfolio
     """
@@ -523,6 +539,7 @@ def _diversify_by_sector(portfolio):
 def _add_stock_helper(portfolio, stock_quantity, stock_ticker, overwrite=True):
     """
     Given a portfolio object it creates and adds a stock object to it.
+
     :param portfolio: (Portfolio) Portfolio to add stocks to
     :param stock_quantity: (int) quantity of stocks to be added
     :param stock_ticker: (str) stock symbol to be added
@@ -553,6 +570,7 @@ def _verify_stock_ticker_validity(stocks, quantity):
     Verifies if Stock Tickers are valid, by checking through our DB of Stocks.
     Both stock and quantity have a one-to-one correspondence for each stock
     symbol and their corresponding quantity.
+
     :param stocks: list(str) - List of Stock Symbols
     :param quantity: list(str) - List of Stock Quantities
     :return: list(str) - List of Invalid Stock Symbols, can be empty list.
@@ -595,6 +613,7 @@ def _calculate_stock_info(stock_portfolio):
 def _calculate_sector_allocations(portfolio):
     """
     Calculates the sector allocations of a portfolio.
+
     :param portfolio: (Portfolio)
     :return: (dict (str):(float)) {"sector": pct_allocation}
     """

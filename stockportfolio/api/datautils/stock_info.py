@@ -12,6 +12,7 @@ from stockportfolio.api.datautils.rri import (compute_stock_rri_for_range,
 def get_company_industry(symbol):
     """
     Returns industry associated with the given ticker
+    
     :param symbol: (String) ticker symbol of the stock
     :return: (String) Industry
     """
@@ -27,6 +28,7 @@ def get_company_industry(symbol):
 def get_company_rri_for_today(symbol, number_of_days_back):
     """
     Computes RRI for a symbol for given number of days
+
     :param symbol: (String) ticker symbol of the stock
     :param number_of_days_back: (int) number of days back from today
     :return: (float) RRI
@@ -37,6 +39,7 @@ def get_company_rri_for_today(symbol, number_of_days_back):
 def get_company_rri_for_range(symbol, start_date, end_date):
     """
     Computes RRI for a symbol for a range
+
     :param symbol: (String) ticker symbol of the stock
     :param start_date: (DateTime)
     :param end_date: (DateTime)
@@ -48,6 +51,7 @@ def get_company_rri_for_range(symbol, start_date, end_date):
 def get_company_rri_for_days_back(symbol, days_back):
     """
     Computes RRI for a symbol for given number of days back
+
     :param symbol: (String) ticker symbol of the stock
     :param days_back: (int) number of days back from today
     :return: (float) RRI
@@ -66,6 +70,7 @@ def get_company_rri_for_days_back(symbol, days_back):
 def get_company_name(symbol):
     """
     Returns company name associated with the given ticker
+
     :param symbol: (String) ticker symbol of the stock
     :return: (String) Name
     """
@@ -80,7 +85,8 @@ def get_company_name(symbol):
 
 def get_company_sector(symbol):
     """
-   Returns company sector associated with the given ticker
+    Returns company sector associated with the given ticker
+
     :param symbol: (String) ticker symbol of the stock
     :return: (String) Sector
     """
@@ -96,6 +102,7 @@ def get_company_sector(symbol):
 def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
     """
     Returns a list of closing prices
+
     :param symbol: (String) ticker symbol of the stock
     :param number_of_days_back: (int) number of days back from today
     :return: (float) daily closing prices
@@ -114,6 +121,7 @@ def get_price_for_number_of_days_back_from_today(symbol, number_of_days_back):
 def get_company_rri_for_a_week(symbol):
     """
     Gets a week's worth of risk values.
+
     :param symbol: (str)
     :return: (list) [ [date1, rri], [date2, rri], .... [date7, rri] ]
     """
@@ -132,6 +140,7 @@ def get_company_rri_for_a_week(symbol):
 def get_company_rri_for_a_month(symbol):
     """
     Gets a month's worth of risk values.
+
     :param symbol: (str)
     :return: (list) [ [date1, rri], [date2, rri], .... [date30, rri] ]
     """
@@ -150,6 +159,8 @@ def get_company_rri_for_a_month(symbol):
 
 def get_company_rri_for_a_year(symbol):
     """
+    Gets a years's worth of risk values.
+
     :param symbol: (str)
     :return: (list) [ [date1, rri], [date2, rri], .... [date365, rri] ]
     """
@@ -168,6 +179,7 @@ def get_company_rri_for_a_year(symbol):
 
 def get_stock_volume_traded_for_a_week(symbol):
     """
+    Gets the volume traded for the specified stock in the last week.
 
     :param symbol: (str)
     :return: (list) [ [date1, rri], [date2, rri], .... [date365, rri] ]
@@ -181,6 +193,7 @@ def get_stock_volume_traded_for_a_week(symbol):
 
 def get_stock_volume_traded_for_a_month(symbol):
     """
+    Gets the volume traded for the specified stock in the last month.
 
     :param symbol: (str)
     :return: (list) [ [date1, rri], [date2, rri], .... [date365, rri] ]
