@@ -10,6 +10,12 @@ from stockportfolio.api.models import (Portfolio, PortfolioRank,
 
 
 def update_rri_for_all_portfolios():
+    """         
+    Recalculates rri for every portfolio and updates it
+
+    :return:
+    """
+
     for portfolio in Portfolio.objects.all():
         stocks = portfolio.portfolio_stocks.all()
         if not stocks:
@@ -25,6 +31,12 @@ def update_rri_for_all_portfolios():
 
 
 def update_rank_for_all_portfolios():
+    """         
+    Recalculates rank for every portfolio and updates it
+
+    :return:
+    """
+
     risks = []
     for portfolio in Portfolio.objects.all():
         risk_object = portfolio.portfolio_risk.order_by('-risk_date').first()
@@ -45,6 +57,12 @@ def update_rank_for_all_portfolios():
 
 
 def update_value_for_all_portfolios():
+    """         
+    Recalculates value for every portfolio and updates it
+
+    :return:
+    """
+
     for portfolio in Portfolio.objects.all():
         value = 0.0
         for sp in portfolio.portfolio_stocks.all():
@@ -57,6 +75,12 @@ def update_value_for_all_portfolios():
 
 
 def update_rri_for_all_stocks():
+    """         
+    Recalculates rri for every stock and updates it
+
+    :return:
+    """
+
     for stock in Stock.objects.all():
         try:
             risk = Risk(
@@ -70,6 +94,12 @@ def update_rri_for_all_stocks():
 
 
 def update_price_for_all_stocks():
+    """         
+    Recalculates price for every stock and updates it
+
+    :return:
+    """
+
     for stock in Stock.objects.all():
         try:
             price = Price(value=yf.get_current_price(stock.stock_ticker))
@@ -81,6 +111,12 @@ def update_price_for_all_stocks():
 
 
 def precompute_rri_for_all_stocks():
+    """         
+    Precomputes rri for every stock
+
+    :return:
+    """
+
     stocks_to_precompute = (Stock.objects.values('stock_id')
                             .annotate(Count('stock_risk')).order_by()
                             .filter(stock_risk__count__lt=30))
@@ -103,6 +139,12 @@ def precompute_rri_for_all_stocks():
 
 
 def precompute_prices_for_all_stocks():
+    """         
+    Precomputes price for every stock
+
+    :return:
+    """
+
     stocks_to_precompute = (Stock.objects.values('stock_id')
                             .annotate(Count('stock_price')).order_by()
                             .filter(stock_price__count__lt=100))
@@ -126,6 +168,7 @@ def precompute_prices_for_all_stocks():
 
 def _calculate_risk(risk):
     """
+    Calculates risk
 
     :param risk: (Risk)
     :return: (dict)
@@ -136,6 +179,7 @@ def _calculate_risk(risk):
 
 def _calculate_price(price):
     """
+    Calculates price
 
     :param price: (Price)
     :return: (dict)
