@@ -143,7 +143,7 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
     '-s',
-    'stockportfolio.api.test.test_selenium'
+    #'stockportfolio.api.datautils.test.test_yahoo_finance'
 ]
 
 ADVANCED_SETTINGS = {

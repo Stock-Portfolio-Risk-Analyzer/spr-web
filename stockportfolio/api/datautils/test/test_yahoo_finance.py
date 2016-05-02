@@ -35,13 +35,14 @@ class TestYahooFinance(unittest.TestCase):
     Checks if yf fetches multiple stock data correctly having expected format 
     """
     def test_get_stock_data_multiple(self):
-         data = yf.get_stock_data_multiple(
+        data = yf.get_stock_data_multiple(
             [self.symbol, 'AAPL'], self.start_date, self.end_date)
         self.assertTrue(data['AAPL'].keys().__contains__('Open'))
         self.assertTrue(data['AAPL'].keys().__contains__('High'))
         self.assertTrue(data['AAPL'].keys().__contains__('Low'))
         self.assertTrue(data['AAPL'].keys().__contains__('Close'))
         self.assertTrue(data['AAPL'].keys().__contains__('Volume'))
+
     """
     Checks if yf returns expected percentage format for return values
     """
