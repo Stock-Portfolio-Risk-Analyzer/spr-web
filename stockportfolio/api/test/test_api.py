@@ -10,8 +10,17 @@ from stockportfolio.api.models import Portfolio
 
 
 class ApiTestCase(TestCase):
-
+    """
+    Tests for the REST API functionality.
+    """
     def setUp(self):
+        """
+        Sets up a request factory and creates a user and a portfolio in th
+        test database.
+
+        :return: None
+        """
+
         self.factory = RequestFactory()
         self.user = User.objects.create_user(
             username='test', email='test@test.com', password='testing123')
@@ -19,6 +28,12 @@ class ApiTestCase(TestCase):
         self.portfolio.save()
 
     def test_add_stock(self):
+        """
+        Tests if our add_stock succesfully adds a StockPortfolio object
+        to the specified portfolio
+
+        :return: None
+        """
 
         url = "%s?stock=AAPL&quantity=10"
         request = self.factory.get(
@@ -52,6 +67,12 @@ class ApiTestCase(TestCase):
             self.assertAlmostEqual(aapl[key], expected_aapl[key])
 
     def test_remove_stock(self):
+        """
+        Tests if our remove_stock succesfully adds a StockPortfolio object
+        to the specified portfolio
+
+        :return: None
+        """
 
         # add the stock
         url = "%s?stock=AAPL&quantity=10"
@@ -90,6 +111,12 @@ class ApiTestCase(TestCase):
         self.assertEqual(len(portfolio['stocks']), 0)
 
     def test_create_portfolio(self):
+        """
+        Test create portfolio adds a new portoflio object to specified user.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse('create_portfolio', kwargs={'user_id': self.user.id})
         )
@@ -117,6 +144,13 @@ class ApiTestCase(TestCase):
         self.assertEqual(expected_content, portfolio)
 
     def test_delete_portfolio_authorized_user(self):
+        """
+        Test delete_portfolio removes portfolio if requested by authorized
+        user.
+
+        :return: None
+        """
+
         # delete the portfolio
         request = self.factory.get(
             reverse(
@@ -142,6 +176,13 @@ class ApiTestCase(TestCase):
                 request, portfolio_id=self.portfolio.portfolio_id)
 
     def test_delete_portfolio_unauthorized_user(self):
+        """
+        Test delete_portfolio doesn't removes portfolio if requested by
+        anonymous user.
+
+        :return: None
+        """
+
         # delete the portfolio
         request = self.factory.get(
             reverse(
@@ -166,6 +207,14 @@ class ApiTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_get_portfolio_by_user_authorized_user(self):
+        """
+        Test get portfolio works if requested by
+        authorized user, in other words the portfolio belongs
+        to him.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse('get_portfolio_by_user', kwargs={'user_id': self.user.id})
         )
@@ -185,6 +234,13 @@ class ApiTestCase(TestCase):
         self.assertEqual(expected_content, received_content)
 
     def test_get_portfolio_by_user_unauthorized_user(self):
+        """
+        Test get portfolio doesn't provide portfolio details if requested by
+        anonymous user.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse('get_portfolio_by_user', kwargs={'user_id': self.user.id})
         )
@@ -193,6 +249,13 @@ class ApiTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_get_portfolio_by_user_non_existent_user(self):
+        """
+        Test get portfolio doesn't provide portfolio details if requested by
+        non-existent user.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse('get_portfolio_by_user', kwargs={'user_id': 100})
         )
@@ -201,6 +264,13 @@ class ApiTestCase(TestCase):
             api.get_portfolio_by_user(request, 100)
 
     def test_get_list_of_portfolios(self):
+        """
+        Test get list of portfolios succesfully returns a valid
+        json file with portfolio ids and names.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse('get_portfolio_list_by_user',
                     kwargs={'user_id': self.user.id})
@@ -216,6 +286,13 @@ class ApiTestCase(TestCase):
         self.assertEqual(expected_content, received_content)
 
     def test_get_list_of_portfolios_non_existent_user(self):
+        """
+        Test get list of portfolios succesfully returns 404 error code
+        for non-existent user.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse('get_portfolio_list_by_user',
                     kwargs={'user_id': 100})
@@ -225,6 +302,13 @@ class ApiTestCase(TestCase):
             api.get_list_of_portfolios(request, 100)
 
     def test_get_portfolio_authorized_user(self):
+        """
+        Test get list of portfolios succesfully returns a valid
+        json file with portfolio ids and names.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse(
                 'get_portfolio',
@@ -248,6 +332,13 @@ class ApiTestCase(TestCase):
         self.assertEqual(expected_content, received_content)
 
     def test_get_portfolio_unauthorized_user(self):
+        """
+        Check that get portfolio returns 403 error code when
+        request is made by anonymous user.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse(
                 'get_portfolio',
@@ -260,6 +351,13 @@ class ApiTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_get_portfolio_non_existent_portfolio(self):
+        """
+        Check that get portfolio returns 404 error code if portfolio
+        does not exist.
+
+        :return: None
+        """
+
         request = self.factory.get(
             reverse('get_portfolio', kwargs={'portfolio_id': 100})
         )

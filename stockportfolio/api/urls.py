@@ -1,3 +1,7 @@
+"""
+The list of URL patterns for the API
+"""
+
 from django.conf.urls import url
 
 from stockportfolio.api import api, views

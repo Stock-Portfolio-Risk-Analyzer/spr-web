@@ -5,14 +5,17 @@ import time
 import requests
 from django.test import LiveServerTestCase
 from registration.models import RegistrationProfile
+
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 from stockportfolio.settings.base import BASE_DIR
 
 
 class SeleniumTestCase(LiveServerTestCase):
+    """
+    Base test case for Selenium tests.
+    """
 
     driver = None
     user_info = {
@@ -30,23 +33,36 @@ class SeleniumTestCase(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """
+        Creates the Selenium driver and activates a user account
+        This is a class method, so it runs before any tests.
+        """
         super(SeleniumTestCase, cls).setUpClass()
         cls.driver = webdriver.Firefox()
         cls.driver.maximize_window()
         cls.register_and_activate()
-        cls.login()
 
     def setUp(self):
+        """
+        Runs before each test and adds some helper methods/members
+        """
         self.new_page = lambda driver: driver.find_element_by_tag_name('body')
         self.timeout = 20
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Runs at the end of all the tests. Stops the web driver
+        """
         cls.driver.quit()
         super(SeleniumTestCase, cls).tearDownClass()
 
     @classmethod
     def register_and_activate(cls):
+        """
+        Class helper method that register and activates an account
+        through Selenium
+        """
         cls.driver.get(cls.live_server_url + '/accounts/register/')
         username_box = cls.driver.find_element_by_name('username')
         username_box.send_keys(cls.user_info['user_name'])
@@ -67,6 +83,9 @@ class SeleniumTestCase(LiveServerTestCase):
 
     @classmethod
     def login(cls):
+        """
+        Class helper method that logins the user before tests start running
+        """
         cls.driver.get(cls.live_server_url)
         WebDriverWait(cls.driver, 20).until(
             EC.title_contains('Stock Portfolio Risk Analyzer'))
@@ -83,6 +102,9 @@ class SeleniumTestCase(LiveServerTestCase):
 
     def screenshot(self, prefix="", upload=True):
         """
+        Takes a screenshot of the page and optionally uploads it to Imgur
+        Useful for getting screenshots out of Travis CI
+
         :param prefix: optional prefix for the resulting file
         :param upload: upload the image to Imgur (default)
         """
@@ -100,13 +122,10 @@ class SeleniumTestCase(LiveServerTestCase):
                 print 'image link ' + r.content
 
     def wait(self, fn, time=20):
-        WebDriverWait(SeleniumTestCase.driver, time).until(fn)
+        """
+        Helper function to force Selenium to wait for a certain condition
 
-    def test_dashboard(self):
-        SeleniumTestCase.driver.get(
-            SeleniumTestCase.live_server_url + '/dashboard/')
-        self.wait(self.new_page, self.timeout)
-        SeleniumTestCase.driver.find_element_by_tag_name('body')
-        self.assertEqual(
-            SeleniumTestCase.driver.title,
-            'SPRA | %s\'s profile' % (SeleniumTestCase.user_info['user_name']))
+        :param fn : (int) function that determines if we're done waiting
+        :param time: time in seconds to wait before throwing TimeoutException
+        """
+        WebDriverWait(SeleniumTestCase.driver, time).until(fn)

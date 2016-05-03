@@ -11,9 +11,23 @@ from stockportfolio.settings.base import BASE_DIR
 
 
 class Command(BaseCommand):
+    """
+    Extends Django BaseCommand, generates all stock objects
+    from secwiki_tickers.csv.
+
+    """
     help = 'Creates all of the stock objects if they do not exist'
 
     def handle(self, *args, **options):
+        """
+        Function that loads all stock objects into Database. Ensures that the
+        stock objects do not exist before creating them, then precomputes
+        prices and rri for all stocks.
+
+        :param args: None
+        :param options: None
+        :return: None
+        """
         fpath = os.path.join(
             BASE_DIR, 'api', 'datautils', 'secwiki_tickers.csv')
         df = pandas.read_csv(fpath)

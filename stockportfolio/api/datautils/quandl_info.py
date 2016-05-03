@@ -5,10 +5,13 @@ import Quandl as qd
 
 quandl_key = '-6X6UvP1aeit_zybGREM'
 
+""" Helper methods over the Quandl api"""
+
 
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     """
     Get OHLC stock data from Quandl for a single stock
+
     :param symbol: string
     :param start_date: datetime
     :param end_date: datetime
@@ -36,12 +39,14 @@ def get_stock_data_multiple(
         symbols=None, start_date=None, end_date=None, db_code="WIKI"):
     """
     Get OHLC stock data from Quandl for multiple stocks
+
     :param symbols: list of symbols (strings)
     :param start_date: datetime
     :param end_date: datetime
     :param db_code: Quandl database code.
     :return: OrderedDict of DataFrames of data from start_date to end_date
     """
+
     data = OrderedDict()
 
     if symbols is not None:
@@ -57,31 +62,40 @@ def get_stock_data_multiple(
 
 def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
-    :param symbol:
-    :param start_date:
-    :param end_date:
+    Get OHLC stock percentage returns from Quandl for a single stock
+
+    :param symbol: stock ticker to look up
+    :param start_date: datetime
+    :param end_date: datetime
     :param col: (string) name of column to calculate the pct returns from
-    :return:
+    :return: stock percentage returns from Quandle for a specified stock
     """
+
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.pct_change().fillna(0)
 
 
 def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
-    :param symbol:
-    :param start_date:
-    :param end_date:
-    :param col:  (string) name of column to calculate the returns from
-    :return:
+    Get OHLC stock returns from Quandl for a single stock
+
+    :param symbol: stock ticker to look up
+    :param start_date: datetime
+    :param end_date: datetime
+    :param col:  name of column to calculate the returns from
+    :return: stock returns from Quandl for a specified input stock
     """
+
     data = get_stock_data(symbol, start_date, end_date)[col]
     return data.diff().fillna(0)
 
 
 def get_options_data_quandl(symbol=None):
     """
+    Get OHLC stock options from Quandl for a single stock
+
     :param symbol: ticker symbol
     :return: list of column names
     """
+
     return list(get_stock_data(symbol).columns.values)

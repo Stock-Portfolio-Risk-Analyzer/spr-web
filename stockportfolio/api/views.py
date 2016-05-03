@@ -27,8 +27,17 @@ from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
                                       update_rank_for_all_portfolios,
                                       update_rri_for_all_portfolios)
 
+"""Functions that render user-facing templates from data."""
+
 
 def dashboard(request):
+    """
+    Prepares the context of dashboard adding portfolio,user, stock information
+
+    :param request: (HTTPRequest Object)
+    :return render_template: renders index.html
+    """
+
     if request.user.is_anonymous():
         return redirect("/")
     email = string.lower(string.strip(request.user.email, string.whitespace))
@@ -59,7 +68,13 @@ def dashboard(request):
 
 
 def landing(request):
-    """Renders the landing page"""
+    """
+    Redirects authenticated user from landing page to dashboard
+
+    :param request:(HTTPRequest Object)
+    :return HttpResponseRedirect: HTTPResponse
+    """
+
     if request.user.is_anonymous():
         return render_to_response('landing.html')
     else:
@@ -67,16 +82,38 @@ def landing(request):
 
 
 def ticker(request, symbol):
-    # any api errors bubble up to the user
+    """
+    Gets current stock price having a ticker
+
+    :param request:(HTTPRequest Object)
+    :param symbol: (string)
+    :return HttpResponseRedirect: creates HTTPResponse
+    """
+
     return HttpResponse(yf.get_current_price(symbol))
 
 
 def company_name(request, symbol):
-    # any api errors bubble up to the user
+    """
+    Gets current stock price having a ticker
+
+    :param request:(HTTPRequest Object)
+    :param symbol: (string)
+    :return HttpResponseRedirect: creates HTTPResponse
+    """
+
     return HttpResponse(yf.get_company_name(symbol))
 
 
 def user_profile(request, user_id):
+    """
+    Renders user profile
+
+    :param request:(HTTPRequest Object)
+    :param user_id: (string)
+    :return render_template: renders user_profile.html
+    """
+
     user = User.objects.get(user_id)
     if user is None:
         raise Http404
@@ -87,12 +124,26 @@ def user_profile(request, user_id):
 
 
 def calculate_all_rris(request):
+    """
+    Updates rri for all portfolios
+
+    :param request:(HTTPRequest Object)
+    :return HttpResponse: HTTPResponse with status 200
+    """
+
     update_rri_for_all_portfolios()
     update_rank_for_all_portfolios()
     return HttpResponse(status=200)
 
 
 def modify_account(request):
+    """
+    Modifies user account
+
+    :param request:(HTTPRequest Object)
+    :return render_template: renders modify_account modal
+    """
+
     if request.method == 'POST':
         form = UpdateProfile(request.POST, instance=request.user)
         if form.is_valid():
@@ -103,6 +154,14 @@ def modify_account(request):
 
 
 def stock_interface(request, ticker):
+    """
+    Creates context for stock_interface and renders teh modal
+
+    :param request:(HTTPRequest Object)
+    :param ticker: (string)
+    :return render_template: renders stock_interface modal
+    """
+
     ticker = ticker.upper()
     stock = get_object_or_404(
         Stock, Q(stock_ticker=ticker) | Q(stock_name__iexact=ticker))
@@ -139,6 +198,14 @@ def stock_interface(request, ticker):
 
 
 def stock_rec(request, portfolio_id, rec_type):
+    """
+    Renders recommendation modal and populatest he context
+
+    :param request:(HTTPRequest Object)
+    :param portfolio_id: (int)
+    :return render_template: renders recommendation modal
+    """
+
     recs = rec_utils.stock_recommender(request, portfolio_id, rec_type)
     message = ''
     if rec_type == 'stable':
@@ -169,8 +236,11 @@ def generate_portfolio(request):
     either the user's default portfolio or their first portfolio if they have
     not selected a default. If there are no user portfolios, a risk between
     -2.5 and 2.5 is selected.
-    :param request
+
+    :param request:(HTTPRequest Object)
+    :return render_template: renders generate_portfolio modal
     """
+
     if request.user.is_anonymous():
         return HttpResponse(status=403)
     upper_bound = random.randint(16, 20)
@@ -192,8 +262,8 @@ def generate_portfolio(request):
         else:
             ' number than ' + str(p_risk)
         new_portfolio = rec_utils.get_recommendations(
-            lambda x: x <= p_risk,
-            all_stocks, random.randint(lower_bound, upper_bound))
+            rec_utils._recommender_low_risk,
+            all_stocks, random.randint(lower_bound, upper_bound), p_risk)
     elif(p_type == 'diverse'):
         message = 'We chose this portfolio with sector diversity in mind.'
         new_portfolio = rec_utils.get_sector_stocks(
@@ -206,8 +276,8 @@ def generate_portfolio(request):
         else:
             ' than ' + str(p_risk)
         new_portfolio = rec_utils.get_recommendations(
-            lambda x: x > p_risk, all_stocks,
-            random.randint(lower_bound, upper_bound))
+            rec_utils._recommender_high_risk, all_stocks,
+            random.randint(lower_bound, upper_bound), p_risk)
     new_portfolio, v, tlow, thi = rec_utils.determine_stock_quantities(
         portfolio, new_portfolio)
     end = time.time() - start
@@ -229,6 +299,14 @@ def generate_portfolio(request):
 
 
 def simulate_portfolio(request, portfolio_id):
+    """
+    Populates simulate profolio with statistics png
+
+    :param request:(HTTPRequest Object)
+    :param portfolio_id: (int)
+    :return HttpResponse: redirects to portfolio simulation
+    """
+
     if not settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
         url = (settings.ADVANCED_SETTINGS['REMOTE_SIMULATION_URL'] +
                request.path)

@@ -6,18 +6,17 @@ from mock import Mock
 from stockportfolio.api.datautils.rri import (compute_portfolio_rri_for_range,
                                               compute_stock_rri_for_range)
 
-
-"""
-Test methods in rri.py
-Author: Shivam Gupta (sgupta40@illinois.edu)
-        Rohan Kapoor (rkapoor6@illinois.edu)
-"""
+"""Tests the rri module"""
 
 
 class TestRRI(unittest.TestCase):
+    """Tests the rri module"""
 
     def test_compute_portfolio_rri_for_range1(self):
-        """ Tests the compute_portfolio_rri_for_range function """
+        """
+        Tests if rri computation works and provides positive risk
+        """
+
         apple = Mock()
         apple.stock.stock_ticker = 'AAPL'
         apple.quantity = 10
@@ -38,6 +37,7 @@ class TestRRI(unittest.TestCase):
         Tests the compute_portfolio_rri_for_range function
         when quantity is zero
         """
+
         apple = Mock()
         apple.stock.stock_ticker = 'AAPL'
         apple.quantity = 0
@@ -54,7 +54,10 @@ class TestRRI(unittest.TestCase):
         self.assertTrue(math.isnan(rri))
 
     def test_compute_stock_rri_for_range1(self):
-        """ Tests the compute_stock_rri_for_range function """
+        """
+        Tests rri calculation for single stock
+        """
+
         symbol = "AAPL"
         start_date = "03/03/2016"
         end_date = "03/13/2016"
@@ -62,7 +65,10 @@ class TestRRI(unittest.TestCase):
         self.assertTrue(rri > 0)
 
     def test_compute_stock_rri_for_range2(self):
-        """ Tests the compute_stock_rri_for_range function """
+        """
+        Tests rri calculation for different stock
+        """
+
         symbol = "GDDY"
         start_date = "03/03/2016"
         end_date = "03/13/2016"
