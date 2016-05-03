@@ -64,11 +64,11 @@ def get_pct_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
     Get OHLC stock percentage returns from Quandl for a single stock
 
-    :param symbol:
-    :param start_date:
-    :param end_date:
+    :param symbol: stock ticker to look up
+    :param start_date: datetime
+    :param end_date: datetime
     :param col: (string) name of column to calculate the pct returns from
-    :return:
+    :return: stock percentage returns from Quandle for a specified stock
     """
 
     data = get_stock_data(symbol, start_date, end_date)[col]
@@ -79,11 +79,11 @@ def get_returns(symbol, start_date=None, end_date=None, col='Adj. Close'):
     """
     Get OHLC stock returns from Quandl for a single stock
 
-    :param symbol: shit
-    :param start_date: foo
-    :param end_date: bar
+    :param symbol: stock ticker to look up
+    :param start_date: datetime
+    :param end_date: datetime
     :param col:  name of column to calculate the returns from
-    :return: some shit
+    :return: stock returns from Quandl for a specified input stock
     """
 
     data = get_stock_data(symbol, start_date, end_date)[col]
