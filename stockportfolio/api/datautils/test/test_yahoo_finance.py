@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime as dt
+
 import stockportfolio.api.datautils.yahoo_finance as yf
 
 
