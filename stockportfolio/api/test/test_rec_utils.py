@@ -10,6 +10,7 @@ from stockportfolio.settings.base import BASE_DIR
 
 
 class RecUtilsTestCase(TestCase):
+    """Tests the rec_utils modules"""
 
     @classmethod
     def setUpClass(cls):
@@ -37,7 +38,7 @@ class RecUtilsTestCase(TestCase):
     def tearDownClass(cls):
         """
         Tears down test class
-        
+
         :param cls: Class method variable
         """
         super(RecUtilsTestCase, cls).tearDownClass()
@@ -101,7 +102,7 @@ class RecUtilsTestCase(TestCase):
         """
         Tests to check if the stock_quantities being returned are
         the same as the one in the portfolio
-        
+
         :param self: Instance method variable
         """
         curr = self.cls.portfolio
@@ -134,9 +135,9 @@ class RecUtilsTestCase(TestCase):
 
     def test_fetch_target_value(self):
         """
-        Tests to check if fetch_target values is within the targets set by 
+        Tests to check if fetch_target values is within the targets set by
         the user
-        
+
         :param self: Instance method variable
         """
         portfolio = None
@@ -146,9 +147,9 @@ class RecUtilsTestCase(TestCase):
 
     def test_calculate_portfolio_value(self):
         """
-        Tests to check if the portfolio value is as expected by the totalled 
+        Tests to check if the portfolio value is as expected by the totalled
         value of stocks by their respective quantities
-        
+
         :param self: Instance method variable
         """
         p = [('AAPL', 10, 130.4), ('TTPH', 2, 10),
@@ -161,7 +162,7 @@ class RecUtilsTestCase(TestCase):
         """
         Tests to check that when the function is called on an empty stock,
         it returns 0 as the stock_price
-        
+
         :param self: Instance method variable
         """
         stock = None
@@ -196,7 +197,7 @@ class RecUtilsTestCase(TestCase):
         it returns an empty list as the sectors
         but when called on an actual portfolio,
         it returns a non-empty list
-        
+
         :param self: Instance method variable
         """
         portfolio = None
@@ -210,7 +211,7 @@ class RecUtilsTestCase(TestCase):
         """
         Checks to see if the stocks are being loaded correctly from the
         portfolio
-        
+
         :param cls: Class method variable
         """
         fpath = os.path.join(
