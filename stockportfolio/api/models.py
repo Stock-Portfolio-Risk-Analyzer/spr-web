@@ -5,6 +5,8 @@ from django.db import models
 from django.utils import timezone
 
 
+"""Database models for the application""" 
+
 class Risk(models.Model):
     """
     Inherited from the Frameworks Model Class. Holds Risk information

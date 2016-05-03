@@ -6,6 +6,7 @@ import pandas as pd
 import pandas_datareader.data as web
 import ystockquote
 
+"""Helper functions for accessing the Yahoo api """
 
 def get_stock_data(symbol, start_date=None, end_date=None):
     """

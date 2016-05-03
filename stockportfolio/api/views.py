@@ -27,6 +27,7 @@ from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
                                       update_rank_for_all_portfolios,
                                       update_rri_for_all_portfolios)
 
+"""Functions that render user-facing templates from data."""
 
 def dashboard(request):
     """

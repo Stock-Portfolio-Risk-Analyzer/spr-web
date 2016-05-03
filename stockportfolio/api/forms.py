@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 
 from stockportfolio.api.models import Portfolio, UserSettings
 
+"""Contains the forms for the stockportfolio module"""
 
 class UpdateProfile(forms.ModelForm):
     """

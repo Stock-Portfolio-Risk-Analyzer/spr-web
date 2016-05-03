@@ -19,6 +19,7 @@ from stockportfolio.api.models import (Portfolio, PortfolioRank,
                                        UserSettings)
 from stockportfolio.api.utils import _calculate_risk
 
+"""Backend module for the API"""
 
 def add_stock(request, portfolio_id):
     """
