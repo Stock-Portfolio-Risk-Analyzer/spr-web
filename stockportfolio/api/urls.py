@@ -1,6 +1,5 @@
 """
-This is the URL module.
-
+The list of URL patterns for the API
 """
 
 from django.conf.urls import url

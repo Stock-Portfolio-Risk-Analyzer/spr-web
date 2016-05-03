@@ -8,6 +8,7 @@ import yahoo_finance
 from stockportfolio.api.datautils.rri import (compute_stock_rri_for_range,
                                               compute_stock_rri_for_today)
 
+""" Helper functions for RRI over ranges """
 
 def get_company_industry(symbol):
     """
