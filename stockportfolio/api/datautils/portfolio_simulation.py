@@ -6,7 +6,7 @@ import pandas as pd
 from django.conf import settings
 from django.http import HttpResponse
 
-from yahoo_finance import get_stock_data
+from stockportfolio.api.datautils.yahoo_finance import get_stock_data
 
 if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
     import matplotlib  # isort:skip
@@ -17,17 +17,20 @@ if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
     from matplotlib.ticker import FuncFormatter  # isort:skip
     import seaborn as sns  # isort:skip
 
+""" Generates a tearsheet based on portfolio simulation"""
+
 
 def get_benchmark_returns(
-        benchmark='SPY', start_date=None, end_date=None,
-        price_field='Adj Close'):
+        benchmark='SPY', start_date=None,
+        end_date=None, price_field='Adj Close'):
     """
     Get the daily (non-cumulative) percent returns for the benchmark.
-    :param start_date: (DateTime)
-    :param end_date: (DateTime)
+
+    :param start_date: (datetime)
+    :param end_date: (datetime)
     :param benchmark: (str) default: SPY (S&P 500 index)
     :param price_field: (str) default: 'Adj Close'
-    :return: (pd.Series)
+    :return: (pd.Series) daily non-cumulative returns of the benchmark
     """
     if start_date is None:
         start_date = dt.datetime(year=2008, month=1, day=1)
@@ -43,11 +46,12 @@ def get_portfolio_returns_series(
         portfolio, start_date=None, end_date=None, price_field='Adj Close'):
     """
     Simulates portfolio returns assuming the portfolio was bought on
-    start_date and held through end_date
-    :param portfolio:
-    :param start_date:
-    :param end_date:
-    :param price_field:
+    start_date and held through end_date.
+
+    :param portfolio: (dict of str:int) symbol:quantity
+    :param start_date: (datetime)
+    :param end_date: (datetime)
+    :param price_field: (str) default: 'Adj Close'
     :return:
     """
     if start_date is None:
@@ -68,9 +72,10 @@ def get_portfolio_value_series(
     """
     Generate a time-series of the portfolio assuming the portfolio was bought
     on start_date and held through end_date.
+
     :param portfolio: (dict) symbol:quantity
-    :param start_date: (DateTime)
-    :param end_date: (DateTime)
+    :param start_date: (datetime)
+    :param end_date: (datetime)
     :param price_field: (str) default: 'Adj Close'
     :return:
     """
@@ -100,10 +105,11 @@ def get_position_value_series(
     """
     Generate a time-series of a single position's value assuming
     it was bought on start_date and held through end_date.
+
     :param symbol: (str)
     :param quantity: (float)
-    :param start_date: (DateTime)
-    :param end_date: (DateTime)
+    :param start_date: (datetime)
+    :param end_date: (datetime)
     :param price_field: (str)
     :return: (pd.Series)
     """
@@ -122,6 +128,7 @@ def get_position_value_series(
 def get_cum_returns(returns, starting_value=None):
     """
     Compute cumulative returns from simple (non-cumulative) returns.
+
     :param returns: (pd.Series) non-cumulative returns
     :param starting_value: (float) optional, default=1
     :return: (pd.Series)
@@ -139,6 +146,7 @@ def get_cum_returns(returns, starting_value=None):
 def one_dec_places(x, pos=None):
     """
     1/10 decimal places for plot ticks.
+
     :param x:
     :param pos:
     :return:
@@ -149,6 +157,7 @@ def one_dec_places(x, pos=None):
 def percentage(x, pos):
     """
     Adds percentage sign to plot ticks.
+
     :param x:
     :param pos:
     :return:
@@ -157,6 +166,13 @@ def percentage(x, pos):
 
 
 def basic_linear_regression(x, y):
+    """
+    Simple linear-regression function.
+
+    :param x: (list of int) scalar
+    :param y: (int) dependent variable
+    :return: least-sq coefficient
+    """
     length = len(x)
     sum_x = sum(x)
     sum_y = sum(y)
@@ -170,10 +186,11 @@ def basic_linear_regression(x, y):
 
 def alpha_beta(returns, benchmark_returns):
     """
-    Calculates alpha and beta.
-    :param returns: (pd.Series) daily returns (non-cumulative)
-    :param benchmark_returns:  (pd.Series) benchmark daily returns
-        (non-cumulative) used to calculate beta
+    Calculates alpha and beta based on a given benchmark.
+
+    :param returns: (pd.Series) daily non-cumulative returns
+    :param benchmark_returns: (pd.Series)
+        daily non-cumulative returns of the benchmark
     :return: (float) alpha, (float) beta
     """
     ret_index = returns.index
@@ -184,20 +201,12 @@ def alpha_beta(returns, benchmark_returns):
 
 def aggregate_returns(daily_returns, convert_to):
     """
-    Aggregates returns by week, month, or year.
-    Parameters
-    ----------
-    daily_returns : pd.Series
-       Daily returns of the strategy, noncumulative.
-        - See full explanation in tears.create_full_tear_sheet (returns).
-    convert_to : str
-        Can be 'weekly', 'monthly', or 'yearly'.
-    Returns
-    -------
-    pd.Series
-        Aggregated returns.
-    """
+    Aggregates daily non-cumulative returns to weekly/monthly/yearly.
 
+    :param daily_returns: (pd.Series) daily non-cumulative returns
+    :param convert_to: (str) 'weekly', 'monthly', 'yearly'
+    :return: (pd.Series) aggregated returns
+    """
     def cumulate_returns(x):
         return get_cum_returns(x)[-1]
 
@@ -271,9 +280,11 @@ def rolling_beta(returns, benchmark_returns, rolling_window=21 * 6):
     """
     Calculates the rolling beta (given the rolling_window) of the portfolio
     simulation vs the benchmark_returns.
-    :param returns: (pd.Series) noncumulative daily returns of portfolio
-    :param benchmark_returns: (pd.Series) noncumulative daily returns of
-        the benchmark
+
+    :param returns: (pd.Series) daily non-cumulative
+        returns returns of portfolio
+    :param benchmark_returns: (pd.Series) daily non-cumulative
+        returns of the benchmark
     :param rolling_window: (int) size of rolling window in days
     :return: (pd.Series) rolling beta
     See https://en.wikipedia.org/wiki/Beta_(finance) for more details.
@@ -294,11 +305,12 @@ def rolling_beta(returns, benchmark_returns, rolling_window=21 * 6):
 def plot_rolling_beta(returns, benchmark_returns, ax):
     """
     Plots the rolling 6-month and 12-month beta versus date.
-    :param returns: (pd.Series) noncumulative daily returns of portfolio
-    :param benchmark_returns: (pd.Series) noncumulative daily returns of
-        the benchmark
+
+    :param returns: (pd.Series) daily non-cumulative returns of the portfolio
+    :param benchmark_returns: (pd.Series) daily
+        non-cumulative returns of the benchmark
     :param ax: (matplotlib.Axes)
-    :return:
+    :return: (matplotlib.Axes)
     """
     if ax is None:
         ax = plt.gca()
@@ -321,6 +333,7 @@ def plot_rolling_beta(returns, benchmark_returns, ax):
 def get_max_drawdown_underwater(underwater):
     """
     Determine peak/valley/recover dates of underwater drawdown periods.
+
     :param underwater: (pd.DataFrame)
     :return: peak, valley, recovery
     """
@@ -338,7 +351,7 @@ def get_top_drawdowns(returns, n_drawdowns=10):
     Finds top drawdowns, sorted by drawdown amount.
 
     :param returns: (pd.Series)
-    :param n_drawdowns: (int)
+    :param n_drawdowns: (int) number of drawdown periods
     :return: (list) of peaks/valleys/recoveries
     """
     returns = returns.copy()
@@ -366,9 +379,10 @@ def get_top_drawdowns(returns, n_drawdowns=10):
 def gen_drawdown_table(returns, n_drawdown_periods=10):
     """
     Generates drawdown tables for the top n_drawdown_periods
+
     :param returns: (pd.Series) noncumulative daily returns
     :param n_drawdown_periods: (int) number of drawdown periods
-    :return:
+    :return: (pd.DataFrame)
     """
     cum_returns = get_cum_returns(returns, 1.0)
     drawdown_periods = get_top_drawdowns(
@@ -412,10 +426,11 @@ def gen_drawdown_table(returns, n_drawdown_periods=10):
 def plot_drawdown_periods(returns, ax, n_drawdown_periods=10):
     """
     Plots cumulative returns and highlights top drawdown periods.
-    :param returns: (pd.Series)
+
+    :param returns: (pd.Series) daily non-cumulative returns
     :param n_drawdown_periods: (int) number of drawdown periods
     :param ax: (matplotlib.Axes) axes to plot on
-    :return: (matplotlib.Axes) axes to plot on
+    :return: (matplotlib.Axes)
     """
     y_axis_formatter = FuncFormatter(one_dec_places)
     ax.yaxis.set_major_formatter(FuncFormatter(y_axis_formatter))
@@ -443,9 +458,10 @@ def plot_drawdown_periods(returns, ax, n_drawdown_periods=10):
 
 def plot_monthly_returns_heatmap(returns, ax):
     """
-    Plots a heatmap of returns by month.
-    :param returns: (pd.Series)
-    :param ax: (matplotlib.Axes)
+    Plots a heat map of returns by month.
+
+    :param returns: (pd.Series) daily non-cumulative returns
+    :param ax: (matplotlib.Axes) axes to be plotted on
     :return: (matplotlib.Axes)
     """
 
@@ -469,8 +485,9 @@ def plot_monthly_returns_heatmap(returns, ax):
 def plot_annual_returns(returns, ax):
     """
     Plots a bar graph of returns by year.
-    :param returns: (pd.Series)
-    :param ax: (matploblib.Axes)
+
+    :param returns: (pd.Series) daily non-cumulative returns
+    :param ax: (matploblib.Axes) axes to be plotted on
     :return: (matplotlib.Axes)
     """
     x_axis_formatter = FuncFormatter(percentage)
@@ -496,6 +513,7 @@ def plot_annual_returns(returns, ax):
 def plot_monthly_returns_dist(returns, ax):
     """
     Plots a distribution of monthly returns.
+
     :param returns: (pd.Series)
     :param ax: (matplotlib.Axes)
     :return: (matplotlib.Axes)
@@ -526,9 +544,10 @@ def plot_monthly_returns_dist(returns, ax):
 def create_returns_tear_sheet(portfolio_id, portfolio, benchmark_rets=None):
     """
     Generate a number of plots for analyzing a portfolio simulation.
-    :param portfolio_id:
-    :param portfolio:
-    :param benchmark_rets:
+
+    :param portfolio_id: (int)
+    :param portfolio: (dict of str:int)
+    :param benchmark_rets: (pd.Series)
     :return: (HttpResponse)
     """
 

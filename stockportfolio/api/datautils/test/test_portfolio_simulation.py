@@ -7,11 +7,18 @@ from django.conf import settings
 import stockportfolio.api.datautils.portfolio_simulation as ps
 import stockportfolio.api.datautils.yahoo_finance as yf
 
+"""Tests the portfolio_simulation module"""
+
 
 class TestPortfolioSimulation(unittest.TestCase):
-
+    """Tests the portfolio_simulation module"""
     @classmethod
     def setUpClass(cls):
+        """
+        Create a fixture Portfolio Simulation testing
+
+        :param cls: (class instance)
+        """
 
         cls.start_date = dt.datetime(year=2015, month=4, day=20)
         cls.end_date = dt.datetime(year=2016, month=4, day=20)
@@ -30,6 +37,10 @@ class TestPortfolioSimulation(unittest.TestCase):
         cls.benchmark = 'SPY'
 
     def test_get_benchmark_returns(self):
+        """
+        Test that we get the benchmark returns correctly.
+
+        """
         benchmark_returns = ps.get_benchmark_returns(
             benchmark=self.benchmark,
             start_date=self.start_date,
@@ -54,6 +65,10 @@ class TestPortfolioSimulation(unittest.TestCase):
                 pass
 
     def test_get_portfolio_returns_series(self):
+        """
+        Test that we get the daily non-cumulative returns correctly.
+
+        """
         portfolio_returns_series = ps.get_portfolio_returns_series(
             self.portfolio,
             start_date=self.start_date,
@@ -86,6 +101,10 @@ class TestPortfolioSimulation(unittest.TestCase):
                 pass
 
     def test_get_portfolio_value_series(self):
+        """
+        Test that we get the daily portfolio value correctly.
+
+        """
         portfolio_value_series = ps.get_portfolio_value_series(
             self.portfolio,
             start_date=self.start_date,
@@ -108,6 +127,10 @@ class TestPortfolioSimulation(unittest.TestCase):
                 pass
 
     def test_get_position_value_series(self):
+        """
+        Test that we can get the daily value of a position correctly.
+
+        """
         position_value_series = ps.get_position_value_series(
             self.test_symbol, self.test_qty,
             start_date=self.start_date,
@@ -125,6 +148,10 @@ class TestPortfolioSimulation(unittest.TestCase):
                 pass
 
     def test_calculate_alpha_beta(self):
+        """
+        Test that we alpha, beta calculations are correct
+
+        """
         alpha_beta_start_date = dt.datetime(year=2012, month=1, day=1)
         alpha_beta_end_date = dt.datetime(year=2016, month=1, day=1)
         returns = ps.get_portfolio_returns_series(
@@ -145,6 +172,10 @@ class TestPortfolioSimulation(unittest.TestCase):
         self.assertAlmostEqual(beta, expected_beta)
 
     def test_create_returns_tear_sheet(self):
+        """
+        Test that we can return a png from the returns tear sheet
+
+        """
         if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
             benchmark_returns = ps.get_benchmark_returns(
                 benchmark=self.benchmark,
