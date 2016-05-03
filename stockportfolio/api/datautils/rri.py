@@ -53,6 +53,7 @@ def verify_data_with_quandl(symbol, start_date, end_date, yahoo_data):
         else:
             return quandl_data
 
+
 def compute_daily_change_for_past_given_days(symbol, number_of_days_back):
     """
     Computes daily change in value
@@ -206,7 +207,7 @@ def compute_portfolio_rri_for_today(stocks, number_of_days_back):
 def compute_portfolio_rri_for_range(stocks, start_date, end_date):
     """
     Computes RRI for a portfolio for a range
-    
+
     :param stocks: (list) list of stocks in a portfolio
     :param start_date: (DateTime)
     :param end_date: (DateTime)

@@ -29,6 +29,7 @@ from stockportfolio.api.utils import (_calculate_price, _calculate_risk,
 
 """Functions that render user-facing templates from data."""
 
+
 def dashboard(request):
     """
     Prepares the context of dashboard adding portfolio,user, stock information
@@ -36,7 +37,7 @@ def dashboard(request):
     :param request: (HTTPRequest Object)
     :return render_template: renders index.html
     """
-    
+
     if request.user.is_anonymous():
         return redirect("/")
     email = string.lower(string.strip(request.user.email, string.whitespace))
@@ -65,8 +66,8 @@ def dashboard(request):
     context.update(csrf(request))
     return render_to_response("index.html", context)
 
-def landing(request):
 
+def landing(request):
     """
     Redirects authenticated user from landing page to dashboard
 
@@ -79,23 +80,25 @@ def landing(request):
     else:
         return redirect("/dashboard/")
 
+
 def ticker(request, symbol):
-    """         
+    """
     Gets current stock price having a ticker
 
     :param request:(HTTPRequest Object)
-    :param symbol: (string)   
-    :return HttpResponseRedirect: creates HTTPResponse 
+    :param symbol: (string)
+    :return HttpResponseRedirect: creates HTTPResponse
     """
 
     return HttpResponse(yf.get_current_price(symbol))
 
+
 def company_name(request, symbol):
-    """         
+    """
     Gets current stock price having a ticker
 
     :param request:(HTTPRequest Object)
-    :param symbol: (string)   
+    :param symbol: (string)
     :return HttpResponseRedirect: creates HTTPResponse
     """
 
@@ -103,11 +106,11 @@ def company_name(request, symbol):
 
 
 def user_profile(request, user_id):
-    """         
+    """
     Renders user profile
 
     :param request:(HTTPRequest Object)
-    :param user_id: (string)   
+    :param user_id: (string)
     :return render_template: renders user_profile.html
     """
 
@@ -121,7 +124,7 @@ def user_profile(request, user_id):
 
 
 def calculate_all_rris(request):
-    """         
+    """
     Updates rri for all portfolios
 
     :param request:(HTTPRequest Object)
@@ -134,7 +137,7 @@ def calculate_all_rris(request):
 
 
 def modify_account(request):
-    """         
+    """
     Modifies user account
 
     :param request:(HTTPRequest Object)
@@ -151,11 +154,11 @@ def modify_account(request):
 
 
 def stock_interface(request, ticker):
-    """         
+    """
     Creates context for stock_interface and renders teh modal
 
     :param request:(HTTPRequest Object)
-    :param ticker: (string)   
+    :param ticker: (string)
     :return render_template: renders stock_interface modal
     """
 
@@ -195,11 +198,11 @@ def stock_interface(request, ticker):
 
 
 def stock_rec(request, portfolio_id, rec_type):
-    """         
+    """
     Renders recommendation modal and populatest he context
 
     :param request:(HTTPRequest Object)
-    :param portfolio_id: (int)   
+    :param portfolio_id: (int)
     :return render_template: renders recommendation modal
     """
 
@@ -228,7 +231,6 @@ def stock_rec(request, portfolio_id, rec_type):
 
 
 def generate_portfolio(request):
-    
     """
     Generates one of several types of portfolios, possibly with input from
     either the user's default portfolio or their first portfolio if they have
@@ -297,11 +299,11 @@ def generate_portfolio(request):
 
 
 def simulate_portfolio(request, portfolio_id):
-    """         
+    """
     Populates simulate profolio with statistics png
 
     :param request:(HTTPRequest Object)
-    :param portfolio_id: (int)   
+    :param portfolio_id: (int)
     :return HttpResponse: redirects to portfolio simulation
     """
 

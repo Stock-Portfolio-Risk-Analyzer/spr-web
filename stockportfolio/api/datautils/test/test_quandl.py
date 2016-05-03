@@ -7,8 +7,8 @@ from stockportfolio.api.datautils.quandl_info import (get_options_data_quandl,
                                                       get_stock_data,
                                                       get_stock_data_multiple)
 
-
 """Tests the quandl_info module"""
+
 
 class TestQuandl(unittest.TestCase):
     """Test the quandl_info module"""
@@ -25,7 +25,8 @@ class TestQuandl(unittest.TestCase):
 
     def test_get_stock_data_multiple(self):
         """
-        Tests if fetching stock data works for multiple stocks by checking historical values
+        Tests if fetching stock data works for multiple stocks
+        by checking historical values
         """
 
         start = dt(year=2015, month=1, day=5)
@@ -33,6 +34,7 @@ class TestQuandl(unittest.TestCase):
         data = get_stock_data_multiple(["GOOG", "AAPL"], start, end)
         self.assertEqual(data['GOOG']['Close'][0], 513.87)
         self.assertEqual(data['AAPL']['Close'][0], 106.25)
+
     def test_get_pct_returns(self):
         """
         Tests if getting returns in percents work
@@ -53,6 +55,7 @@ class TestQuandl(unittest.TestCase):
         end = dt(year=2015, month=1, day=6)
         close = -11.910000000000025
         self.assertEqual(get_returns("GOOG", start, end)[1], close)
+
     def test_get_options_data(self):
         """
         Tests if options row is correctly formatted

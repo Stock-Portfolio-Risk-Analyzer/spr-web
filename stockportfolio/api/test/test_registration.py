@@ -1,7 +1,7 @@
 from registration.models import RegistrationProfile
+
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 from stockportfolio.api.test.test_selenium import SeleniumTestCase
 
 
@@ -12,7 +12,7 @@ class RegistrationTestCase(SeleniumTestCase):
 
     def setUp(self):
         """
-        Test fixture 
+        Test fixture
         """
         self.cls = RegistrationTestCase
         super(RegistrationTestCase, self).setUp()
@@ -20,7 +20,7 @@ class RegistrationTestCase(SeleniumTestCase):
 
     def tearDown(self):
         """
-        Test fixture 
+        Test fixture
         """
         super(RegistrationTestCase, self).tearDown()
 
@@ -38,7 +38,7 @@ class RegistrationTestCase(SeleniumTestCase):
         Runs at the end of all the tests. Stops the web driver
         """
         super(RegistrationTestCase, cls).tearDownClass()
-    
+
     def test_runner(self):
         """
         Runs everything sequentially
@@ -69,7 +69,7 @@ class RegistrationTestCase(SeleniumTestCase):
         # redirect to registration page
         button = self.cls.driver.find_element_by_xpath(
             '//*[@id="page-top"]/header/div/div/a[1]')
-        #self.wait(self.new_page)
+        # self.wait(self.new_page)
         self.cls.driver.implicitly_wait(10)
         button.click()
 
@@ -77,8 +77,6 @@ class RegistrationTestCase(SeleniumTestCase):
         """
         Checks if register functionality works
         """
-        #self.cls.driver.get(self.cls.live_server_url)
-        #self.assertEqual(self.cls.driver.title, 'User test')
         username_box = self.cls.driver.find_element_by_name('username')
         username_box.send_keys(self.cls.user_info['user_name'])
         email_box = self.driver.find_element_by_name('email')

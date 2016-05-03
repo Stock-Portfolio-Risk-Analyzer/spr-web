@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 import stockportfolio.api.views as views
+
 """ Top level URL patterns for stockportfolio """
 
 urlpatterns = [

@@ -21,14 +21,15 @@ from stockportfolio.api.utils import _calculate_risk
 
 """Backend module for the API"""
 
+
 def add_stock(request, portfolio_id):
     """
     Adds Stock to Portfolio
 
     :param request: HTTP Request Object
     :param portfolio_id: (int) ID for the Portoflio Object
-    :return: HTTPResponse - CODE - 200 if successful, 403 if unauthorized user is \
-    requesting, 400 if specified stock not found in Database
+    :return: HTTPResponse - CODE - 200 if successful, 403 if unauthorized \
+    user is requesting, 400 if specified stock not found in Database
     """
     portfolio = get_object_or_404(Portfolio, portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:
@@ -446,7 +447,7 @@ def download_porfolio_data(request, portfolio_id):
 
     :param request: (HTTPRequest) HTTP Request Object
     :param portfolio_id: ID for the portfolio we wish to download.
-    :return: (HTTPResponse) with attachment named 'backup-[portfolio_name].csv' \
+    :return: (HTTPResponse) with attachment named 'backup-[portfolio_name].csv'
     """
     portfolio = Portfolio.objects.get(portfolio_id=portfolio_id)
     if portfolio.portfolio_user.pk is not request.user.pk:

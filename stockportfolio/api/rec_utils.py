@@ -6,6 +6,7 @@ from stockportfolio.api.models import Portfolio, Stock
 
 """ Functions to assist in portfolio and stock recommendation """
 
+
 def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     """
     Helper function to pick stocks by sector
@@ -177,7 +178,7 @@ def determine_stock_quantities(curr_portfolio, new_portfolio):
 
 def stock_to_dict(stock):
     """
-    Given a stock, this function converts all its data to a dictionary and 
+    Given a stock, this function converts all its data to a dictionary and
     returns that dictionary
 
     :param stock: stock to convert
@@ -209,7 +210,7 @@ def stock_recommender(request, portfolio_id, rec_type):
     """
     Given a request, portfolio_id and a recommendation type, this function
     generates a map that contains stock recommendations for the user
-    
+
     :param request: request object
     :param portfolio_id: portfolio id for the specific portfolio
     :param rec_type: the type of recommendation
@@ -265,7 +266,8 @@ def _recommender_high_risk(x, p_risk):
 
 def _recommender_stable(x, p_risk):
     """
-    Helper function that returns recommendations within 1.2 and 0.8 of portfolio risk
+    Helper function that returns recommendations within 1.2 and 0.8 of
+    portfolio risk
 
     :param x: recommendation risk
     :param p_risk: portfolio risk
@@ -310,7 +312,8 @@ def _calculate_portfolio_value(portfolio):
 
 def _get_latest_stock_price(stock):
     """
-    Helper function that returns the latest stock price lower than portfolio risk
+    Helper function that returns the latest stock price lower than
+    portfolio risk
 
     :param stock: stock whose price has to be checked
     :param stock_price: latest stock price
@@ -383,11 +386,11 @@ def _add_stock(symbol, quantity, portfolio):
     name = get_company_name(symbol)
     sector = get_company_sector(symbol)
     s = Stock.objects.get_or_create(
-            stock_name=name,
-            stock_ticker=symbol,
-            stock_sector=sector)[0]
+        stock_name=name,
+        stock_ticker=symbol,
+        stock_sector=sector)[0]
     sp = portfolio.portfolio_stocks.get_or_create(
-            stock=s,
-            defaults={'quantity': float(quantity)})[0]
+        stock=s,
+        defaults={'quantity': float(quantity)})[0]
     sp.save()
     return s

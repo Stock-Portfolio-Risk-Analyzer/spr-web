@@ -27,6 +27,7 @@ with open(fpath, 'rb') as csvfile:
 
 tickers = list(set(tickers))
 
+
 def get_stock_sentiment(symbol):
     """
     This function returns the sentiment for a stock

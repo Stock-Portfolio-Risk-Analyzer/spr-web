@@ -1,7 +1,6 @@
 import os
 from datetime import date, timedelta
 
-import numpy as np
 import pandas as pd
 
 import yahoo_finance
@@ -10,10 +9,11 @@ from stockportfolio.api.datautils.rri import (compute_stock_rri_for_range,
 
 """ Helper functions for RRI over ranges """
 
+
 def get_company_industry(symbol):
     """
     Returns industry associated with the given ticker
-    
+
     :param symbol: (String) ticker symbol of the stock
     :return: (String) Industry
     """

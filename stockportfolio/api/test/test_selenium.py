@@ -5,18 +5,16 @@ import time
 import requests
 from django.test import LiveServerTestCase
 from registration.models import RegistrationProfile
+
 from selenium import webdriver
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 from stockportfolio.settings.base import BASE_DIR
 
 
 class SeleniumTestCase(LiveServerTestCase):
     """
-    Base test case for Selenium tests. 
+    Base test case for Selenium tests.
     """
 
     driver = None
@@ -62,7 +60,7 @@ class SeleniumTestCase(LiveServerTestCase):
     @classmethod
     def register_and_activate(cls):
         """
-        Class helper method that register and activates an account 
+        Class helper method that register and activates an account
         through Selenium
         """
         cls.driver.get(cls.live_server_url + '/accounts/register/')

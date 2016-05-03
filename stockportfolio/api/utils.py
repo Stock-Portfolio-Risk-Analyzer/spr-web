@@ -1,16 +1,15 @@
 import numpy
 from django.db.models import Count
 
-from datautils import rri as rri
-from datautils import stock_info as stock_info
-from datautils import yahoo_finance as yf
-from datautils.yahoo_finance import get_current_price
+from stockportfolio.api.datautils import rri as rri
+from stockportfolio.api.datautils import stock_info as stock_info
+from stockportfolio.api.datautils import yahoo_finance as yf
 from stockportfolio.api.models import (Portfolio, PortfolioRank,
                                        PortfolioValue, Price, Risk, Stock)
 
 
 def update_rri_for_all_portfolios():
-    """         
+    """
     Recalculates rri for every portfolio and updates it
 
     :return: None
@@ -31,7 +30,7 @@ def update_rri_for_all_portfolios():
 
 
 def update_rank_for_all_portfolios():
-    """         
+    """
     Recalculates rank for every portfolio and updates it
 
     :return: None
@@ -57,7 +56,7 @@ def update_rank_for_all_portfolios():
 
 
 def update_value_for_all_portfolios():
-    """         
+    """
     Recalculates value for every portfolio and updates it
 
     :return: None
@@ -66,7 +65,7 @@ def update_value_for_all_portfolios():
     for portfolio in Portfolio.objects.all():
         value = 0.0
         for sp in portfolio.portfolio_stocks.all():
-            price = get_current_price(sp.stock.stock_ticker)
+            price = yf.get_current_price(sp.stock.stock_ticker)
             if not price:
                 price = 0
             value += sp.quantity * price
@@ -75,7 +74,7 @@ def update_value_for_all_portfolios():
 
 
 def update_rri_for_all_stocks():
-    """         
+    """
     Recalculates rri for every stock and updates it
 
     :return: None
@@ -94,7 +93,7 @@ def update_rri_for_all_stocks():
 
 
 def update_price_for_all_stocks():
-    """         
+    """
     Recalculates price for every stock and updates it
 
     :return: None
@@ -111,7 +110,7 @@ def update_price_for_all_stocks():
 
 
 def precompute_rri_for_all_stocks():
-    """         
+    """
     Precomputes rri for every stock
 
     :return: None
@@ -139,7 +138,7 @@ def precompute_rri_for_all_stocks():
 
 
 def precompute_prices_for_all_stocks():
-    """         
+    """
     Precomputes price for every stock
 
     :return: None

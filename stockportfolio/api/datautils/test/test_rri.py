@@ -6,8 +6,8 @@ from mock import Mock
 from stockportfolio.api.datautils.rri import (compute_portfolio_rri_for_range,
                                               compute_stock_rri_for_range)
 
-
 """Tests the rri module"""
+
 
 class TestRRI(unittest.TestCase):
     """Tests the rri module"""

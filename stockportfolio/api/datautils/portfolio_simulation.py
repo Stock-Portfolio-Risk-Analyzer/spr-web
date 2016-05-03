@@ -6,7 +6,7 @@ import pandas as pd
 from django.conf import settings
 from django.http import HttpResponse
 
-from yahoo_finance import get_stock_data
+from stockportfolio.api.datautils.yahoo_finance import get_stock_data
 
 if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
     import matplotlib  # isort:skip
@@ -19,7 +19,10 @@ if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
 
 """ Generates a tearsheet based on portfolio simulation"""
 
-def get_benchmark_returns(benchmark='SPY', start_date=None, end_date=None, price_field='Adj Close'):
+
+def get_benchmark_returns(
+        benchmark='SPY', start_date=None,
+        end_date=None, price_field='Adj Close'):
     """
     Get the daily (non-cumulative) percent returns for the benchmark.
 
@@ -39,7 +42,8 @@ def get_benchmark_returns(benchmark='SPY', start_date=None, end_date=None, price
     return benchmark_price_series.pct_change().dropna()
 
 
-def get_portfolio_returns_series(portfolio, start_date=None, end_date=None, price_field='Adj Close'):
+def get_portfolio_returns_series(
+        portfolio, start_date=None, end_date=None, price_field='Adj Close'):
     """
     Simulates portfolio returns assuming the portfolio was bought on
     start_date and held through end_date.
@@ -63,7 +67,8 @@ def get_portfolio_returns_series(portfolio, start_date=None, end_date=None, pric
     return portfolio_returns_series
 
 
-def get_portfolio_value_series(portfolio, start_date=None, end_date=None, price_field='Adj Close'):
+def get_portfolio_value_series(
+        portfolio, start_date=None, end_date=None, price_field='Adj Close'):
     """
     Generate a time-series of the portfolio assuming the portfolio was bought
     on start_date and held through end_date.
@@ -184,7 +189,8 @@ def alpha_beta(returns, benchmark_returns):
     Calculates alpha and beta based on a given benchmark.
 
     :param returns: (pd.Series) daily non-cumulative returns
-    :param benchmark_returns: (pd.Series)daily non-cumulative returns of the benchmark
+    :param benchmark_returns: (pd.Series)
+        daily non-cumulative returns of the benchmark
     :return: (float) alpha, (float) beta
     """
     ret_index = returns.index
@@ -275,8 +281,10 @@ def rolling_beta(returns, benchmark_returns, rolling_window=21 * 6):
     Calculates the rolling beta (given the rolling_window) of the portfolio
     simulation vs the benchmark_returns.
 
-    :param returns: (pd.Series) daily non-cumulative returns returns of portfolio
-    :param benchmark_returns: (pd.Series) daily non-cumulative returns of the benchmark
+    :param returns: (pd.Series) daily non-cumulative
+        returns returns of portfolio
+    :param benchmark_returns: (pd.Series) daily non-cumulative
+        returns of the benchmark
     :param rolling_window: (int) size of rolling window in days
     :return: (pd.Series) rolling beta
     See https://en.wikipedia.org/wiki/Beta_(finance) for more details.
@@ -299,7 +307,8 @@ def plot_rolling_beta(returns, benchmark_returns, ax):
     Plots the rolling 6-month and 12-month beta versus date.
 
     :param returns: (pd.Series) daily non-cumulative returns of the portfolio
-    :param benchmark_returns: (pd.Series) daily non-cumulative returns of the benchmark
+    :param benchmark_returns: (pd.Series) daily
+        non-cumulative returns of the benchmark
     :param ax: (matplotlib.Axes)
     :return: (matplotlib.Axes)
     """

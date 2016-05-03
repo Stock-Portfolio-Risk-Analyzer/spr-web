@@ -1,18 +1,5 @@
-import base64
-import logging
-import os
-import time
-
-import requests
-from django.test import LiveServerTestCase
-from registration.models import RegistrationProfile
-from selenium import webdriver
-from selenium.webdriver.remote.remote_connection import LOGGER
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 from stockportfolio.api.test.test_selenium import SeleniumTestCase
-from stockportfolio.settings.base import BASE_DIR
 
 
 class DashboardTest(SeleniumTestCase):

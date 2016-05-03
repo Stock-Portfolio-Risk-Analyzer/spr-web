@@ -6,7 +6,8 @@ import pandas as pd
 import pandas_datareader.data as web
 import ystockquote
 
-"""Helper functions for accessing the Yahoo api"
+"""Helper functions for accessing the Yahoo api"""
+
 
 def get_stock_data(symbol, start_date=None, end_date=None):
     """
@@ -38,7 +39,8 @@ def get_stock_data_multiple(symbols, start_date=None, end_date=None):
     :param symbols: (list of str) symbols to get data for
     :param start_date: (datetime)
     :param end_date: (datetime)
-    :return: (OrderedDict of str : pd.DataFrame) of DataFrames of stock data from start_date to end_date
+    :return: (OrderedDict of str : pd.DataFrame) of DataFrames of
+        stock data from start_date to end_date
     """
     data = OrderedDict()
 
