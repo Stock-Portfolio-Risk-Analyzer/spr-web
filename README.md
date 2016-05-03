@@ -1,6 +1,9 @@
 # Stock Portfolio Risk Analysis Django Project
 
-![travis ci button](https://travis-ci.org/Stock-Portfolio-Risk-Analyzer/spr-web.svg) [![Coverage Status](https://coveralls.io/repos/github/Stock-Portfolio-Risk-Analyzer/spr-web/badge.svg?branch=develop)](https://coveralls.io/github/Stock-Portfolio-Risk-Analyzer/spr-web?branch=develop)
+![travis ci button](https://travis-ci.org/Stock-Portfolio-Risk-Analyzer/spr-web.svg)
+[![Coverage Status](https://coveralls.io/repos/github/Stock-Portfolio-Risk-Analyzer/spr-web/badge.svg?branch=develop)](https://coveralls.io/github/Stock-Portfolio-Risk-Analyzer/spr-web?branch=develop)
+[![Documentation Status](https://readthedocs.org/projects/spr-web/badge/?version=latest)](http://spr-web.readthedocs.io/en/latest/?badge=latest)
+
 
 Analyzes and displays the riskiness of your stock portfolio. A project for CS428 at UIUC.
 
@@ -19,9 +22,9 @@ Analyzes and displays the riskiness of your stock portfolio. A project for CS428
 
 ## Local Database Setup
 
-Download and install PostgresSQL, including the development packages. 
-For details on how to do this, consult the PostgresSQL documentation for your 
-operating system or Linux distribution. 
+Download and install PostgresSQL, including the development packages.
+For details on how to do this, consult the PostgresSQL documentation for your
+operating system or Linux distribution.
 
 Then you must create a database called `spra` along with a user/password called `spra`.
 Alternatively, you can change these settings in `stockportfolio/settings/local.py`
@@ -48,7 +51,7 @@ To autodoc/generate templates:
 To build the html pages:
 `cd docs; make html`
 
-An example of how methods should be documented: 
+An example of how methods should be documented:
 
 ```python
 def get_stock_data(symbol, start_date=None, end_date=None):
