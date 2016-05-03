@@ -1,10 +1,11 @@
+""" Top level URL patterns for stockportfolio """
+
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
 import stockportfolio.api.views as views
 
-""" Top level URL patterns for stockportfolio """
 
 urlpatterns = [
     url(r'^$', views.landing, name='landing'),
