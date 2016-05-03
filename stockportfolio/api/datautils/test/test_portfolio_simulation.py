@@ -7,6 +7,8 @@ from django.conf import settings
 import stockportfolio.api.datautils.portfolio_simulation as ps
 import stockportfolio.api.datautils.yahoo_finance as yf
 
+"""Tests the portfolio_simulation module"""
+
 
 class TestPortfolioSimulation(unittest.TestCase):
     """Tests the portfolio_simulation module"""

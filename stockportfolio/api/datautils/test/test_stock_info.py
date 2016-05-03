@@ -3,6 +3,7 @@ from datetime import datetime as dt
 
 import stockportfolio.api.datautils.stock_info as stock_info
 
+"""Tests the stock_info module"""
 
 class TestStockInfo(unittest.TestCase):
     """Tests the stock_info module"""

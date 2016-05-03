@@ -3,6 +3,7 @@ from datetime import datetime as dt
 
 import stockportfolio.api.datautils.sentiment as stm
 
+"""Tests the sentiment module"""
 
 class TestSentiment(unittest.TestCase):
     """Tests the sentiment module"""

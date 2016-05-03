@@ -3,6 +3,7 @@ from datetime import datetime as dt
 
 import stockportfolio.api.datautils.yahoo_finance as yf
 
+"""Tests the yahoo_finance module"""
 
 class TestYahooFinance(unittest.TestCase):
     """Tests the yahoo_finance module"""

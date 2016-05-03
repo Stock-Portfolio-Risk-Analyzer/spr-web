@@ -8,6 +8,8 @@ from stockportfolio.api.datautils.quandl_info import (get_options_data_quandl,
                                                       get_stock_data_multiple)
 
 
+"""Tests the quandl_info module"""
+
 class TestQuandl(unittest.TestCase):
     """Test the quandl_info module"""
 
