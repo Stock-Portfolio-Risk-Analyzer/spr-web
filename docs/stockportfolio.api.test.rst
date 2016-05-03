@@ -20,6 +20,14 @@ stockportfolio.api.test.test_dashboard module
     :undoc-members:
     :show-inheritance:
 
+stockportfolio.api.test.test_modify_account module
+--------------------------------------------------
+
+.. automodule:: stockportfolio.api.test.test_modify_account
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 stockportfolio.api.test.test_rec_utils module
 ---------------------------------------------
 

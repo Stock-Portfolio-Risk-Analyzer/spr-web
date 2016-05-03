@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     stockportfolio.api.datautils
+    stockportfolio.api.management
     stockportfolio.api.newsletter
     stockportfolio.api.test
 
