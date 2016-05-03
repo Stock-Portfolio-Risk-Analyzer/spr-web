@@ -17,6 +17,7 @@ if settings.ADVANCED_SETTINGS['SIMULATION_ENABLED']:
     from matplotlib.ticker import FuncFormatter  # isort:skip
     import seaborn as sns  # isort:skip
 
+""" Generates a tearsheet based on portfolio simulation"""
 
 def get_benchmark_returns(benchmark='SPY', start_date=None, end_date=None, price_field='Adj Close'):
     """

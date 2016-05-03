@@ -5,6 +5,7 @@ import Quandl as qd
 
 quandl_key = '-6X6UvP1aeit_zybGREM'
 
+""" Helper methods over the Quandl api"
 
 def get_stock_data(symbol, start_date=None, end_date=None, db_code="WIKI"):
     """

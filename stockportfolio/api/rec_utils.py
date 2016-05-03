@@ -4,6 +4,7 @@ from stockportfolio.api.datautils.yahoo_finance import (get_company_name,
                                                         get_company_sector)
 from stockportfolio.api.models import Portfolio, Stock
 
+""" Functions to assist in portfolio and stock recommendation """
 
 def get_sector_stocks(portfolio, all_stocks, num_stocks, diversify=False):
     """
